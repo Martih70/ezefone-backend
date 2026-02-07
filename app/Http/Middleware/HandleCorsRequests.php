@@ -15,7 +15,8 @@ class HandleCorsRequests
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Allow requests from localhost and local network IPs
+        // For development and mobile apps (which don't send origin headers)
+        // Allow all origins. Restrict in production if needed.
         $allowedOrigins = [
             'http://localhost:*',
             'http://127.0.0.1:*',
@@ -28,8 +29,8 @@ class HandleCorsRequests
 
         $origin = $request->header('origin');
 
-        // Check if origin is allowed
-        $allowed = false;
+        // Allow requests from specified origins OR requests without origin header (mobile apps)
+        $allowed = !$origin; // Allow if no origin header (typical for mobile apps)
         if ($origin) {
             foreach ($allowedOrigins as $allowedOrigin) {
                 if ($this->matchesPattern($origin, $allowedOrigin)) {
@@ -40,8 +41,9 @@ class HandleCorsRequests
         }
 
         if ($allowed) {
+            $responseOrigin = $origin ?: '*';
             return $next($request)
-                ->header('Access-Control-Allow-Origin', $origin)
+                ->header('Access-Control-Allow-Origin', $responseOrigin)
                 ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
                 ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
                 ->header('Access-Control-Allow-Credentials', 'true');
