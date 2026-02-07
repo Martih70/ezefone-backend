@@ -54,4 +54,17 @@ class ContactController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public function destroy($contactId)
+    {
+        $contact = Contact::findOrFail($contactId);
+
+        // Remove all favorites for this contact
+        Favorite::where('contact_id', $contactId)->delete();
+
+        // Delete the contact
+        $contact->delete();
+
+        return response()->json(null, 204);
+    }
 }
