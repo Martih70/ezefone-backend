@@ -255,7 +255,7 @@ function sheetAction(action) {
       break;
     case 'whatsapp': {
       const digits = contact.phone.replace(/\D/g, '');
-      window.open('https://wa.me/' + digits, '_blank');
+      window.location.href = 'https://wa.me/' + digits;
       break;
     }
   }
@@ -292,7 +292,7 @@ function renderMessages() {
 
 function whatsappContact(phone) {
   const digits = phone.replace(/\D/g, '');
-  window.open('https://wa.me/' + digits, '_blank');
+  window.location.href = 'https://wa.me/' + digits;
 }
 
 // ============================================================
@@ -511,7 +511,7 @@ function keypadPress(d) { keypadDigits += d; renderKeypad(); }
 function keypadDelete()  { keypadDigits = keypadDigits.slice(0,-1); renderKeypad(); }
 function keypadClear()   { keypadDigits = ''; renderKeypad(); }
 function keypadCall()    { keypadDigits ? window.location.href = 'tel:' + keypadDigits : showToast('Enter a number'); }
-function keypadWhatsApp() { keypadDigits ? window.open('https://wa.me/' + keypadDigits.replace(/\D/g,''), '_blank') : showToast('Enter a number'); }
+function keypadWhatsApp() { keypadDigits ? window.location.href = 'https://wa.me/' + keypadDigits.replace(/\D/g,'') : showToast('Enter a number'); }
 
 function initKeypadLongPress() {
   const btn = document.getElementById('keypad-delete-btn');
@@ -565,9 +565,19 @@ function overlayClose(e, fn) {
 // ============================================================
 // INIT
 // ============================================================
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+
 async function init() {
   updateClock();
   setInterval(updateClock, 30000);
+
+  // Hide Contact Picker import button on iOS — API not supported
+  if (isIOS()) {
+    const importBtn = document.getElementById('import-from-phone-btn');
+    if (importBtn) importBtn.style.display = 'none';
+  }
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(function(e) { console.warn('SW:', e); });
