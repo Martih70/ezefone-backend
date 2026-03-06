@@ -573,10 +573,25 @@ async function init() {
   updateClock();
   setInterval(updateClock, 30000);
 
-  // Hide Contact Picker import button on iOS — API not supported
+  // iOS-specific behaviour
   if (isIOS()) {
+    // Hide Contact Picker import button — API not supported on iOS
     const importBtn = document.getElementById('import-from-phone-btn');
     if (importBtn) importBtn.style.display = 'none';
+
+    // Show install hint in Safari if not already installed and not dismissed
+    const isStandalone = window.navigator.standalone === true;
+    const dismissed    = localStorage.getItem('ios-hint-dismissed');
+    if (!isStandalone && !dismissed) {
+      const hint = document.getElementById('ios-install-hint');
+      if (hint) {
+        hint.classList.remove('hidden');
+        document.getElementById('ios-hint-dismiss').addEventListener('click', function() {
+          hint.classList.add('hidden');
+          localStorage.setItem('ios-hint-dismissed', '1');
+        });
+      }
+    }
   }
 
   if ('serviceWorker' in navigator) {
