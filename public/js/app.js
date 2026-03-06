@@ -21,6 +21,14 @@ const AVATAR_COLORS = [
   '#c05a8a', '#7aad3a',
 ];
 
+// Fixed pastel themes per card position (0–3)
+const CARD_THEMES = [
+  { bg: '#e8f4fd', border: '#b3d9f5', avatar: '#1a6fa8', glow: 'rgba(26,111,168,0.18)' },
+  { bg: '#e8f8ef', border: '#a8e8c0', avatar: '#1e8c4e', glow: 'rgba(30,140,78,0.18)'  },
+  { bg: '#fef0e8', border: '#f9c9a8', avatar: '#c45e20', glow: 'rgba(196,94,32,0.18)'  },
+  { bg: '#f0edfb', border: '#cfc5f5', avatar: '#6b3ec2', glow: 'rgba(107,62,194,0.18)' },
+];
+
 function getAvatarColor(name) {
   if (!name) return AVATAR_COLORS[0];
   let h = 0;
@@ -172,18 +180,15 @@ function renderPeople() {
     const fav = state.favorites[i];
 
     if (fav && fav.contact) {
-      const contact = fav.contact;
-      const color   = getAvatarColor(contact.name);
-      const glow    = hexToRgba(color, 0.25);
+      const contact  = fav.contact;
+      const theme    = CARD_THEMES[i];
       const initials = getInitials(contact.name);
-      const id = fav.contact_id;
+      const id       = fav.contact_id;
 
-      const cardBg     = hexToRgba(color, 0.10);
-      const cardBorder = hexToRgba(color, 0.25);
-      html += '<div class="hero-card" style="--glow-color:' + glow + ';background:' + cardBg + ';border-color:' + cardBorder + '" onclick="heroTap(' + id + ')">'
+      html += '<div class="hero-card" style="--glow-color:' + theme.glow + ';background:' + theme.bg + ';border-color:' + theme.border + '" onclick="heroTap(' + id + ')">'
         + '<button class="hero-more-btn" onclick="event.stopPropagation();showActionSheet(' + id + ')" title="More options">'
         + '<span class="material-icons-round">more_horiz</span></button>'
-        + '<div class="hero-avatar" style="background:' + color + ';box-shadow:0 4px 18px ' + glow + '">'
+        + '<div class="hero-avatar" style="background:' + theme.avatar + ';box-shadow:0 4px 18px ' + theme.glow + '">'
         + esc(initials) + '</div>'
         + '<div class="hero-name">' + esc(firstName(contact.name)) + '</div>'
         + '<div class="hero-phone">' + esc(contact.phone || '') + '</div>'
