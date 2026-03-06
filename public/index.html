@@ -321,6 +321,49 @@
     <div class="ios-hint-arrow">&#x25BC;</div>
   </div>
 
+  <!-- ============================================================
+       SETUP WIZARD (first launch only)
+       ============================================================ -->
+  <div id="setup-wizard" class="wizard-overlay hidden">
+
+    <!-- Welcome step -->
+    <div id="wizard-welcome" class="wizard-step">
+      <div class="wizard-logo">
+        <span>E</span>
+        <div class="wizard-logo-dot"></div>
+      </div>
+      <h1 class="wizard-heading">Welcome to<br>Ezefone</h1>
+      <p class="wizard-sub">Let&rsquo;s add the people you call most &mdash; up to four of them. It only takes a minute!</p>
+      <button class="wizard-primary-btn" onclick="wizardNext()">Let&rsquo;s Go</button>
+    </div>
+
+    <!-- Person step (reused for all 4) -->
+    <div id="wizard-person" class="wizard-step hidden">
+      <div class="wizard-progress">
+        <div id="wizard-dots" class="wizard-dots"></div>
+        <p id="wizard-step-label" class="wizard-step-label">Person 1 of 4</p>
+      </div>
+      <h2 class="wizard-heading" id="wizard-person-heading">Who&rsquo;s your first person?</h2>
+      <div class="wizard-form">
+        <input type="text"  id="wizard-name"  class="wizard-input" placeholder="Their name" autocomplete="name">
+        <input type="tel"   id="wizard-phone" class="wizard-input" placeholder="Their phone number" autocomplete="tel">
+      </div>
+      <button class="wizard-primary-btn" id="wizard-add-btn" onclick="wizardSave()">Add &amp; Continue</button>
+      <button class="wizard-skip-btn"    onclick="wizardSkip()">Skip for now</button>
+    </div>
+
+    <!-- Done step -->
+    <div id="wizard-done" class="wizard-step hidden">
+      <div class="wizard-done-icon">
+        <span class="material-icons-round">check_circle</span>
+      </div>
+      <h1 class="wizard-heading">All set!</h1>
+      <p class="wizard-sub">Your people are ready. Just tap a card to call them straight away.</p>
+      <button class="wizard-primary-btn" onclick="wizardFinish()">Open Ezefone</button>
+    </div>
+
+  </div>
+
   <script src="/js/app.js"></script>
 </body>
 </html>

@@ -565,6 +565,92 @@ function overlayClose(e, fn) {
 // ============================================================
 // INIT
 // ============================================================
+// ============================================================
+// SETUP WIZARD
+// ============================================================
+let wizardStep = 0;
+const WIZARD_HEADINGS = [
+  'Who\u2019s your first person?',
+  'Who\u2019s your second person?',
+  'Who\u2019s your third person?',
+  'And your fourth person?',
+];
+
+function showWizard() {
+  document.getElementById('setup-wizard').classList.remove('hidden');
+  document.getElementById('wizard-welcome').classList.remove('hidden');
+  document.getElementById('wizard-person').classList.add('hidden');
+  document.getElementById('wizard-done').classList.add('hidden');
+  wizardStep = 0;
+}
+
+function wizardNext() {
+  document.getElementById('wizard-welcome').classList.add('hidden');
+  document.getElementById('wizard-person').classList.remove('hidden');
+  wizardStep = 1;
+  wizardUpdateStep();
+}
+
+function wizardUpdateStep() {
+  document.getElementById('wizard-step-label').textContent = 'Person ' + wizardStep + ' of 4';
+  document.getElementById('wizard-person-heading').textContent = WIZARD_HEADINGS[wizardStep - 1];
+  document.getElementById('wizard-name').value  = '';
+  document.getElementById('wizard-phone').value = '';
+  document.getElementById('wizard-name').focus();
+
+  // Dots
+  const dots = document.getElementById('wizard-dots');
+  dots.innerHTML = '';
+  for (let i = 1; i <= 4; i++) {
+    const d = document.createElement('div');
+    d.className = 'wizard-dot' + (i < wizardStep ? ' done' : i === wizardStep ? ' active' : '');
+    dots.appendChild(d);
+  }
+}
+
+async function wizardSave() {
+  const name  = document.getElementById('wizard-name').value.trim();
+  const phone = document.getElementById('wizard-phone').value.trim();
+  if (!name) { document.getElementById('wizard-name').focus(); return; }
+
+  const btn = document.getElementById('wizard-add-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving\u2026';
+
+  try {
+    const contact = await createContact({ name, phone: phone || null });
+    await addFavourite(contact.id);
+  } catch(e) {
+    // continue even if save fails
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Add & Continue';
+  wizardAdvance();
+}
+
+function wizardSkip() {
+  wizardAdvance();
+}
+
+function wizardAdvance() {
+  if (wizardStep < 4) {
+    wizardStep++;
+    wizardUpdateStep();
+  } else {
+    document.getElementById('wizard-person').classList.add('hidden');
+    document.getElementById('wizard-done').classList.remove('hidden');
+  }
+}
+
+function wizardFinish() {
+  localStorage.setItem('wizard-complete', '1');
+  document.getElementById('setup-wizard').classList.add('hidden');
+  renderPeople();
+  renderManageList();
+  updateContactCount();
+}
+
 function isIOS() {
   return /iphone|ipad|ipod/i.test(navigator.userAgent);
 }
@@ -618,6 +704,11 @@ async function init() {
 
   initKeypadLongPress();
   await loadContacts();
+
+  // Show setup wizard on first launch
+  if (!localStorage.getItem('wizard-complete')) {
+    showWizard();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);
