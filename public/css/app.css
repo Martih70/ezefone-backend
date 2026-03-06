@@ -856,6 +856,23 @@ input {
 .sheet-whatsapp { background: var(--green-light); box-shadow: 0 3px 12px rgba(61,184,112,0.35); }
 .sheet-sms      { background: var(--amber); box-shadow: 0 3px 12px rgba(245,166,35,0.35); }
 
+.sheet-remove {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-btn);
+  background: #fff5f5;
+  border: 2px solid #fecaca;
+  font-size: 15px; font-weight: 700;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s;
+}
+.sheet-remove:active { background: #fee2e2; }
+.sheet-remove .material-icons-round { font-size: 20px; }
+
 .sheet-cancel {
   width: 100%;
   padding: 15px;

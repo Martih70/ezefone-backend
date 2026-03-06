@@ -175,7 +175,7 @@
 
       <!-- Manage / favourites list -->
       <div class="settings-section">
-        <div class="settings-section-label">ALL CONTACTS &mdash; TAP STAR TO SET AS ONE OF YOUR PEOPLE</div>
+        <div class="settings-section-label">ALL CONTACTS &mdash; TAP STAR TO SET AS ONE OF YOUR FAVOURITES</div>
         <div id="manage-list" class="manage-list-card">
           <!-- Rendered by JS -->
         </div>
@@ -271,6 +271,9 @@
           <span class="material-icons-round">chat</span>WhatsApp
         </button>
       </div>
+      <button class="sheet-remove" onclick="sheetAction('remove')">
+        <span class="material-icons-round">star_border</span>Remove from Favourites
+      </button>
       <button class="sheet-cancel" onclick="hideActionSheet()">Cancel</button>
     </div>
   </div>

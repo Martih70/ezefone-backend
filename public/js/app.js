@@ -258,6 +258,9 @@ function sheetAction(action) {
       window.location.href = 'https://wa.me/' + digits;
       break;
     }
+    case 'remove':
+      toggleFavourite(id, true);
+      break;
   }
 }
 
