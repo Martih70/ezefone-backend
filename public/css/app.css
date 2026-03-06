@@ -240,10 +240,10 @@ input {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 20px 14px 24px;
+  padding: 12px 14px 16px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  min-height: 0;
 }
 
 .section-label {
@@ -256,24 +256,30 @@ input {
   text-align: center;
 }
 
-/* 2×2 grid */
+/* 2×2 grid — equal cells, fills available space */
 .hero-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 13px;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 12px;
 }
 
 /* ---- Filled hero card ---- */
 .hero-card {
   background: var(--card-bg);
   border-radius: var(--radius-card);
-  padding: 18px 14px 16px;
+  padding: 12px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
   position: relative;
   cursor: pointer;
+  min-height: 0;
   /* Glow set inline by JS via --glow-color */
   box-shadow: 0 4px 20px var(--glow-color, rgba(0,0,0,0.08));
   border: 1px solid rgba(255,255,255,0.6);
@@ -293,13 +299,13 @@ input {
 
 /* Avatar circle */
 .hero-avatar {
-  width: 86px;
-  height: 86px;
+  width: clamp(56px, 18vw, 90px);
+  height: clamp(56px, 18vw, 90px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 34px;
+  font-size: clamp(22px, 7vw, 36px);
   font-weight: 900;
   color: white;
   border: 3px solid rgba(255,255,255,0.85);
@@ -377,10 +383,10 @@ input {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 32px 14px;
+  padding: 12px;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
-  aspect-ratio: 1 / 1.15;
+  min-height: 0;
 }
 
 .hero-empty:active {
