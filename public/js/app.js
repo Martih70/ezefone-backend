@@ -4,11 +4,12 @@
 // STATE
 // ============================================================
 const state = {
-  screen: 'contacts',
+  screen: 'people',
   contacts: [],
+  favorites: [],   // [{id, contact_id, contact, order}]
   loading: false,
-  manageQuery: '',
   installPrompt: null,
+  sheetContactId: null,
 };
 
 // ============================================================
@@ -16,17 +17,23 @@ const state = {
 // ============================================================
 const AVATAR_COLORS = [
   '#0d9488', '#2563eb', '#b45309', '#059669',
-  '#7c3aed', '#dc2626', '#d97706', '#0284c7',
-  '#db2777', '#ea580c',
+  '#7c3aed', '#0891b2', '#d97706', '#0284c7',
+  '#db2777', '#65a30d',
 ];
 
 function getAvatarColor(name) {
   if (!name) return AVATAR_COLORS[0];
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+  return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
+}
+
+// Hex colour → rgba for glow
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
 }
 
 function getInitials(name) {
@@ -36,27 +43,25 @@ function getInitials(name) {
   return name.slice(0, 2).toUpperCase();
 }
 
+function firstName(name) {
+  return (name || '').trim().split(/\s+/)[0];
+}
+
 // ============================================================
-// HTML ESCAPING (XSS safety)
+// XSS SAFETY
 // ============================================================
 function esc(str) {
   if (str === null || str === undefined) return '';
   return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 // ============================================================
 // API
 // ============================================================
 async function apiRequest(method, path, body) {
-  const opts = {
-    method,
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-  };
+  const opts = { method, headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } };
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch('/api' + path, opts);
   if (!res.ok) {
@@ -72,13 +77,15 @@ async function loadContacts() {
   try {
     const data = await apiRequest('GET', '/contacts');
     state.contacts = (data.contacts || []).sort((a, b) => a.name.localeCompare(b.name));
+    state.favorites = data.favorites || [];
   } catch (err) {
-    console.error('Failed to load contacts:', err);
+    console.error(err);
     showToast('Could not load contacts \u2014 check connection');
   } finally {
     state.loading = false;
-    renderContacts();
-    renderManage();
+    renderPeople();
+    renderManageList();
+    renderMessages();
     updateContactCount();
   }
 }
@@ -92,7 +99,21 @@ async function createContact(data) {
 
 async function deleteContactById(id) {
   await apiRequest('DELETE', '/contacts/' + id);
-  state.contacts = state.contacts.filter(c => c.id !== id);
+  state.contacts  = state.contacts.filter(c => c.id !== id);
+  state.favorites = state.favorites.filter(f => f.contact_id !== id);
+}
+
+async function addFavourite(contactId) {
+  if (state.favorites.length >= 4) { showToast('My Favourites is full (4 max)'); return; }
+  const fav = await apiRequest('POST', '/contacts/' + contactId + '/favorite');
+  // Ensure contact is populated on the fav object
+  if (!fav.contact) fav.contact = state.contacts.find(c => c.id === contactId);
+  state.favorites.push(fav);
+}
+
+async function removeFavourite(contactId) {
+  await apiRequest('DELETE', '/contacts/' + contactId + '/favorite');
+  state.favorites = state.favorites.filter(f => f.contact_id !== contactId);
 }
 
 async function refreshData() {
@@ -104,9 +125,6 @@ async function refreshData() {
 // ============================================================
 // NAVIGATION
 // ============================================================
-// Screens that are not nav tabs (managed separately)
-const NON_TAB_SCREENS = ['manage'];
-
 function navigate(screen) {
   const prev = document.getElementById('screen-' + state.screen);
   const next = document.getElementById('screen-' + screen);
@@ -116,213 +134,131 @@ function navigate(screen) {
   next.classList.add('active');
   state.screen = screen;
 
-  // Update bottom nav highlight (only for the 4 tab screens)
-  if (!NON_TAB_SCREENS.includes(screen)) {
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.screen === screen);
-    });
-  }
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.screen === screen);
+  });
 
-  // FAB visibility: show on contacts tab only
-  const fab = document.getElementById('fab-add');
-  if (fab) fab.style.display = (screen === 'contacts') ? 'flex' : 'none';
-
-  // Render the screen
-  switch (screen) {
-    case 'contacts': renderContacts(); break;
-    case 'messages': renderMessages(); break;
-    case 'settings': updateContactCount(); loadSosInputs(); break;
-    case 'manage':   renderManage(); break;
-    case 'keypad':   renderKeypad(); break;
-  }
+  if (screen === 'people')   renderPeople();
+  if (screen === 'messages') renderMessages();
+  if (screen === 'settings') { updateContactCount(); loadSosInputs(); renderManageList(); }
 }
 
 // ============================================================
-// HEADER: CLOCK
+// CLOCK
 // ============================================================
 function updateClock() {
-  const now = new Date();
+  const now  = new Date();
   const timeEl = document.getElementById('header-time');
   const dateEl = document.getElementById('header-date');
-  if (!timeEl || !dateEl) return;
-
-  const h = now.getHours().toString().padStart(2, '0');
-  const m = now.getMinutes().toString().padStart(2, '0');
+  if (!timeEl) return;
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
   timeEl.textContent = h + ':' + m;
-
-  const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  dateEl.textContent = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()];
+  const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  dateEl.textContent = DAYS[now.getDay()] + ' ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
 }
 
 // ============================================================
-// RENDER: CONTACTS (2-col card grid)
+// RENDER: YOUR PEOPLE (4-slot hero grid)
 // ============================================================
-function renderContacts() {
-  const grid = document.getElementById('contacts-grid');
+function renderPeople() {
+  const grid = document.getElementById('hero-grid');
   if (!grid) return;
 
-  if (state.loading) {
-    grid.innerHTML = '<div class="loading-spinner" style="grid-column:1/-1"><div class="spinner"></div><p>Loading\u2026</p></div>';
-    return;
-  }
+  let html = '';
 
-  if (state.contacts.length === 0) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">'
-      + '<span class="material-icons-round">people_outline</span>'
-      + '<p>No contacts yet. Tap the green + button to add your first contact.</p>'
-      + '</div>';
-    return;
-  }
+  for (let i = 0; i < 4; i++) {
+    const fav = state.favorites[i];
 
-  grid.innerHTML = state.contacts.map(contact => {
-    const color    = getAvatarColor(contact.name);
-    const initials = getInitials(contact.name);
-    const id       = contact.id;
-    const hasPhone = !!contact.phone;
+    if (fav && fav.contact) {
+      const contact = fav.contact;
+      const color   = getAvatarColor(contact.name);
+      const glow    = hexToRgba(color, 0.25);
+      const initials = getInitials(contact.name);
+      const id = fav.contact_id;
 
-    // Action buttons: Call + WhatsApp Chat + SMS (all for contacts with phones)
-    let btns = '';
-    if (hasPhone) {
-      btns += '<button class="card-btn card-btn-call" onclick="handleAction(\'call\',' + id + ')">'
-        + '<span class="material-icons-round">call</span>Call</button>';
-      btns += '<button class="card-btn card-btn-chat" onclick="handleAction(\'whatsapp\',' + id + ')">'
-        + '<span class="material-icons-round">chat</span>Chat</button>';
-      btns += '<button class="card-btn card-btn-sms" onclick="handleAction(\'sms\',' + id + ')">'
-        + '<span class="material-icons-round">message</span>SMS</button>';
+      html += '<div class="hero-card" style="--glow-color:' + glow + '" onclick="heroTap(' + id + ')">'
+        + '<button class="hero-more-btn" onclick="event.stopPropagation();showActionSheet(' + id + ')" title="More options">'
+        + '<span class="material-icons-round">more_horiz</span></button>'
+        + '<div class="hero-avatar" style="background:' + color + ';box-shadow:0 4px 18px ' + glow + '">'
+        + esc(initials) + '</div>'
+        + '<div class="hero-name">' + esc(firstName(contact.name)) + '</div>'
+        + '<div class="hero-phone">' + esc(contact.phone || '') + '</div>'
+        + '<div class="hero-call-hint"><span class="material-icons-round">call</span>Tap to call</div>'
+        + '</div>';
+
+    } else {
+      html += '<div class="hero-empty" onclick="navigate(\'settings\')">'
+        + '<div class="hero-empty-icon"><span class="material-icons-round">person_add</span></div>'
+        + '<div class="hero-empty-label">Add a Person</div>'
+        + '</div>';
     }
+  }
 
-    return '<div class="contact-card">'
-      + '<div class="card-avatar" style="background:' + color + '">' + esc(initials) + '</div>'
-      + '<div class="card-name">' + esc(contact.name) + '</div>'
-      + '<div class="card-sub">' + esc(contact.phone || (contact.email || '')) + '</div>'
-      + (btns ? '<div class="card-actions">' + btns + '</div>' : '')
-      + '</div>';
-  }).join('');
+  grid.innerHTML = html;
 
-  // SOS card
+  // SOS card — always visible
   const sosNumber = localStorage.getItem('sos-number');
   const sosName   = localStorage.getItem('sos-name') || 'Emergency contact';
   const sosCard   = document.getElementById('sos-card');
   const sosSub    = document.getElementById('sos-subtitle');
   if (sosCard) {
-    if (sosNumber) {
-      sosCard.classList.remove('hidden');
-      if (sosSub) sosSub.textContent = sosName + ' \u2014 ' + sosNumber;
-    } else {
-      sosCard.classList.add('hidden');
+    sosCard.classList.remove('hidden');
+    if (sosSub) {
+      sosSub.textContent = sosNumber
+        ? sosName + ' \u2014 ' + sosNumber
+        : 'Tap to set up your emergency contact';
     }
   }
 }
 
-// ============================================================
-// RENDER: MANAGE CONTACTS (list style, with delete)
-// ============================================================
-function renderManage() {
-  const list = document.getElementById('manage-list');
-  if (!list) return;
-
-  const query    = state.manageQuery.toLowerCase();
-  const filtered = state.contacts.filter(c =>
-    c.name.toLowerCase().includes(query) ||
-    (c.phone && c.phone.includes(query))
-  );
-
-  if (state.loading) {
-    list.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>Loading\u2026</p></div>';
-    return;
-  }
-
-  if (filtered.length === 0) {
-    const msg = state.contacts.length === 0
-      ? 'No contacts yet. Tap the + button above to add your first contact.'
-      : 'No contacts match your search.';
-    list.innerHTML = '<div class="empty-state"><span class="material-icons-round">search_off</span><p>' + esc(msg) + '</p></div>';
-    return;
-  }
-
-  list.innerHTML = filtered.map(contact => {
-    const color    = getAvatarColor(contact.name);
-    const initials = getInitials(contact.name);
-    const id       = contact.id;
-    return '<div class="manage-row">'
-      + '<div class="manage-avatar" style="background:' + color + '">' + esc(initials) + '</div>'
-      + '<div class="manage-info">'
-      + '<div class="manage-name">' + esc(contact.name) + '</div>'
-      + '<div class="manage-phone">' + esc(contact.phone || contact.email || '') + '</div>'
-      + '</div>'
-      + '<button class="manage-delete-btn" onclick="confirmDelete(' + id + ')" title="Delete">'
-      + '<span class="material-icons-round">delete</span>'
-      + '</button>'
-      + '</div>';
-  }).join('');
-}
-
-function filterManage(query) {
-  state.manageQuery = query;
-  renderManage();
-}
-
-function updateContactCount() {
-  const el = document.getElementById('contact-count-label');
-  if (el) {
-    const n = state.contacts.length;
-    el.textContent = n === 0 ? 'No contacts' : n + ' contact' + (n === 1 ? '' : 's');
-  }
+// Tap a hero card = straight call
+function heroTap(contactId) {
+  const fav = state.favorites.find(f => f.contact_id === contactId);
+  const contact = fav ? fav.contact : state.contacts.find(c => c.id === contactId);
+  if (!contact || !contact.phone) { showToast('No phone number'); return; }
+  window.location.href = 'tel:' + contact.phone;
 }
 
 // ============================================================
-// RENDER: KEYPAD
+// ACTION SHEET (··· button)
 // ============================================================
-let keypadDigits = '';
+function showActionSheet(contactId) {
+  const fav = state.favorites.find(f => f.contact_id === contactId);
+  const contact = fav ? fav.contact : state.contacts.find(c => c.id === contactId);
+  if (!contact) return;
 
-function renderKeypad() {
-  const el = document.getElementById('keypad-digits');
-  if (el) el.textContent = keypadDigits || '\u00a0'; // non-breaking space to keep height
+  state.sheetContactId = contactId;
+  document.getElementById('sheet-name').textContent  = contact.name;
+  document.getElementById('sheet-phone').textContent = contact.phone || '';
+  document.getElementById('action-sheet-overlay').classList.remove('hidden');
 }
 
-function keypadPress(digit) {
-  keypadDigits += digit;
-  renderKeypad();
+function hideActionSheet() {
+  document.getElementById('action-sheet-overlay').classList.add('hidden');
+  state.sheetContactId = null;
 }
 
-function keypadDelete() {
-  keypadDigits = keypadDigits.slice(0, -1);
-  renderKeypad();
-}
+function sheetAction(action) {
+  const id = state.sheetContactId;
+  hideActionSheet();
+  if (id === null) return;
 
-function keypadClear() {
-  keypadDigits = '';
-  renderKeypad();
-}
+  const fav = state.favorites.find(f => f.contact_id === id);
+  const contact = fav ? fav.contact : state.contacts.find(c => c.id === id);
+  if (!contact || !contact.phone) { showToast('No phone number'); return; }
 
-function keypadCall() {
-  if (keypadDigits) {
-    window.location.href = 'tel:' + keypadDigits;
-  } else {
-    showToast('Enter a number to call');
+  switch (action) {
+    case 'call':
+      window.location.href = 'tel:' + contact.phone;
+      break;
+    case 'whatsapp': {
+      const digits = contact.phone.replace(/\D/g, '');
+      window.open('https://wa.me/' + digits, '_blank');
+      break;
+    }
   }
-}
-
-function keypadSMS() {
-  if (keypadDigits) {
-    window.location.href = 'sms:' + keypadDigits;
-  } else {
-    showToast('Enter a number to message');
-  }
-}
-
-function initKeypadLongPress() {
-  const btn = document.getElementById('keypad-delete-btn');
-  if (!btn) return;
-  let timer = null;
-  const startLong = function() { timer = setTimeout(function() { keypadClear(); }, 700); };
-  const stopLong  = function() { clearTimeout(timer); };
-  btn.addEventListener('mousedown',  startLong);
-  btn.addEventListener('touchstart', startLong, { passive: true });
-  btn.addEventListener('mouseup',    stopLong);
-  btn.addEventListener('mouseleave', stopLong);
-  btn.addEventListener('touchend',   stopLong);
 }
 
 // ============================================================
@@ -334,52 +270,203 @@ function renderMessages() {
 
   const withPhone = state.contacts.filter(c => c.phone);
   if (withPhone.length === 0) {
-    list.innerHTML = '<div class="empty-state"><span class="material-icons-round">chat_bubble_outline</span><p>No contacts with phone numbers. Add contacts in Settings.</p></div>';
+    list.innerHTML = '<div class="empty-state"><span class="material-icons-round">chat_bubble_outline</span>'
+      + '<p>No contacts with phone numbers yet. Add contacts in Settings.</p></div>';
     return;
   }
 
   list.innerHTML = withPhone.map(contact => {
     const color    = getAvatarColor(contact.name);
     const initials = getInitials(contact.name);
-    const id       = contact.id;
     return '<div class="message-row">'
       + '<div class="message-avatar" style="background:' + color + '">' + esc(initials) + '</div>'
       + '<div class="message-info">'
       + '<div class="message-name">' + esc(contact.name) + '</div>'
       + '<div class="message-phone">' + esc(contact.phone) + '</div>'
       + '</div>'
-      + '<button class="message-sms-btn" onclick="handleAction(\'sms\',' + id + ')">'
-      + '<span class="material-icons-round">message</span>SMS</button>'
+      + '<button class="message-sms-btn" onclick="whatsappContact(\'' + esc(contact.phone) + '\')">'
+      + '<span class="material-icons-round">chat</span>WhatsApp</button>'
       + '</div>';
   }).join('');
 }
 
+function whatsappContact(phone) {
+  const digits = phone.replace(/\D/g, '');
+  window.open('https://wa.me/' + digits, '_blank');
+}
+
 // ============================================================
-// CONTACT ACTIONS (by ID — no string injection risk)
+// RENDER: MANAGE LIST (in Settings)
 // ============================================================
-function handleAction(action, contactId) {
-  const contact = state.contacts.find(c => c.id === contactId);
-  if (!contact) return;
-  if (!contact.phone && (action === 'call' || action === 'sms' || action === 'whatsapp')) {
-    showToast('No phone number for this contact');
+function renderManageList() {
+  const list = document.getElementById('manage-list');
+  if (!list) return;
+
+  if (state.loading) {
+    list.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>Loading\u2026</p></div>';
     return;
   }
 
-  switch (action) {
-    case 'call':
-      window.location.href = 'tel:' + contact.phone;
-      break;
-    case 'sms':
-      window.location.href = 'sms:' + contact.phone;
-      break;
-    case 'whatsapp': {
-      const digits = contact.phone.replace(/\D/g, '');
-      window.open('https://wa.me/' + digits, '_blank');
-      break;
+  if (state.contacts.length === 0) {
+    list.innerHTML = '<div class="empty-state"><span class="material-icons-round">people_outline</span>'
+      + '<p>No contacts yet. Import from your phone or add manually.</p></div>';
+    return;
+  }
+
+  const favIds = new Set(state.favorites.map(f => f.contact_id));
+
+  list.innerHTML = state.contacts.map(contact => {
+    const color    = getAvatarColor(contact.name);
+    const initials = getInitials(contact.name);
+    const isFav    = favIds.has(contact.id);
+    const id       = contact.id;
+
+    return '<div class="manage-row">'
+      + '<div class="manage-avatar" style="background:' + color + '">' + esc(initials) + '</div>'
+      + '<div class="manage-info">'
+      + '<div class="manage-name">' + esc(contact.name) + '</div>'
+      + '<div class="manage-phone">' + esc(contact.phone || contact.email || '') + '</div>'
+      + '</div>'
+      + '<div class="manage-actions">'
+      + '<button class="manage-star-btn' + (isFav ? ' active' : '') + '" onclick="toggleFavourite(' + id + ',' + isFav + ')" title="' + (isFav ? 'Remove from My Favourites' : 'Add to My Favourites') + '">'
+      + '<span class="material-icons-round">' + (isFav ? 'star' : 'star_border') + '</span></button>'
+      + '<button class="manage-delete-btn" onclick="confirmDelete(' + id + ')" title="Delete contact">'
+      + '<span class="material-icons-round">delete</span></button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function updateContactCount() {
+  const el = document.getElementById('contact-count-label');
+  if (!el) return;
+  const n = state.contacts.length;
+  const f = state.favorites.length;
+  el.textContent = n + ' contact' + (n === 1 ? '' : 's') + ', ' + f + ' of 4 favourite slots used';
+}
+
+// ============================================================
+// TOGGLE FAVOURITE
+// ============================================================
+async function toggleFavourite(contactId, isFav) {
+  try {
+    if (isFav) {
+      await removeFavourite(contactId);
+      showToast('Removed from My Favourites');
+    } else {
+      await addFavourite(contactId);
+      showToast('Added to My Favourites');
     }
-    case 'video':
-      window.location.href = 'facetime:' + contact.phone;
-      break;
+    renderPeople();
+    renderManageList();
+    updateContactCount();
+  } catch (err) {
+    showToast('Could not update: ' + err.message);
+  }
+}
+
+// ============================================================
+// DELETE CONTACT
+// ============================================================
+function confirmDelete(contactId) {
+  const contact = state.contacts.find(c => c.id === contactId);
+  if (!contact) return;
+  if (!confirm('Delete ' + contact.name + '?')) return;
+
+  deleteContactById(contactId)
+    .then(function() {
+      renderPeople();
+      renderManageList();
+      renderMessages();
+      updateContactCount();
+      showToast('Contact deleted');
+    })
+    .catch(function() { showToast('Failed to delete contact'); });
+}
+
+// ============================================================
+// ADD CONTACT MANUALLY
+// ============================================================
+function showAddContactModal() {
+  document.getElementById('add-contact-modal').classList.remove('hidden');
+  setTimeout(function() { document.getElementById('contact-name-input').focus(); }, 150);
+}
+
+function hideAddContactModal() {
+  document.getElementById('add-contact-modal').classList.add('hidden');
+  document.getElementById('add-contact-form').reset();
+}
+
+async function submitAddContact(e) {
+  e.preventDefault();
+  const name  = document.getElementById('contact-name-input').value.trim();
+  const phone = document.getElementById('contact-phone-input').value.trim();
+  if (!name) return;
+
+  const btn = document.getElementById('add-contact-submit');
+  btn.disabled = true;
+  btn.textContent = 'Adding\u2026';
+
+  try {
+    await createContact({ name, phone: phone || null });
+    hideAddContactModal();
+    renderManageList();
+    renderMessages();
+    updateContactCount();
+    showToast(name + ' added');
+  } catch (err) {
+    showToast('Failed: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Add Contact';
+  }
+}
+
+// ============================================================
+// IMPORT FROM PHONE (Contact Picker API)
+// ============================================================
+async function importFromPhone() {
+  if (!('contacts' in navigator) || !('ContactsManager' in window)) {
+    showToast('Import not supported on this browser \u2014 use Chrome on Android');
+    return;
+  }
+
+  try {
+    const picked = await navigator.contacts.select(['name', 'tel'], { multiple: true });
+    if (!picked.length) { showToast('No contacts selected'); return; }
+
+    let added = 0;
+    let skipped = 0;
+
+    for (const c of picked) {
+      const name  = (c.name && c.name[0]) ? c.name[0].trim() : null;
+      const phone = (c.tel  && c.tel[0])  ? c.tel[0].trim()  : null;
+      if (!name) { skipped++; continue; }
+
+      // Avoid duplicates (simple name match)
+      const exists = state.contacts.some(existing => existing.name.toLowerCase() === name.toLowerCase());
+      if (exists) { skipped++; continue; }
+
+      try {
+        await createContact({ name, phone: phone || null });
+        added++;
+      } catch (err) {
+        skipped++;
+      }
+    }
+
+    renderManageList();
+    renderMessages();
+    updateContactCount();
+
+    if (added > 0) {
+      showToast(added + ' contact' + (added === 1 ? '' : 's') + ' imported' + (skipped ? ', ' + skipped + ' skipped' : ''));
+    } else {
+      showToast('No new contacts added' + (skipped ? ' (' + skipped + ' already exist)' : ''));
+    }
+  } catch (err) {
+    // User cancelled or permission denied
+    showToast('Import cancelled');
   }
 }
 
@@ -396,90 +483,47 @@ function sosTap() {
   }
 }
 
-function saveSosNumber(value) {
+function saveSosField(key, value) {
   const trimmed = value.trim();
-  if (trimmed) {
-    localStorage.setItem('sos-number', trimmed);
-  } else {
-    localStorage.removeItem('sos-number');
-  }
-  renderContacts();
-}
-
-function saveSosName(value) {
-  const trimmed = value.trim();
-  if (trimmed) {
-    localStorage.setItem('sos-name', trimmed);
-  } else {
-    localStorage.removeItem('sos-name');
-  }
-  renderContacts();
+  if (trimmed) { localStorage.setItem(key, trimmed); }
+  else         { localStorage.removeItem(key); }
+  renderPeople();
 }
 
 function loadSosInputs() {
-  const numInput  = document.getElementById('sos-number-input');
-  const nameInput = document.getElementById('sos-name-input');
-  if (numInput)  numInput.value  = localStorage.getItem('sos-number') || '';
-  if (nameInput) nameInput.value = localStorage.getItem('sos-name') || '';
+  const n = document.getElementById('sos-number-input');
+  const l = document.getElementById('sos-name-input');
+  if (n) n.value = localStorage.getItem('sos-number') || '';
+  if (l) l.value = localStorage.getItem('sos-name')   || '';
 }
 
 // ============================================================
-// ADD CONTACT MODAL
+// KEYPAD
 // ============================================================
-function showAddContactModal() {
-  document.getElementById('add-contact-modal').classList.remove('hidden');
-  setTimeout(function() {
-    document.getElementById('contact-name-input').focus();
-  }, 150);
+let keypadDigits = '';
+
+function renderKeypad() {
+  const el = document.getElementById('keypad-digits');
+  if (el) el.textContent = keypadDigits || '\u00a0';
 }
 
-function hideAddContactModal() {
-  document.getElementById('add-contact-modal').classList.add('hidden');
-  document.getElementById('add-contact-form').reset();
-}
+function keypadPress(d) { keypadDigits += d; renderKeypad(); }
+function keypadDelete()  { keypadDigits = keypadDigits.slice(0,-1); renderKeypad(); }
+function keypadClear()   { keypadDigits = ''; renderKeypad(); }
+function keypadCall()    { keypadDigits ? window.location.href = 'tel:' + keypadDigits : showToast('Enter a number'); }
+function keypadWhatsApp() { keypadDigits ? window.open('https://wa.me/' + keypadDigits.replace(/\D/g,''), '_blank') : showToast('Enter a number'); }
 
-async function submitAddContact(e) {
-  e.preventDefault();
-  const name  = document.getElementById('contact-name-input').value.trim();
-  const phone = document.getElementById('contact-phone-input').value.trim();
-  const email = document.getElementById('contact-email-input').value.trim();
-  if (!name) return;
-
-  const submitBtn = document.getElementById('add-contact-submit');
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Adding\u2026';
-
-  try {
-    await createContact({ name, phone: phone || null, email: email || null });
-    hideAddContactModal();
-    renderContacts();
-    renderManage();
-    updateContactCount();
-    showToast('Contact added');
-  } catch (err) {
-    showToast('Failed to add contact: ' + err.message);
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Add Contact';
-  }
-}
-
-// ============================================================
-// DELETE CONTACT
-// ============================================================
-function confirmDelete(contactId) {
-  const contact = state.contacts.find(c => c.id === contactId);
-  if (!contact) return;
-  if (!confirm('Delete ' + contact.name + '?')) return;
-
-  deleteContactById(contactId)
-    .then(function() {
-      renderManage();
-      renderContacts();
-      updateContactCount();
-      showToast('Contact deleted');
-    })
-    .catch(function() { showToast('Failed to delete contact'); });
+function initKeypadLongPress() {
+  const btn = document.getElementById('keypad-delete-btn');
+  if (!btn) return;
+  let timer = null;
+  const start = function() { timer = setTimeout(keypadClear, 700); };
+  const stop  = function() { clearTimeout(timer); };
+  btn.addEventListener('mousedown',  start);
+  btn.addEventListener('touchstart', start, { passive: true });
+  btn.addEventListener('mouseup',    stop);
+  btn.addEventListener('mouseleave', stop);
+  btn.addEventListener('touchend',   stop);
 }
 
 // ============================================================
@@ -493,7 +537,7 @@ function showInstallPrompt() {
       document.getElementById('install-banner').classList.add('hidden');
     });
   } else {
-    showToast('Open in browser menu \u2192 Add to Home Screen');
+    showToast('Browser menu \u2192 Add to Home Screen');
   }
 }
 
@@ -502,55 +546,52 @@ function showInstallPrompt() {
 // ============================================================
 let toastTimer = null;
 
-function showToast(message, duration) {
-  if (duration === undefined) duration = 2500;
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.classList.remove('hidden');
+function showToast(msg, ms) {
+  if (!ms) ms = 2600;
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('hidden');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { toast.classList.add('hidden'); }, duration);
+  toastTimer = setTimeout(function() { t.classList.add('hidden'); }, ms);
+}
+
+// ============================================================
+// UTILITY
+// ============================================================
+function overlayClose(e, fn) {
+  if (e.target === e.currentTarget) fn();
 }
 
 // ============================================================
 // INIT
 // ============================================================
 async function init() {
-  // Clock
   updateClock();
   setInterval(updateClock, 30000);
 
-  // Service Worker
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(function(err) {
-      console.warn('SW registration failed:', err);
-    });
+    navigator.serviceWorker.register('/sw.js').catch(function(e) { console.warn('SW:', e); });
   }
 
-  // PWA install prompt
   window.addEventListener('beforeinstallprompt', function(e) {
     e.preventDefault();
     state.installPrompt = e;
-    const dismissed = localStorage.getItem('install-dismissed');
-    if (!dismissed) {
+    if (!localStorage.getItem('install-dismissed')) {
       document.getElementById('install-banner').classList.remove('hidden');
     }
   });
 
   document.getElementById('install-btn').addEventListener('click', showInstallPrompt);
-
   document.getElementById('dismiss-install').addEventListener('click', function() {
     document.getElementById('install-banner').classList.add('hidden');
     localStorage.setItem('install-dismissed', '1');
   });
 
-  // Close modal on overlay tap
   document.getElementById('add-contact-modal').addEventListener('click', function(e) {
     if (e.target === this) hideAddContactModal();
   });
 
   initKeypadLongPress();
-
-  // Load data
   await loadContacts();
 }
 

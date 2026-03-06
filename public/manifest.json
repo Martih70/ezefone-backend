@@ -1,6 +1,6 @@
 {
-  "name": "EzeFone",
-  "short_name": "EzeFone",
+  "name": "Ezefone",
+  "short_name": "Ezefone",
   "description": "Simple calling and messaging for everyone",
   "start_url": "/",
   "display": "standalone",

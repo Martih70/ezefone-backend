@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#1a6b3c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="EZefone">
-  <title>EZefone</title>
+  <meta name="apple-mobile-web-app-title" content="Ezefone">
+  <title>Ezefone</title>
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/icons/icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,18 +19,18 @@
 <body>
 
   <!-- ============================================================
-       SCREEN: CONTACTS (default / tab 1)
+       SCREEN 1: YOUR PEOPLE (default)
        ============================================================ -->
-  <div id="screen-contacts" class="screen active">
+  <div id="screen-people" class="screen active">
 
-    <!-- Green App Header -->
+    <!-- Green gradient header -->
     <div class="app-header">
       <div class="header-left">
         <div class="header-logo">
           <span>E</span>
           <div class="header-logo-dot"></div>
         </div>
-        <span class="header-title">EZefone</span>
+        <span class="header-title">Ezefone</span>
       </div>
       <div class="header-right">
         <div id="header-time" class="header-time"></div>
@@ -38,14 +38,14 @@
       </div>
     </div>
 
-    <!-- Install Banner (green card) -->
+    <!-- Install banner -->
     <div id="install-banner" class="install-card hidden">
       <div class="install-card-icon">
         <span class="material-icons-round">smartphone</span>
       </div>
       <div class="install-card-text">
         <strong>Add to Home Screen</strong>
-        <span>Use EZefone like a proper app &mdash; no store needed</span>
+        <span>Use Ezefone like a proper app &mdash; no store needed</span>
       </div>
       <button id="install-btn" class="install-card-action">Install</button>
       <button id="dismiss-install" class="install-card-dismiss">
@@ -53,39 +53,29 @@
       </button>
     </div>
 
-    <!-- Contacts Scroll Area -->
-    <div class="contacts-scroll">
-
-      <!-- Section Label -->
-      <div class="section-label">YOUR PEOPLE</div>
-
-      <!-- 2-column contact card grid -->
-      <div id="contacts-grid" class="contacts-grid">
+    <!-- Hero grid: 4 favourite cards -->
+    <div class="people-scroll">
+      <div class="section-label">MY FAVOURITES</div>
+      <div id="hero-grid" class="hero-grid">
         <!-- Rendered by JS -->
       </div>
 
-      <!-- SOS Card -->
-      <div id="sos-card" class="sos-card hidden" onclick="sosTap()">
+      <!-- SOS card -->
+      <div id="sos-card" class="sos-card" onclick="sosTap()">
         <span class="material-icons-round sos-icon">emergency</span>
         <div class="sos-text">
           <div class="sos-title">Call for Help</div>
           <div id="sos-subtitle" class="sos-subtitle">Tap to call your emergency contact</div>
         </div>
-        <span class="material-icons-round sos-phone-icon">call</span>
+        <span class="material-icons-round sos-arrow">call</span>
       </div>
-
     </div>
 
-    <!-- Floating Add Button -->
-    <button class="fab" id="fab-add" onclick="showAddContactModal()" title="Add contact">
-      <span class="material-icons-round">person_add</span>
-    </button>
-
-  </div><!-- /screen-contacts -->
+  </div><!-- /screen-people -->
 
 
   <!-- ============================================================
-       SCREEN: KEYPAD (tab 2)
+       SCREEN 2: KEYPAD
        ============================================================ -->
   <div id="screen-keypad" class="screen">
     <div class="sub-header">
@@ -113,8 +103,8 @@
         <button class="key-btn" onclick="keypadPress('#')"><span class="key-num">#</span><span class="key-sub">&nbsp;</span></button>
       </div>
       <div class="keypad-actions">
-        <button class="keypad-sms-btn" onclick="keypadSMS()">
-          <span class="material-icons-round">message</span>
+        <button class="keypad-sms-btn" onclick="keypadWhatsApp()">
+          <span class="material-icons-round">chat</span>
         </button>
         <button class="keypad-call-btn" onclick="keypadCall()">
           <span class="material-icons-round">call</span>
@@ -128,20 +118,18 @@
 
 
   <!-- ============================================================
-       SCREEN: MESSAGES (tab 3)
+       SCREEN 3: MESSAGES
        ============================================================ -->
   <div id="screen-messages" class="screen">
     <div class="sub-header">
-      <h1 class="sub-header-title">Messages</h1>
+      <h1 class="sub-header-title">WhatsApp</h1>
     </div>
-    <div id="messages-list" class="messages-list">
-      <!-- Rendered by JS -->
-    </div>
+    <div id="messages-list" class="messages-list"></div>
   </div><!-- /screen-messages -->
 
 
   <!-- ============================================================
-       SCREEN: SETTINGS (tab 4)
+       SCREEN 4: SETTINGS
        ============================================================ -->
   <div id="screen-settings" class="screen">
     <div class="sub-header">
@@ -149,52 +137,76 @@
     </div>
     <div class="settings-scroll">
 
+      <!-- Manage contacts -->
       <div class="settings-section">
-        <div class="settings-section-label">EMERGENCY CONTACT</div>
+        <div class="settings-section-label">CONTACTS</div>
+        <div class="settings-card">
+
+          <!-- Import from phone (Contact Picker API) -->
+          <button class="import-btn" id="import-from-phone-btn" onclick="importFromPhone()">
+            <span class="material-icons-round">contacts</span>
+            <div class="import-btn-text">
+              <span class="import-btn-title">Import from Phone</span>
+              <span class="import-btn-sub">Pick contacts from your address book</span>
+            </div>
+            <span class="material-icons-round import-btn-arrow">arrow_forward</span>
+          </button>
+
+          <button class="settings-row settings-row-btn" onclick="showAddContactModal()">
+            <span class="material-icons-round settings-row-icon">person_add</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Add Contact Manually</div>
+              <div class="settings-row-sub">Enter name and phone number</div>
+            </div>
+            <span class="material-icons-round settings-chevron">chevron_right</span>
+          </button>
+
+          <button class="settings-row settings-row-btn" onclick="refreshData()">
+            <span class="material-icons-round settings-row-icon">sync</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Refresh</div>
+              <div class="settings-row-sub" id="contact-count-label">Loading&hellip;</div>
+            </div>
+            <span class="material-icons-round settings-chevron">chevron_right</span>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Manage / favourites list -->
+      <div class="settings-section">
+        <div class="settings-section-label">ALL CONTACTS &mdash; TAP STAR TO SET AS ONE OF YOUR PEOPLE</div>
+        <div id="manage-list" class="manage-list-card">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Emergency contact -->
+      <div class="settings-section">
+        <div class="settings-section-label">EMERGENCY CONTACT (SOS)</div>
         <div class="settings-card">
           <div class="settings-row">
             <span class="material-icons-round settings-row-icon" style="color:#d93025">emergency</span>
             <div class="settings-row-body">
-              <div class="settings-row-label">SOS Number</div>
-              <input type="tel" id="sos-number-input" class="settings-inline-input"
-                     placeholder="e.g. +44 7700 900123"
-                     onchange="saveSosNumber(this.value)">
+              <div class="settings-row-label">SOS Name</div>
+              <input type="text" id="sos-name-input" class="settings-inline-input"
+                     placeholder="e.g. Margaret / Ambulance"
+                     onchange="saveSosField('sos-name', this.value)">
             </div>
           </div>
           <div class="settings-row">
-            <span class="material-icons-round settings-row-icon" style="color:#d93025">person</span>
+            <span class="material-icons-round settings-row-icon" style="color:#d93025">call</span>
             <div class="settings-row-body">
-              <div class="settings-row-label">SOS Name</div>
-              <input type="text" id="sos-name-input" class="settings-inline-input"
-                     placeholder="e.g. Ambulance / Margaret"
-                     onchange="saveSosName(this.value)">
+              <div class="settings-row-label">SOS Number</div>
+              <input type="tel" id="sos-number-input" class="settings-inline-input"
+                     placeholder="e.g. +44 7700 900123"
+                     onchange="saveSosField('sos-number', this.value)">
             </div>
           </div>
         </div>
       </div>
 
-      <div class="settings-section">
-        <div class="settings-section-label">MANAGE CONTACTS</div>
-        <div class="settings-card">
-          <button class="settings-row settings-row-btn" onclick="navigate('manage')">
-            <span class="material-icons-round settings-row-icon">contacts</span>
-            <div class="settings-row-body">
-              <div class="settings-row-label">Add &amp; Remove Contacts</div>
-              <div class="settings-row-sub" id="contact-count-label">Loading...</div>
-            </div>
-            <span class="material-icons-round settings-chevron">chevron_right</span>
-          </button>
-          <button class="settings-row settings-row-btn" onclick="refreshData()">
-            <span class="material-icons-round settings-row-icon">sync</span>
-            <div class="settings-row-body">
-              <div class="settings-row-label">Refresh Contacts</div>
-              <div class="settings-row-sub">Sync from server</div>
-            </div>
-            <span class="material-icons-round settings-chevron">chevron_right</span>
-          </button>
-        </div>
-      </div>
-
+      <!-- App -->
       <div class="settings-section">
         <div class="settings-section-label">APP</div>
         <div class="settings-card">
@@ -210,14 +222,7 @@
             <span class="material-icons-round settings-row-icon">info</span>
             <div class="settings-row-body">
               <div class="settings-row-label">Version</div>
-              <div class="settings-row-sub">EZefone PWA 1.0</div>
-            </div>
-          </div>
-          <div class="settings-row">
-            <span class="material-icons-round settings-row-icon">business</span>
-            <div class="settings-row-body">
-              <div class="settings-row-label">Developer</div>
-              <div class="settings-row-sub">CallFormLabs</div>
+              <div class="settings-row-sub">Ezefone PWA 1.0 &bull; by CallFormLabs</div>
             </div>
           </div>
         </div>
@@ -228,45 +233,20 @@
 
 
   <!-- ============================================================
-       SCREEN: MANAGE CONTACTS (sub-screen from Settings)
-       ============================================================ -->
-  <div id="screen-manage" class="screen">
-    <div class="sub-header">
-      <button class="sub-back-btn" onclick="navigate('settings')">
-        <span class="material-icons-round">arrow_back</span>
-      </button>
-      <h1 class="sub-header-title">Manage Contacts</h1>
-      <button class="sub-add-btn" onclick="showAddContactModal()">
-        <span class="material-icons-round">person_add</span>
-      </button>
-    </div>
-    <div class="search-bar-wrap">
-      <div class="search-bar">
-        <span class="material-icons-round">search</span>
-        <input type="text" id="manage-search" placeholder="Search..." oninput="filterManage(this.value)" autocomplete="off">
-      </div>
-    </div>
-    <div id="manage-list" class="manage-list">
-      <!-- Rendered by JS -->
-    </div>
-  </div><!-- /screen-manage -->
-
-
-  <!-- ============================================================
-       BOTTOM NAVIGATION (4 tabs)
+       BOTTOM NAVIGATION
        ============================================================ -->
   <nav class="bottom-nav">
-    <button class="nav-btn active" data-screen="contacts" onclick="navigate('contacts')">
+    <button class="nav-btn active" data-screen="people" onclick="navigate('people')">
       <span class="material-icons-round">people</span>
-      <span class="nav-label">Contacts</span>
+      <span class="nav-label">My Favourites</span>
     </button>
     <button class="nav-btn" data-screen="keypad" onclick="navigate('keypad')">
       <span class="material-icons-round">dialpad</span>
       <span class="nav-label">Keypad</span>
     </button>
     <button class="nav-btn" data-screen="messages" onclick="navigate('messages')">
-      <span class="material-icons-round">chat_bubble</span>
-      <span class="nav-label">Messages</span>
+      <span class="material-icons-round">chat</span>
+      <span class="nav-label">WhatsApp</span>
     </button>
     <button class="nav-btn" data-screen="settings" onclick="navigate('settings')">
       <span class="material-icons-round">settings</span>
@@ -276,9 +256,30 @@
 
 
   <!-- ============================================================
+       ACTION SHEET (··· button on hero card)
+       ============================================================ -->
+  <div id="action-sheet-overlay" class="sheet-overlay hidden" onclick="hideActionSheet()">
+    <div class="action-sheet" id="action-sheet" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div id="sheet-name" class="sheet-name"></div>
+      <div id="sheet-phone" class="sheet-phone"></div>
+      <div class="sheet-btns">
+        <button class="sheet-btn sheet-call"     onclick="sheetAction('call')">
+          <span class="material-icons-round">call</span>Call
+        </button>
+        <button class="sheet-btn sheet-whatsapp" onclick="sheetAction('whatsapp')">
+          <span class="material-icons-round">chat</span>WhatsApp
+        </button>
+      </div>
+      <button class="sheet-cancel" onclick="hideActionSheet()">Cancel</button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
        ADD CONTACT MODAL
        ============================================================ -->
-  <div id="add-contact-modal" class="modal-overlay hidden">
+  <div id="add-contact-modal" class="modal-overlay hidden" onclick="overlayClose(event, hideAddContactModal)">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <h2 class="modal-title">Add Contact</h2>
@@ -290,10 +291,6 @@
         <div class="form-group">
           <label class="form-label">Phone Number</label>
           <input type="tel" id="contact-phone-input" class="form-input" placeholder="+44 7700 000000" autocomplete="tel">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" id="contact-email-input" class="form-input" placeholder="email@example.com" autocomplete="email">
         </div>
         <div class="modal-btn-row">
           <button type="button" class="modal-cancel-btn" onclick="hideAddContactModal()">Cancel</button>
