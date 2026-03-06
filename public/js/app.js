@@ -16,9 +16,9 @@ const state = {
 // AVATAR COLOURS
 // ============================================================
 const AVATAR_COLORS = [
-  '#0d9488', '#2563eb', '#b45309', '#059669',
-  '#7c3aed', '#0891b2', '#d97706', '#0284c7',
-  '#db2777', '#65a30d',
+  '#2a9d8f', '#457bb5', '#c07a3a', '#3aab72',
+  '#7c6bbf', '#3a9ab5', '#d4a028', '#3a8fbf',
+  '#c05a8a', '#7aad3a',
 ];
 
 function getAvatarColor(name) {
@@ -178,7 +178,9 @@ function renderPeople() {
       const initials = getInitials(contact.name);
       const id = fav.contact_id;
 
-      html += '<div class="hero-card" style="--glow-color:' + glow + '" onclick="heroTap(' + id + ')">'
+      const cardBg     = hexToRgba(color, 0.10);
+      const cardBorder = hexToRgba(color, 0.25);
+      html += '<div class="hero-card" style="--glow-color:' + glow + ';background:' + cardBg + ';border-color:' + cardBorder + '" onclick="heroTap(' + id + ')">'
         + '<button class="hero-more-btn" onclick="event.stopPropagation();showActionSheet(' + id + ')" title="More options">'
         + '<span class="material-icons-round">more_horiz</span></button>'
         + '<div class="hero-avatar" style="background:' + color + ';box-shadow:0 4px 18px ' + glow + '">'
