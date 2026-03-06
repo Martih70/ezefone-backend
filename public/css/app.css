@@ -859,6 +859,7 @@ input {
 .sheet-remove {
   width: 100%;
   padding: 14px;
+  margin-bottom: 10px;
   border-radius: var(--radius-btn);
   background: #fff5f5;
   border: 2px solid #fecaca;
