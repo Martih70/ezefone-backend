@@ -807,6 +807,8 @@ input {
   padding: 14px 20px calc(20px + env(safe-area-inset-bottom));
   width: 100%;
   max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .sheet-handle {

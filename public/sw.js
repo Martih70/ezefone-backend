@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ezefone-pwa-v3';
+const CACHE_NAME = 'ezefone-pwa-v4';
 
 const STATIC_ASSETS = [
   '/',
@@ -41,7 +41,17 @@ self.addEventListener('fetch', function(event) {
     return; // fall through to network
   }
 
-  // Static assets: cache first, fall back to network
+  // HTML: always network-first so updates appear immediately
+  if (url.pathname === '/' || url.pathname.endsWith('.html')) {
+    event.respondWith(
+      fetch(event.request).catch(function() {
+        return caches.match(event.request);
+      })
+    );
+    return;
+  }
+
+  // Static assets (CSS/JS/icons): cache first, fall back to network
   event.respondWith(
     caches.match(event.request).then(function(cached) {
       if (cached) return cached;
