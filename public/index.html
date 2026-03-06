@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a6b3c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EZefone">
+  <title>EZefone</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Literata:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+
+  <!-- ============================================================
+       SCREEN: CONTACTS (default / tab 1)
+       ============================================================ -->
+  <div id="screen-contacts" class="screen active">
+
+    <!-- Green App Header -->
+    <div class="app-header">
+      <div class="header-left">
+        <div class="header-logo">
+          <span>E</span>
+          <div class="header-logo-dot"></div>
+        </div>
+        <span class="header-title">EZefone</span>
+      </div>
+      <div class="header-right">
+        <div id="header-time" class="header-time"></div>
+        <div id="header-date" class="header-date"></div>
+      </div>
+    </div>
+
+    <!-- Install Banner (green card) -->
+    <div id="install-banner" class="install-card hidden">
+      <div class="install-card-icon">
+        <span class="material-icons-round">smartphone</span>
+      </div>
+      <div class="install-card-text">
+        <strong>Add to Home Screen</strong>
+        <span>Use EZefone like a proper app &mdash; no store needed</span>
+      </div>
+      <button id="install-btn" class="install-card-action">Install</button>
+      <button id="dismiss-install" class="install-card-dismiss">
+        <span class="material-icons-round">close</span>
+      </button>
+    </div>
+
+    <!-- Contacts Scroll Area -->
+    <div class="contacts-scroll">
+
+      <!-- Section Label -->
+      <div class="section-label">YOUR PEOPLE</div>
+
+      <!-- 2-column contact card grid -->
+      <div id="contacts-grid" class="contacts-grid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- SOS Card -->
+      <div id="sos-card" class="sos-card hidden" onclick="sosTap()">
+        <span class="material-icons-round sos-icon">emergency</span>
+        <div class="sos-text">
+          <div class="sos-title">Call for Help</div>
+          <div id="sos-subtitle" class="sos-subtitle">Tap to call your emergency contact</div>
+        </div>
+        <span class="material-icons-round sos-phone-icon">call</span>
+      </div>
+
+    </div>
+
+    <!-- Floating Add Button -->
+    <button class="fab" id="fab-add" onclick="showAddContactModal()" title="Add contact">
+      <span class="material-icons-round">person_add</span>
+    </button>
+
+  </div><!-- /screen-contacts -->
+
+
+  <!-- ============================================================
+       SCREEN: KEYPAD (tab 2)
+       ============================================================ -->
+  <div id="screen-keypad" class="screen">
+    <div class="sub-header">
+      <h1 class="sub-header-title">Phone</h1>
+    </div>
+    <div class="keypad-container">
+      <div class="keypad-display">
+        <span id="keypad-digits" class="keypad-digits">&nbsp;</span>
+        <button class="keypad-delete" id="keypad-delete-btn" onclick="keypadDelete()">
+          <span class="material-icons-round">backspace</span>
+        </button>
+      </div>
+      <div class="keypad-grid">
+        <button class="key-btn" onclick="keypadPress('1')"><span class="key-num">1</span><span class="key-sub">&nbsp;</span></button>
+        <button class="key-btn" onclick="keypadPress('2')"><span class="key-num">2</span><span class="key-sub">ABC</span></button>
+        <button class="key-btn" onclick="keypadPress('3')"><span class="key-num">3</span><span class="key-sub">DEF</span></button>
+        <button class="key-btn" onclick="keypadPress('4')"><span class="key-num">4</span><span class="key-sub">GHI</span></button>
+        <button class="key-btn" onclick="keypadPress('5')"><span class="key-num">5</span><span class="key-sub">JKL</span></button>
+        <button class="key-btn" onclick="keypadPress('6')"><span class="key-num">6</span><span class="key-sub">MNO</span></button>
+        <button class="key-btn" onclick="keypadPress('7')"><span class="key-num">7</span><span class="key-sub">PQRS</span></button>
+        <button class="key-btn" onclick="keypadPress('8')"><span class="key-num">8</span><span class="key-sub">TUV</span></button>
+        <button class="key-btn" onclick="keypadPress('9')"><span class="key-num">9</span><span class="key-sub">WXYZ</span></button>
+        <button class="key-btn" onclick="keypadPress('*')"><span class="key-num">*</span><span class="key-sub">&nbsp;</span></button>
+        <button class="key-btn" onclick="keypadPress('0')"><span class="key-num">0</span><span class="key-sub">+</span></button>
+        <button class="key-btn" onclick="keypadPress('#')"><span class="key-num">#</span><span class="key-sub">&nbsp;</span></button>
+      </div>
+      <div class="keypad-actions">
+        <button class="keypad-sms-btn" onclick="keypadSMS()">
+          <span class="material-icons-round">message</span>
+        </button>
+        <button class="keypad-call-btn" onclick="keypadCall()">
+          <span class="material-icons-round">call</span>
+        </button>
+        <button class="keypad-clear-btn" onclick="keypadClear()">
+          <span class="keypad-clr-label">CLR</span>
+        </button>
+      </div>
+    </div>
+  </div><!-- /screen-keypad -->
+
+
+  <!-- ============================================================
+       SCREEN: MESSAGES (tab 3)
+       ============================================================ -->
+  <div id="screen-messages" class="screen">
+    <div class="sub-header">
+      <h1 class="sub-header-title">Messages</h1>
+    </div>
+    <div id="messages-list" class="messages-list">
+      <!-- Rendered by JS -->
+    </div>
+  </div><!-- /screen-messages -->
+
+
+  <!-- ============================================================
+       SCREEN: SETTINGS (tab 4)
+       ============================================================ -->
+  <div id="screen-settings" class="screen">
+    <div class="sub-header">
+      <h1 class="sub-header-title">Settings</h1>
+    </div>
+    <div class="settings-scroll">
+
+      <div class="settings-section">
+        <div class="settings-section-label">EMERGENCY CONTACT</div>
+        <div class="settings-card">
+          <div class="settings-row">
+            <span class="material-icons-round settings-row-icon" style="color:#d93025">emergency</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">SOS Number</div>
+              <input type="tel" id="sos-number-input" class="settings-inline-input"
+                     placeholder="e.g. +44 7700 900123"
+                     onchange="saveSosNumber(this.value)">
+            </div>
+          </div>
+          <div class="settings-row">
+            <span class="material-icons-round settings-row-icon" style="color:#d93025">person</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">SOS Name</div>
+              <input type="text" id="sos-name-input" class="settings-inline-input"
+                     placeholder="e.g. Ambulance / Margaret"
+                     onchange="saveSosName(this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-label">MANAGE CONTACTS</div>
+        <div class="settings-card">
+          <button class="settings-row settings-row-btn" onclick="navigate('manage')">
+            <span class="material-icons-round settings-row-icon">contacts</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Add &amp; Remove Contacts</div>
+              <div class="settings-row-sub" id="contact-count-label">Loading...</div>
+            </div>
+            <span class="material-icons-round settings-chevron">chevron_right</span>
+          </button>
+          <button class="settings-row settings-row-btn" onclick="refreshData()">
+            <span class="material-icons-round settings-row-icon">sync</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Refresh Contacts</div>
+              <div class="settings-row-sub">Sync from server</div>
+            </div>
+            <span class="material-icons-round settings-chevron">chevron_right</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-label">APP</div>
+        <div class="settings-card">
+          <button class="settings-row settings-row-btn" onclick="showInstallPrompt()">
+            <span class="material-icons-round settings-row-icon">get_app</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Install App</div>
+              <div class="settings-row-sub">Add to home screen</div>
+            </div>
+            <span class="material-icons-round settings-chevron">chevron_right</span>
+          </button>
+          <div class="settings-row">
+            <span class="material-icons-round settings-row-icon">info</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Version</div>
+              <div class="settings-row-sub">EZefone PWA 1.0</div>
+            </div>
+          </div>
+          <div class="settings-row">
+            <span class="material-icons-round settings-row-icon">business</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Developer</div>
+              <div class="settings-row-sub">CallFormLabs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /screen-settings -->
+
+
+  <!-- ============================================================
+       SCREEN: MANAGE CONTACTS (sub-screen from Settings)
+       ============================================================ -->
+  <div id="screen-manage" class="screen">
+    <div class="sub-header">
+      <button class="sub-back-btn" onclick="navigate('settings')">
+        <span class="material-icons-round">arrow_back</span>
+      </button>
+      <h1 class="sub-header-title">Manage Contacts</h1>
+      <button class="sub-add-btn" onclick="showAddContactModal()">
+        <span class="material-icons-round">person_add</span>
+      </button>
+    </div>
+    <div class="search-bar-wrap">
+      <div class="search-bar">
+        <span class="material-icons-round">search</span>
+        <input type="text" id="manage-search" placeholder="Search..." oninput="filterManage(this.value)" autocomplete="off">
+      </div>
+    </div>
+    <div id="manage-list" class="manage-list">
+      <!-- Rendered by JS -->
+    </div>
+  </div><!-- /screen-manage -->
+
+
+  <!-- ============================================================
+       BOTTOM NAVIGATION (4 tabs)
+       ============================================================ -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-screen="contacts" onclick="navigate('contacts')">
+      <span class="material-icons-round">people</span>
+      <span class="nav-label">Contacts</span>
+    </button>
+    <button class="nav-btn" data-screen="keypad" onclick="navigate('keypad')">
+      <span class="material-icons-round">dialpad</span>
+      <span class="nav-label">Keypad</span>
+    </button>
+    <button class="nav-btn" data-screen="messages" onclick="navigate('messages')">
+      <span class="material-icons-round">chat_bubble</span>
+      <span class="nav-label">Messages</span>
+    </button>
+    <button class="nav-btn" data-screen="settings" onclick="navigate('settings')">
+      <span class="material-icons-round">settings</span>
+      <span class="nav-label">Settings</span>
+    </button>
+  </nav>
+
+
+  <!-- ============================================================
+       ADD CONTACT MODAL
+       ============================================================ -->
+  <div id="add-contact-modal" class="modal-overlay hidden">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <h2 class="modal-title">Add Contact</h2>
+      <form id="add-contact-form" onsubmit="submitAddContact(event)">
+        <div class="form-group">
+          <label class="form-label">Name *</label>
+          <input type="text" id="contact-name-input" class="form-input" placeholder="Full name" required autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" id="contact-phone-input" class="form-input" placeholder="+44 7700 000000" autocomplete="tel">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="contact-email-input" class="form-input" placeholder="email@example.com" autocomplete="email">
+        </div>
+        <div class="modal-btn-row">
+          <button type="button" class="modal-cancel-btn" onclick="hideAddContactModal()">Cancel</button>
+          <button type="submit" class="modal-submit-btn" id="add-contact-submit">Add Contact</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       TOAST
+       ============================================================ -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

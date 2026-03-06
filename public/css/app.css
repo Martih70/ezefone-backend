@@ -1,0 +1,1121 @@
+/* =============================================
+   Variables
+   ============================================= */
+:root {
+  --green-deep:   #1a6b3c;
+  --green-mid:    #2a8c52;
+  --green-light:  #3db870;
+  --amber:        #f5a623;
+  --blue-msg:     #0284c7;
+  --red-sos:      #d93025;
+  --video-blue:   #1a73e8;
+
+  --bg:           #faf8f4;
+  --card-bg:      #ffffff;
+  --border:       #e2e8f0;
+  --text:         #0f172a;
+  --text-muted:   #64748b;
+  --text-light:   #94a3b8;
+
+  --radius-card:  20px;
+  --radius-btn:   16px;
+  --radius-full:  9999px;
+
+  --nav-height:   72px;
+  --header-height: 72px;
+
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-btn:  0 3px 8px rgba(0,0,0,0.18);
+}
+
+/* =============================================
+   Reset
+   ============================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  color: inherit;
+}
+
+input {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.hidden { display: none !important; }
+
+/* =============================================
+   Screen System
+   ============================================= */
+.screen {
+  position: fixed;
+  inset: 0;
+  bottom: var(--nav-height);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(20px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+}
+
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(0);
+}
+
+/* =============================================
+   Green App Header (Contacts tab only)
+   ============================================= */
+.app-header {
+  background: var(--green-deep);
+  padding: 14px 18px;
+  padding-top: calc(14px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  min-height: var(--header-height);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo {
+  width: 46px;
+  height: 46px;
+  background: rgba(255,255,255,0.18);
+  border: 2px solid rgba(255,255,255,0.35);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+  color: white;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.header-logo-dot {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--amber);
+  border: 2px solid var(--green-deep);
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.3px;
+}
+
+.header-right {
+  text-align: right;
+}
+
+.header-time {
+  font-size: 26px;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.header-date {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* =============================================
+   Sub-screen Header (Keypad, Messages, Settings, Manage)
+   ============================================= */
+.sub-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  padding-top: calc(14px + env(safe-area-inset-top));
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  min-height: var(--header-height);
+}
+
+.sub-header-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text);
+  flex: 1;
+}
+
+.sub-back-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.sub-back-btn:active { background: var(--border); }
+
+.sub-add-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green-deep);
+  margin-left: auto;
+}
+
+.sub-add-btn:active { background: var(--border); }
+
+/* =============================================
+   Install Banner Card
+   ============================================= */
+.install-card {
+  background: var(--green-mid);
+  border-radius: var(--radius-card);
+  margin: 14px 16px 4px;
+  padding: 14px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-card);
+}
+
+.install-card-icon {
+  width: 46px;
+  height: 46px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.install-card-icon .material-icons-round {
+  color: white;
+  font-size: 26px;
+}
+
+.install-card-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.install-card-text strong {
+  font-size: 15px;
+  font-weight: 800;
+  color: white;
+}
+
+.install-card-text span {
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.3;
+}
+
+.install-card-action {
+  background: white;
+  color: var(--green-mid);
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  font-size: 13px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.install-card-dismiss {
+  color: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.install-card-dismiss .material-icons-round {
+  font-size: 20px;
+}
+
+/* =============================================
+   Contacts Grid
+   ============================================= */
+.contacts-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 14px 24px;
+}
+
+.section-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-light);
+  letter-spacing: 1.2px;
+  margin-bottom: 12px;
+  padding-left: 2px;
+}
+
+.contacts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Individual Contact Card */
+.contact-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-card);
+  padding: 18px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border);
+}
+
+.card-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 900;
+  color: white;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.card-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.2;
+  margin-top: 4px;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Action buttons row inside card */
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  width: 100%;
+  justify-content: center;
+}
+
+.card-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border-radius: var(--radius-btn);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  min-height: 62px;
+  box-shadow: var(--shadow-btn);
+  transition: transform 0.1s, box-shadow 0.1s;
+  letter-spacing: 0.2px;
+}
+
+.card-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.card-btn .material-icons-round {
+  font-size: 22px;
+}
+
+.card-btn-call     { background: var(--green-mid); }
+.card-btn-chat     { background: var(--green-light); }
+.card-btn-video    { background: var(--video-blue); }
+.card-btn-sms      { background: var(--amber); color: #fff; }
+
+/* =============================================
+   SOS Card
+   ============================================= */
+.sos-card {
+  margin-top: 20px;
+  background: var(--red-sos);
+  border-radius: var(--radius-card);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 18px rgba(217, 48, 37, 0.35);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.sos-card:active {
+  transform: scale(0.98);
+}
+
+.sos-icon {
+  font-size: 32px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.sos-text {
+  flex: 1;
+}
+
+.sos-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: white;
+}
+
+.sos-subtitle {
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  margin-top: 2px;
+}
+
+.sos-phone-icon {
+  font-size: 30px;
+  color: rgba(255,255,255,0.85);
+}
+
+/* =============================================
+   Floating Action Button (FAB)
+   ============================================= */
+.fab {
+  position: fixed;
+  bottom: calc(var(--nav-height) + 18px);
+  right: 18px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--green-deep);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 18px rgba(26, 107, 60, 0.45);
+  z-index: 50;
+  transition: transform 0.1s;
+}
+
+.fab:active {
+  transform: scale(0.92);
+}
+
+.fab .material-icons-round {
+  font-size: 24px;
+}
+
+/* FAB only visible on contacts tab */
+.screen:not(#screen-contacts) ~ .fab,
+#screen-contacts:not(.active) ~ .fab {
+  display: none;
+}
+
+/* =============================================
+   Keypad Screen
+   ============================================= */
+.keypad-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 20px;
+  gap: 14px;
+  overflow: hidden;
+}
+
+.keypad-display {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-card);
+  min-height: 64px;
+}
+
+.keypad-digits {
+  flex: 1;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 3px;
+  font-variant-numeric: tabular-nums;
+  min-height: 1.2em;
+}
+
+.keypad-delete {
+  color: var(--text-muted);
+  padding: 8px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.keypad-delete:active { background: var(--border); }
+
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.key-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 66px;
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.1s, background 0.1s;
+}
+
+.key-btn:active {
+  transform: scale(0.91);
+  background: var(--border);
+}
+
+.key-num {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+
+.key-sub {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 1px;
+  margin-top: 3px;
+  height: 14px;
+}
+
+.keypad-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.keypad-call-btn {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: var(--green-mid);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 18px rgba(42, 140, 82, 0.45);
+  transition: transform 0.1s;
+}
+
+.keypad-call-btn:active { transform: scale(0.92); }
+.keypad-call-btn .material-icons-round { font-size: 32px; }
+
+.keypad-sms-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--amber);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(245, 166, 35, 0.45);
+  transition: transform 0.1s;
+}
+
+.keypad-sms-btn:active { transform: scale(0.92); }
+.keypad-sms-btn .material-icons-round { font-size: 24px; }
+
+.keypad-clear-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.1s;
+}
+
+.keypad-clear-btn:active { transform: scale(0.92); }
+
+.keypad-clr-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+/* =============================================
+   Messages Screen
+   ============================================= */
+.messages-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.message-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  min-height: 72px;
+}
+
+.message-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 900;
+  color: white;
+  flex-shrink: 0;
+}
+
+.message-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.message-name {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.message-phone {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: 'Literata', serif;
+  margin-top: 2px;
+}
+
+.message-sms-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 16px;
+  background: var(--amber);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-btn);
+  transition: transform 0.1s;
+}
+
+.message-sms-btn:active { transform: scale(0.94); }
+.message-sms-btn .material-icons-round { font-size: 18px; }
+
+/* =============================================
+   Settings Screen
+   ============================================= */
+.settings-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px 16px 32px;
+}
+
+.settings-section {
+  margin-bottom: 28px;
+}
+
+.settings-section-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: var(--text-light);
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+
+.settings-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  min-height: 66px;
+  width: 100%;
+  text-align: left;
+}
+
+.settings-row:last-child {
+  border-bottom: none;
+}
+
+.settings-row-btn {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.settings-row-btn:active { background: var(--border); }
+
+.settings-row-icon {
+  font-size: 24px;
+  color: var(--green-deep);
+  flex-shrink: 0;
+}
+
+.settings-row-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-row-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.settings-row-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.settings-chevron {
+  color: var(--text-light);
+  font-size: 22px;
+}
+
+.settings-inline-input {
+  margin-top: 6px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.settings-inline-input:focus {
+  border-color: var(--green-deep);
+}
+
+/* =============================================
+   Manage Contacts Sub-screen
+   ============================================= */
+.search-bar-wrap {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--bg);
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 14px;
+}
+
+.search-bar .material-icons-round {
+  color: var(--text-light);
+  font-size: 20px;
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.search-bar input::placeholder { color: var(--text-light); }
+
+.manage-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.manage-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  min-height: 68px;
+}
+
+.manage-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  color: white;
+  flex-shrink: 0;
+}
+
+.manage-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.manage-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.manage-phone {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.manage-delete-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(217,48,37,0.1);
+  color: var(--red-sos);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.1s;
+}
+
+.manage-delete-btn:active { transform: scale(0.9); }
+.manage-delete-btn .material-icons-round { font-size: 20px; }
+
+/* =============================================
+   Bottom Navigation
+   ============================================= */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  z-index: 100;
+  box-shadow: 0 -2px 16px rgba(0,0,0,0.07);
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 4px;
+  color: var(--text-light);
+  transition: color 0.18s;
+}
+
+.nav-btn.active { color: var(--green-deep); }
+
+.nav-btn .material-icons-round { font-size: 25px; }
+
+.nav-label {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* =============================================
+   Modal
+   ============================================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 200;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.modal-sheet {
+  background: var(--card-bg);
+  border-radius: 28px 28px 0 0;
+  padding: 16px 24px 32px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--border);
+  border-radius: var(--radius-full);
+  align-self: center;
+  margin-bottom: 4px;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-input {
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-btn);
+  font-size: 17px;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.form-input:focus { border-color: var(--green-deep); }
+
+.modal-btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.modal-cancel-btn {
+  flex: 1;
+  padding: 15px;
+  border-radius: var(--radius-btn);
+  background: var(--bg);
+  border: 2px solid var(--border);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  min-height: 54px;
+  transition: background 0.15s;
+}
+
+.modal-cancel-btn:active { background: var(--border); }
+
+.modal-submit-btn {
+  flex: 1;
+  padding: 15px;
+  border-radius: var(--radius-btn);
+  background: var(--green-deep);
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+  text-align: center;
+  min-height: 54px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.modal-submit-btn:active { background: var(--green-mid); }
+.modal-submit-btn:disabled { opacity: 0.55; pointer-events: none; }
+
+/* =============================================
+   Empty State
+   ============================================= */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  gap: 14px;
+  color: var(--text-light);
+  text-align: center;
+}
+
+.empty-state .material-icons-round {
+  font-size: 60px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  max-width: 260px;
+  line-height: 1.5;
+}
+
+/* =============================================
+   Toast
+   ============================================= */
+.toast {
+  position: fixed;
+  bottom: calc(var(--nav-height) + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15,23,42,0.9);
+  color: white;
+  padding: 12px 22px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 700;
+  z-index: 300;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  animation: toast-in 0.2s ease;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* =============================================
+   Loading Spinner
+   ============================================= */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  gap: 14px;
+  color: var(--text-muted);
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--border);
+  border-top-color: var(--green-deep);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

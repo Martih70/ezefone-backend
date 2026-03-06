@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="110" fill="#1a6b3c"/>
+  <!-- White E letterform -->
+  <text
+    x="256"
+    y="350"
+    font-family="Arial Black, Arial, sans-serif"
+    font-size="310"
+    font-weight="900"
+    text-anchor="middle"
+    fill="#ffffff"
+  >E</text>
+  <!-- Gold accent dot -->
+  <circle cx="375" cy="385" r="52" fill="#f59e0b"/>
+</svg>
