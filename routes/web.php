@@ -13,16 +13,13 @@ Route::get('/', function () {
         ->header('Content-Type', 'text/html; charset=utf-8');
 });
 
-// API Routes
-Route::prefix('api')->group(function () {
+// API Routes — auth required so contacts are per-user
+Route::prefix('api')->middleware('auth')->group(function () {
     Route::get('/contacts', [ContactController::class, 'index']);
     Route::post('/contacts', [ContactController::class, 'store']);
     Route::delete('/contacts/{contactId}', [ContactController::class, 'destroy']);
     Route::post('/contacts/{contactId}/favorite', [ContactController::class, 'addFavorite']);
     Route::delete('/contacts/{contactId}/favorite', [ContactController::class, 'removeFavorite']);
-    Route::get('/test', function () {
-        return ['message' => 'test works'];
-    });
 });
 
 // Stripe Checkout

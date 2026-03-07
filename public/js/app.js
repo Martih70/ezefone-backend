@@ -72,6 +72,11 @@ async function apiRequest(method, path, body) {
   const opts = { method, headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } };
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch('/api' + path, opts);
+  if (res.status === 401) {
+    // Session expired — redirect to login
+    window.location.href = '/login';
+    return;
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message || 'HTTP ' + res.status);
@@ -756,7 +761,9 @@ async function init() {
   });
 
   initKeypadLongPress();
-  await loadContacts();
+  if (localStorage.getItem('ezefone_paid')) {
+    await loadContacts();
+  }
 
   // Show setup wizard on first launch
   if (!localStorage.getItem('wizard-complete')) {
