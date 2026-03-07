@@ -289,104 +289,110 @@
        SCREEN: HELP
        ============================================================ -->
   <div class="screen" id="screen-help">
-
-    <div class="help-hero">
-      <div class="help-hero-icon">❓</div>
-      <div class="help-hero-text">
-        <h2>How can we help?</h2>
-        <p>Tap any question to see the answer</p>
-      </div>
+    <div class="sub-header">
+      <h1 class="sub-header-title">Help</h1>
     </div>
+    <div class="settings-scroll">
 
-    <div class="section-label">Making Calls</div>
+      <!-- Making Calls -->
+      <div class="settings-section">
+        <div class="settings-section-label">MAKING CALLS</div>
+        <div class="settings-card">
 
-    <div class="faq-card" onclick="toggleFaq(this)">
-      <div class="faq-question">
-        <span class="faq-icon">📞</span>
-        <span class="faq-q-text">How do I call someone?</span>
-        <span class="faq-arrow">›</span>
+          <div class="faq-row" onclick="toggleFaq(this)">
+            <span class="material-icons-round settings-row-icon">call</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">How do I call someone?</div>
+            </div>
+            <span class="material-icons-round faq-chevron">expand_more</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-step"><span class="step-num">1</span><span>Tap the big card of the person you want to call</span></div>
+            <div class="faq-step"><span class="step-num">2</span><span>Your phone will start ringing — wait for them to answer</span></div>
+            <div class="faq-step"><span class="step-num">3</span><span>When finished, tap the <strong>red button</strong> to hang up</span></div>
+          </div>
+
+          <div class="faq-row" onclick="toggleFaq(this)">
+            <span class="material-icons-round settings-row-icon">chat</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">How do I send a WhatsApp message?</div>
+            </div>
+            <span class="material-icons-round faq-chevron">expand_more</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-step"><span class="step-num">1</span><span>Tap the <strong>···</strong> button on someone's card</span></div>
+            <div class="faq-step"><span class="step-num">2</span><span>Tap <strong>WhatsApp</strong></span></div>
+            <div class="faq-step"><span class="step-num">3</span><span>WhatsApp will open ready to message them</span></div>
+          </div>
+
+          <div class="faq-row" onclick="toggleFaq(this)">
+            <span class="material-icons-round settings-row-icon">volume_up</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">I cannot hear anyone — what do I do?</div>
+            </div>
+            <span class="material-icons-round faq-chevron">expand_more</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-step"><span class="step-num">1</span><span>Look at the <strong>right side</strong> of your phone</span></div>
+            <div class="faq-step"><span class="step-num">2</span><span>Press the <strong>top button</strong> several times to raise the volume</span></div>
+            <div class="faq-tip">💡 Keep pressing until the volume bar on screen is full</div>
+          </div>
+
+        </div>
       </div>
-      <div class="faq-answer">
-        <div class="faq-step"><span class="step-num">1</span><span>Tap <strong>My Favourites</strong> at the bottom of the screen</span></div>
-        <div class="faq-step"><span class="step-num">2</span><span>Tap the big card of the person you want to call</span></div>
-        <div class="faq-step"><span class="step-num">3</span><span>The phone will start ringing — wait for them to answer</span></div>
-        <div class="faq-step"><span class="step-num">4</span><span>When you are finished, tap the <strong>red button</strong> to hang up</span></div>
+
+      <!-- Troubleshooting -->
+      <div class="settings-section">
+        <div class="settings-section-label">SOMETHING HAS GONE WRONG</div>
+        <div class="settings-card">
+
+          <div class="faq-row" onclick="toggleFaq(this)">
+            <span class="material-icons-round settings-row-icon">refresh</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">The screen looks wrong or frozen</div>
+            </div>
+            <span class="material-icons-round faq-chevron">expand_more</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-step"><span class="step-num">1</span><span>Do not worry — nothing is broken</span></div>
+            <div class="faq-step"><span class="step-num">2</span><span>Press the <strong>round button</strong> at the bottom of your phone</span></div>
+            <div class="faq-step"><span class="step-num">3</span><span>Find the Ezefone icon and tap it to open again</span></div>
+            <div class="faq-tip">💡 Still wrong? Turn the phone off and back on — this fixes most problems</div>
+          </div>
+
+          <div class="faq-row" onclick="toggleFaq(this)">
+            <span class="material-icons-round settings-row-icon">battery_alert</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">My phone is running out of battery</div>
+            </div>
+            <span class="material-icons-round faq-chevron">expand_more</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-step"><span class="step-num">1</span><span>Plug your charger into the <strong>bottom</strong> of the phone</span></div>
+            <div class="faq-step"><span class="step-num">2</span><span>Plug the other end into the wall socket</span></div>
+            <div class="faq-step"><span class="step-num">3</span><span>A small lightning bolt appears — this means it is charging</span></div>
+            <div class="faq-tip">💡 Charge your phone every night so it is always ready</div>
+          </div>
+
+        </div>
       </div>
+
+      <!-- Support -->
+      <div class="settings-section">
+        <div class="settings-section-label">STILL NEED HELP?</div>
+        <div class="settings-card">
+          <button class="settings-row settings-row-btn" onclick="contactSupport()">
+            <span class="material-icons-round settings-row-icon">mail</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Email Our Support Team</div>
+              <div class="settings-row-sub">info@ezefone.co.uk &bull; reply within 24 hrs</div>
+            </div>
+            <span class="material-icons-round settings-chevron">chevron_right</span>
+          </button>
+        </div>
+      </div>
+
     </div>
-
-    <div class="faq-card" onclick="toggleFaq(this)">
-      <div class="faq-question">
-        <span class="faq-icon">💬</span>
-        <span class="faq-q-text">How do I send a WhatsApp message?</span>
-        <span class="faq-arrow">›</span>
-      </div>
-      <div class="faq-answer">
-        <div class="faq-step"><span class="step-num">1</span><span>Tap the <strong>···</strong> button on someone's card</span></div>
-        <div class="faq-step"><span class="step-num">2</span><span>Tap <strong>WhatsApp</strong></span></div>
-        <div class="faq-step"><span class="step-num">3</span><span>WhatsApp will open with that person ready to message</span></div>
-      </div>
-    </div>
-
-    <div class="faq-card" onclick="toggleFaq(this)">
-      <div class="faq-question">
-        <span class="faq-icon">🔊</span>
-        <span class="faq-q-text">I cannot hear anyone — what do I do?</span>
-        <span class="faq-arrow">›</span>
-      </div>
-      <div class="faq-answer">
-        <div class="faq-step"><span class="step-num">1</span><span>Look at the <strong>right side</strong> of your phone</span></div>
-        <div class="faq-step"><span class="step-num">2</span><span>Press the <strong>top volume button</strong> several times</span></div>
-        <div class="faq-step"><span class="step-num">3</span><span>Each press makes the sound louder</span></div>
-        <div class="faq-tip">💡 Keep pressing until the volume bar on screen is full</div>
-      </div>
-    </div>
-
-    <div class="section-label">Something Has Gone Wrong</div>
-
-    <div class="faq-card" onclick="toggleFaq(this)">
-      <div class="faq-question">
-        <span class="faq-icon">😕</span>
-        <span class="faq-q-text">The screen looks wrong or frozen</span>
-        <span class="faq-arrow">›</span>
-      </div>
-      <div class="faq-answer">
-        <div class="faq-step"><span class="step-num">1</span><span>Do not worry — nothing is broken</span></div>
-        <div class="faq-step"><span class="step-num">2</span><span>Press the <strong>round button</strong> at the bottom of your phone</span></div>
-        <div class="faq-step"><span class="step-num">3</span><span>Find the Ezefone icon and tap it to open again</span></div>
-        <div class="faq-tip">💡 If it still looks wrong, turn the phone off and back on — this fixes most problems</div>
-      </div>
-    </div>
-
-    <div class="faq-card" onclick="toggleFaq(this)">
-      <div class="faq-question">
-        <span class="faq-icon">🔋</span>
-        <span class="faq-q-text">My phone is running out of battery</span>
-        <span class="faq-arrow">›</span>
-      </div>
-      <div class="faq-answer">
-        <div class="faq-step"><span class="step-num">1</span><span>Plug your charger cable into the <strong>bottom</strong> of the phone</span></div>
-        <div class="faq-step"><span class="step-num">2</span><span>Plug the other end into the wall socket</span></div>
-        <div class="faq-step"><span class="step-num">3</span><span>A small lightning bolt will appear — this means it is charging</span></div>
-        <div class="faq-tip">💡 Try to charge your phone every night so it is always ready</div>
-      </div>
-    </div>
-
-    <div class="section-label">Still Need Help?</div>
-
-    <div class="support-card" onclick="contactSupport()">
-      <div class="support-icon">✉️</div>
-      <div class="support-text">
-        <h3>Email Our Support Team</h3>
-        <p>We reply within 24 hours — Monday to Friday</p>
-        <p class="support-email">info@ezefone.co.uk</p>
-      </div>
-      <span class="support-arrow">›</span>
-    </div>
-
-    <div class="help-footer">
-      <p>Ezefone — keeping you connected</p>
-    </div>
-
   </div><!-- /screen-help -->
 
 

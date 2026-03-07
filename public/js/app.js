@@ -554,10 +554,10 @@ function showInstallPrompt() {
 // ============================================================
 // HELP — FAQ ACCORDION
 // ============================================================
-function toggleFaq(card) {
-  const isOpen = card.classList.contains('open');
-  document.querySelectorAll('.faq-card.open').forEach(c => c.classList.remove('open'));
-  if (!isOpen) card.classList.add('open');
+function toggleFaq(row) {
+  const isOpen = row.classList.contains('open');
+  document.querySelectorAll('.faq-row.open').forEach(r => r.classList.remove('open'));
+  if (!isOpen) row.classList.add('open');
 }
 
 // ============================================================
