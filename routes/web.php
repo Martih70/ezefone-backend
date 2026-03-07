@@ -3,6 +3,7 @@
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomerPortalController;
+use App\Http\Controllers\PaymentRegistrationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,10 @@ Route::prefix('api')->group(function () {
 // Stripe Checkout
 Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
 Route::get('/payment/success', [CheckoutController::class, 'success'])->name('payment.success');
+
+// Post-payment account creation
+Route::get('/create-account', [PaymentRegistrationController::class, 'show'])->name('create.account');
+Route::post('/create-account', [PaymentRegistrationController::class, 'store']);
 
 // Stripe Customer Portal
 Route::get('/customer-portal', [CustomerPortalController::class, 'redirect'])

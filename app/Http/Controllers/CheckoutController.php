@@ -43,13 +43,19 @@ class CheckoutController extends Controller
             return redirect('/');
         }
 
-        $session = Session::retrieve($sessionId);
+        $session = Session::retrieve($sessionId, ['expand' => ['customer_details']]);
 
         if ($session->payment_status !== 'paid') {
             return redirect('/');
         }
 
-        // Redirect to the PWA with a paid flag — JS stores it in localStorage
-        return redirect('/?paid=1');
+        // Store verified payment info in session for account creation
+        session([
+            'payment_verified'  => true,
+            'payment_email'     => $session->customer_details?->email,
+            'stripe_session_id' => $sessionId,
+        ]);
+
+        return redirect('/create-account');
     }
 }
