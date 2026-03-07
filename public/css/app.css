@@ -1322,3 +1322,15 @@ input {
   color: #999;
   margin: 0;
 }
+
+.paywall-signin {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.paywall-signin a {
+  color: #1a6b3c;
+  font-weight: 700;
+  text-decoration: none;
+}
