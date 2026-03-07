@@ -552,6 +552,21 @@ function showInstallPrompt() {
 }
 
 // ============================================================
+// ACCOUNT
+// ============================================================
+function openCustomerPortal() {
+  window.location.href = '/customer-portal';
+}
+
+function openPasswordReset() {
+  window.location.href = '/forgot-password';
+}
+
+function contactSupport() {
+  window.location.href = 'mailto:info@ezefone.co.uk?subject=Ezefone Support Request';
+}
+
+// ============================================================
 // TOAST
 // ============================================================
 let toastTimer = null;
