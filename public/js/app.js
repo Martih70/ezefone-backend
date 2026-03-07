@@ -588,6 +588,23 @@ function overlayClose(e, fn) {
 }
 
 // ============================================================
+// PAYWALL
+// ============================================================
+function checkPaywall() {
+  // If returning from successful Stripe payment, store the flag
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('paid') === '1') {
+    localStorage.setItem('ezefone_paid', '1');
+    // Clean the URL
+    history.replaceState(null, '', '/');
+  }
+
+  if (!localStorage.getItem('ezefone_paid')) {
+    document.getElementById('paywall').style.display = 'flex';
+  }
+}
+
+// ============================================================
 // INIT
 // ============================================================
 // ============================================================
@@ -704,6 +721,8 @@ async function init() {
       }
     }
   }
+
+  checkPaywall();
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(function(e) { console.warn('SW:', e); });

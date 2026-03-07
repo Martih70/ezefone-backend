@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\ProfileController;
@@ -22,6 +23,10 @@ Route::prefix('api')->group(function () {
         return ['message' => 'test works'];
     });
 });
+
+// Stripe Checkout
+Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+Route::get('/payment/success', [CheckoutController::class, 'success'])->name('payment.success');
 
 // Stripe Customer Portal
 Route::get('/customer-portal', [CustomerPortalController::class, 'redirect'])

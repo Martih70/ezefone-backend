@@ -1239,3 +1239,86 @@ input {
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* =============================================
+   Paywall Overlay
+   ============================================= */
+.paywall-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(160deg, #1a6b3c 0%, #0f3d22 100%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.paywall-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 36px 28px 32px;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.paywall-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 18px;
+  margin-bottom: 16px;
+}
+
+.paywall-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #1a6b3c;
+  margin: 0 0 8px;
+}
+
+.paywall-tagline {
+  font-size: 1.05rem;
+  color: #555;
+  margin: 0 0 24px;
+}
+
+.paywall-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.paywall-features li {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.paywall-btn {
+  display: block;
+  background: #1a6b3c;
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  padding: 16px 24px;
+  border-radius: 14px;
+  text-decoration: none;
+  margin-bottom: 12px;
+  transition: background 0.2s;
+}
+
+.paywall-btn:active {
+  background: #0f3d22;
+}
+
+.paywall-small {
+  font-size: 0.8rem;
+  color: #999;
+  margin: 0;
+}
