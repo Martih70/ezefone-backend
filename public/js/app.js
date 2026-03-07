@@ -580,6 +580,11 @@ function contactSupport() {
   window.location.href = 'mailto:info@ezefone.co.uk?subject=Ezefone Support Request';
 }
 
+function signOut() {
+  localStorage.removeItem('ezefone_paid');
+  window.location.href = '/logout';
+}
+
 // ============================================================
 // TOAST
 // ============================================================

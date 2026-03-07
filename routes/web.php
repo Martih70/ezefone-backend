@@ -42,5 +42,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Simple GET logout for PWA (no CSRF token available in static HTML)
+Route::get('/logout', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/login');
+})->middleware('auth');
+
 // Auth routes (login, register, password reset) — added by Breeze
 require __DIR__.'/auth.php';
