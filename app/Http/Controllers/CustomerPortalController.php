@@ -10,11 +10,6 @@ use Stripe\Customer;
 
 class CustomerPortalController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Redirect the authenticated user to their Stripe Customer Portal.
      * Creates a Stripe customer record on first visit if one doesn't exist.
