@@ -552,6 +552,15 @@ function showInstallPrompt() {
 }
 
 // ============================================================
+// HELP — FAQ ACCORDION
+// ============================================================
+function toggleFaq(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.faq-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+// ============================================================
 // ACCOUNT
 // ============================================================
 function openCustomerPortal() {
