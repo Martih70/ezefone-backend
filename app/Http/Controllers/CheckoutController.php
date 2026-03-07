@@ -22,8 +22,9 @@ class CheckoutController extends Controller
                 'quantity' => 1,
             ]],
             'success_url'          => url('/payment/success') . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url'           => 'https://ezefone.co.uk',
-            'payment_method_types' => ['card'],
+            'cancel_url'            => 'https://ezefone.co.uk',
+            'payment_method_types'  => ['card'],
+            'allow_promotion_codes' => true,
         ]);
 
         return redirect($session->url);
