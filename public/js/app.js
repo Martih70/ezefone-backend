@@ -553,6 +553,33 @@ function contactSupport() {
   window.location.href = 'mailto:info@ezefone.co.uk?subject=Ezefone Support Request';
 }
 
+async function submitFeedback() {
+  const text   = document.getElementById('feedback-text');
+  const btn    = document.getElementById('feedback-btn');
+  const status = document.getElementById('feedback-status');
+  const msg    = text.value.trim();
+
+  if (!msg) { showToast('Please write something first'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  try {
+    await apiRequest('POST', '/feedback', { message: msg });
+    text.value = '';
+    status.style.display = 'block';
+    status.style.color = 'var(--green-deep)';
+    status.textContent = 'Thank you — feedback sent!';
+  } catch (err) {
+    status.style.display = 'block';
+    status.style.color = '#d93025';
+    status.textContent = 'Could not send — please try again.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send Feedback';
+  }
+}
+
 function signOut() {
   localStorage.removeItem('ezefone_paid');
   window.location.href = '/logout';

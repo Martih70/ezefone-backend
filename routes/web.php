@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomerPortalController;
@@ -21,6 +22,7 @@ Route::prefix('api')->middleware('auth')->group(function () {
     Route::delete('/contacts/{contactId}', [ContactController::class, 'destroy']);
     Route::post('/contacts/{contactId}/favorite', [ContactController::class, 'addFavorite']);
     Route::delete('/contacts/{contactId}/favorite', [ContactController::class, 'removeFavorite']);
+    Route::post('/feedback', [FeedbackController::class, 'store']);
 });
 
 // Stripe Checkout
