@@ -202,7 +202,7 @@ function renderPeople() {
         + '</div>';
 
     } else {
-      html += '<div class="hero-empty" onclick="navigate(\'settings\')">'
+      html += '<div class="hero-empty" onclick="navigate(\'contacts\')">'
         + '<div class="hero-empty-icon"><span class="material-icons-round">person_add</span></div>'
         + '<div class="hero-empty-label">Add a Person</div>'
         + '</div>';
