@@ -69,11 +69,14 @@ function esc(str) {
 // API
 // ============================================================
 async function apiRequest(method, path, body) {
-  const opts = { method, headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } };
+  const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
+  const token = localStorage.getItem('ezefone_token');
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const opts = { method, headers };
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch('/api' + path, opts);
   if (res.status === 401) {
-    // Session expired — redirect to login
+    localStorage.removeItem('ezefone_token');
     window.location.href = '/login';
     return;
   }
@@ -582,6 +585,7 @@ async function submitFeedback() {
 
 function signOut() {
   localStorage.removeItem('ezefone_paid');
+  localStorage.removeItem('ezefone_token');
   window.location.href = '/logout';
 }
 
@@ -610,11 +614,21 @@ function overlayClose(e, fn) {
 // PAYWALL
 // ============================================================
 function checkPaywall() {
-  // If returning from successful Stripe payment, store the flag
   const params = new URLSearchParams(window.location.search);
+
+  // Capture auth token passed after login/payment
+  const token = params.get('token');
+  if (token) {
+    localStorage.setItem('ezefone_token', token);
+  }
+
+  // If returning from successful Stripe payment, store the flag
   if (params.get('paid') === '1') {
     localStorage.setItem('ezefone_paid', '1');
-    // Clean the URL
+  }
+
+  // Clean the URL
+  if (params.get('paid') || params.get('token')) {
     history.replaceState(null, '', '/');
   }
 

@@ -45,10 +45,12 @@ class PaymentRegistrationController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        Auth::login($user, remember: true);
+        Auth::login($user);
 
         session()->forget(['payment_verified', 'payment_email', 'stripe_session_id']);
 
-        return redirect('/?paid=1');
+        $token = $user->createToken('pwa')->plainTextToken;
+
+        return redirect('/?paid=1&token=' . $token);
     }
 }

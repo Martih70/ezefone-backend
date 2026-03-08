@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 
 // API Routes — auth required so contacts are per-user
-Route::prefix('api')->middleware('auth')->group(function () {
+Route::prefix('api')->middleware('auth:sanctum')->group(function () {
     Route::get('/contacts', [ContactController::class, 'index']);
     Route::post('/contacts', [ContactController::class, 'store']);
     Route::delete('/contacts/{contactId}', [ContactController::class, 'destroy']);
