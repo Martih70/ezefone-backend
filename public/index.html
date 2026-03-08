@@ -97,74 +97,17 @@
 
 
   <!-- ============================================================
-       SCREEN 2: KEYPAD
+       SCREEN 2: CONTACTS
        ============================================================ -->
-  <div id="screen-keypad" class="screen">
+  <div id="screen-contacts" class="screen">
     <div class="sub-header">
-      <h1 class="sub-header-title">Phone</h1>
-    </div>
-    <div class="keypad-container">
-      <div class="keypad-display">
-        <span id="keypad-digits" class="keypad-digits">&nbsp;</span>
-        <button class="keypad-delete" id="keypad-delete-btn" onclick="keypadDelete()">
-          <span class="material-icons-round">backspace</span>
-        </button>
-      </div>
-      <div class="keypad-grid">
-        <button class="key-btn" onclick="keypadPress('1')"><span class="key-num">1</span><span class="key-sub">&nbsp;</span></button>
-        <button class="key-btn" onclick="keypadPress('2')"><span class="key-num">2</span><span class="key-sub">ABC</span></button>
-        <button class="key-btn" onclick="keypadPress('3')"><span class="key-num">3</span><span class="key-sub">DEF</span></button>
-        <button class="key-btn" onclick="keypadPress('4')"><span class="key-num">4</span><span class="key-sub">GHI</span></button>
-        <button class="key-btn" onclick="keypadPress('5')"><span class="key-num">5</span><span class="key-sub">JKL</span></button>
-        <button class="key-btn" onclick="keypadPress('6')"><span class="key-num">6</span><span class="key-sub">MNO</span></button>
-        <button class="key-btn" onclick="keypadPress('7')"><span class="key-num">7</span><span class="key-sub">PQRS</span></button>
-        <button class="key-btn" onclick="keypadPress('8')"><span class="key-num">8</span><span class="key-sub">TUV</span></button>
-        <button class="key-btn" onclick="keypadPress('9')"><span class="key-num">9</span><span class="key-sub">WXYZ</span></button>
-        <button class="key-btn" onclick="keypadPress('*')"><span class="key-num">*</span><span class="key-sub">&nbsp;</span></button>
-        <button class="key-btn" onclick="keypadPress('0')"><span class="key-num">0</span><span class="key-sub">+</span></button>
-        <button class="key-btn" onclick="keypadPress('#')"><span class="key-num">#</span><span class="key-sub">&nbsp;</span></button>
-      </div>
-      <div class="keypad-actions">
-        <button class="keypad-sms-btn" onclick="keypadWhatsApp()">
-          <span class="material-icons-round">chat</span>
-        </button>
-        <button class="keypad-call-btn" onclick="keypadCall()">
-          <span class="material-icons-round">call</span>
-        </button>
-        <button class="keypad-clear-btn" onclick="keypadClear()">
-          <span class="keypad-clr-label">CLR</span>
-        </button>
-      </div>
-    </div>
-  </div><!-- /screen-keypad -->
-
-
-  <!-- ============================================================
-       SCREEN 3: MESSAGES
-       ============================================================ -->
-  <div id="screen-messages" class="screen">
-    <div class="sub-header">
-      <h1 class="sub-header-title">WhatsApp</h1>
-    </div>
-    <div id="messages-list" class="messages-list"></div>
-  </div><!-- /screen-messages -->
-
-
-  <!-- ============================================================
-       SCREEN 4: SETTINGS
-       ============================================================ -->
-  <div id="screen-settings" class="screen">
-    <div class="sub-header">
-      <h1 class="sub-header-title">Settings</h1>
+      <h1 class="sub-header-title">Contacts</h1>
     </div>
     <div class="settings-scroll">
 
-      <!-- Manage contacts -->
       <div class="settings-section">
-        <div class="settings-section-label">CONTACTS</div>
         <div class="settings-card">
 
-          <!-- Import from phone (Contact Picker API) -->
           <button class="import-btn" id="import-from-phone-btn" onclick="importFromPhone()">
             <span class="material-icons-round">contacts</span>
             <div class="import-btn-text">
@@ -195,13 +138,36 @@
         </div>
       </div>
 
-      <!-- Manage / favourites list -->
       <div class="settings-section">
         <div class="settings-section-label">ALL CONTACTS &mdash; TAP STAR TO SET AS ONE OF YOUR FAVOURITES</div>
         <div id="manage-list" class="manage-list-card">
           <!-- Rendered by JS -->
         </div>
       </div>
+
+    </div>
+  </div><!-- /screen-contacts -->
+
+
+  <!-- ============================================================
+       SCREEN 3: MESSAGES
+       ============================================================ -->
+  <div id="screen-messages" class="screen">
+    <div class="sub-header">
+      <h1 class="sub-header-title">WhatsApp</h1>
+    </div>
+    <div id="messages-list" class="messages-list"></div>
+  </div><!-- /screen-messages -->
+
+
+  <!-- ============================================================
+       SCREEN 4: SETTINGS
+       ============================================================ -->
+  <div id="screen-settings" class="screen">
+    <div class="sub-header">
+      <h1 class="sub-header-title">Settings</h1>
+    </div>
+    <div class="settings-scroll">
 
       <!-- Emergency contact -->
       <div class="settings-section">
@@ -543,9 +509,9 @@
       <span class="material-icons-round">people</span>
       <span class="nav-label">My Favourites</span>
     </button>
-    <button class="nav-btn" data-screen="keypad" onclick="navigate('keypad')">
-      <span class="material-icons-round">dialpad</span>
-      <span class="nav-label">Keypad</span>
+    <button class="nav-btn" data-screen="contacts" onclick="navigate('contacts')">
+      <span class="material-icons-round">contacts</span>
+      <span class="nav-label">Contacts</span>
     </button>
     <button class="nav-btn" data-screen="messages" onclick="navigate('messages')">
       <span class="material-icons-round">chat</span>

@@ -152,8 +152,9 @@ function navigate(screen) {
   });
 
   if (screen === 'people')   renderPeople();
+  if (screen === 'contacts') { updateContactCount(); renderManageList(); }
   if (screen === 'messages') renderMessages();
-  if (screen === 'settings') { updateContactCount(); loadSosInputs(); renderManageList(); }
+  if (screen === 'settings') loadSosInputs();
 }
 
 // ============================================================
@@ -512,34 +513,6 @@ function loadSosInputs() {
   if (l) l.value = localStorage.getItem('sos-name')   || '';
 }
 
-// ============================================================
-// KEYPAD
-// ============================================================
-let keypadDigits = '';
-
-function renderKeypad() {
-  const el = document.getElementById('keypad-digits');
-  if (el) el.textContent = keypadDigits || '\u00a0';
-}
-
-function keypadPress(d) { keypadDigits += d; renderKeypad(); }
-function keypadDelete()  { keypadDigits = keypadDigits.slice(0,-1); renderKeypad(); }
-function keypadClear()   { keypadDigits = ''; renderKeypad(); }
-function keypadCall()    { keypadDigits ? window.location.href = 'tel:' + keypadDigits : showToast('Enter a number'); }
-function keypadWhatsApp() { keypadDigits ? window.location.href = 'https://wa.me/' + keypadDigits.replace(/\D/g,'') : showToast('Enter a number'); }
-
-function initKeypadLongPress() {
-  const btn = document.getElementById('keypad-delete-btn');
-  if (!btn) return;
-  let timer = null;
-  const start = function() { timer = setTimeout(keypadClear, 700); };
-  const stop  = function() { clearTimeout(timer); };
-  btn.addEventListener('mousedown',  start);
-  btn.addEventListener('touchstart', start, { passive: true });
-  btn.addEventListener('mouseup',    stop);
-  btn.addEventListener('mouseleave', stop);
-  btn.addEventListener('touchend',   stop);
-}
 
 // ============================================================
 // PWA INSTALL
@@ -765,7 +738,6 @@ async function init() {
     if (e.target === this) hideAddContactModal();
   });
 
-  initKeypadLongPress();
   if (localStorage.getItem('ezefone_paid')) {
     await loadContacts();
   }
