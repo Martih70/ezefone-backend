@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ezefone — Quick Guide</title>
+  <style>
+    /* ── Screen styles ── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+      color: #1a1a1a;
+    }
+
+    .print-btn {
+      margin-bottom: 20px;
+      padding: 12px 28px;
+      background: #1e7d3a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .print-btn:hover { background: #165f2b; }
+
+    /* ── A5 page ── */
+    .page {
+      width: 148mm;
+      min-height: 210mm;
+      background: white;
+      padding: 10mm 10mm 8mm;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 3px solid #1e7d3a;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+    .header img { width: 32px; height: 32px; border-radius: 6px; }
+    .header-title { font-size: 20px; font-weight: 900; color: #1e7d3a; }
+    .header-sub { font-size: 10px; color: #555; margin-top: 1px; }
+
+    /* ── Sections ── */
+    .section { margin-bottom: 8px; }
+    .section-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1e7d3a;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #d0e8d8;
+      padding-bottom: 2px;
+    }
+
+    /* ── Steps ── */
+    .steps { display: flex; flex-direction: column; gap: 3px; }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .num {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      background: #1e7d3a;
+      color: white;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Tip ── */
+    .tip {
+      font-size: 10px;
+      color: #555;
+      background: #f0f7f3;
+      border-left: 3px solid #1e7d3a;
+      padding: 3px 6px;
+      margin-top: 3px;
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* ── SOS box ── */
+    .sos-box {
+      background: #fde8e8;
+      border: 2px solid #d93025;
+      border-radius: 6px;
+      padding: 5px 8px;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+    .sos-box strong { color: #d93025; }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px solid #ddd;
+      font-size: 9px;
+      color: #777;
+      text-align: center;
+    }
+    .footer a { color: #1e7d3a; }
+
+    /* ── Print ── */
+    @media print {
+      body { background: white; padding: 0; }
+      .print-btn { display: none; }
+      .page {
+        width: 148mm;
+        min-height: 210mm;
+        box-shadow: none;
+        padding: 10mm 10mm 8mm;
+      }
+      @page {
+        size: A5 portrait;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+  <div class="page">
+
+    <!-- Header -->
+    <div class="header">
+      <img src="/icons/favicon-48x48.png" alt="Ezefone">
+      <div>
+        <div class="header-title">Ezefone — Quick Guide</div>
+        <div class="header-sub">Everything you need, nothing you don't</div>
+      </div>
+    </div>
+
+    <!-- 1. Making a call -->
+    <div class="section">
+      <div class="section-title">1. Making a call from My Favourites</div>
+      <div class="steps">
+        <div class="step"><span class="num">1</span><span>Open Ezefone and you'll see your <strong>My Favourites</strong> screen</span></div>
+        <div class="step"><span class="num">2</span><span>Find the name of the person you want to call</span></div>
+        <div class="step"><span class="num">3</span><span><strong>Tap their name once</strong> — your phone will dial them straight away</span></div>
+      </div>
+    </div>
+
+    <!-- 2. Adding a favourite -->
+    <div class="section">
+      <div class="section-title">2. Adding someone to My Favourites</div>
+      <div class="steps">
+        <div class="step"><span class="num">1</span><span>Tap the <strong>Contacts</strong> tab at the bottom</span></div>
+        <div class="step"><span class="num">2</span><span>Find the person in your list</span></div>
+        <div class="step"><span class="num">3</span><span>Tap the <strong>★ star</strong> next to their name to add them to My Favourites</span></div>
+      </div>
+    </div>
+
+    <!-- 3. Adding a contact -->
+    <div class="section">
+      <div class="section-title">3. Adding a new contact</div>
+      <div class="steps">
+        <div class="step"><span class="num">1</span><span>Tap the <strong>Contacts</strong> tab at the bottom</span></div>
+        <div class="step"><span class="num">2</span><span>Tap <strong>Add Contact Manually</strong></span></div>
+        <div class="step"><span class="num">3</span><span>Type their name and phone number, then tap <strong>Save</strong></span></div>
+      </div>
+    </div>
+
+    <!-- 4. WhatsApp -->
+    <div class="section">
+      <div class="section-title">4. Sending a WhatsApp message</div>
+      <div class="steps">
+        <div class="step"><span class="num">1</span><span>Tap the <strong>WhatsApp</strong> tab at the bottom</span></div>
+        <div class="step"><span class="num">2</span><span>Find the person you want to message</span></div>
+        <div class="step"><span class="num">3</span><span>Tap the <strong>WhatsApp button</strong> next to their name</span></div>
+      </div>
+      <div class="tip">WhatsApp must be installed on your phone for this to work</div>
+    </div>
+
+    <!-- 5. SOS -->
+    <div class="section">
+      <div class="section-title">5. Emergency SOS call</div>
+      <div class="sos-box">
+        The <strong>red SOS button</strong> is always visible on the My Favourites screen.<br>
+        Tap it once to call your emergency contact immediately.<br>
+        To set your emergency contact: go to <strong>Settings → Emergency Contact (SOS)</strong>
+      </div>
+    </div>
+
+    <!-- 6. Trouble -->
+    <div class="section">
+      <div class="section-title">6. If something goes wrong</div>
+      <div class="steps">
+        <div class="step"><span class="num">1</span><span>Close Ezefone completely</span></div>
+        <div class="step"><span class="num">2</span><span>Wait 5 seconds, then open it again</span></div>
+        <div class="step"><span class="num">3</span><span>If still not working, turn your phone off and back on</span></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      Need more help? Email us anytime: <a href="mailto:info@ezefone.co.uk">info@ezefone.co.uk</a> &nbsp;|&nbsp; ezefone.co.uk
+    </div>
+
+  </div>
+
+</body>
+</html>

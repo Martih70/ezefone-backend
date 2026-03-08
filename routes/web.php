@@ -42,6 +42,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Printable A5 guide
+Route::get('/guide', function () {
+    return response(file_get_contents(public_path('guide.html')), 200)
+        ->header('Content-Type', 'text/html; charset=utf-8');
+});
+
 // Simple GET logout for PWA (no CSRF token available in static HTML)
 Route::get('/logout', function () {
     auth()->logout();
