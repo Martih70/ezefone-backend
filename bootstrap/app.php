@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Exclude API routes from CSRF protection
         $middleware->validateCsrfTokens(except: [
             'api/*',
+            'stripe/webhook',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

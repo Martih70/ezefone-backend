@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\PaymentRegistrationController;
@@ -25,6 +26,7 @@ Route::prefix('api')->middleware('auth')->group(function () {
 // Stripe Checkout
 Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
 Route::get('/payment/success', [CheckoutController::class, 'success'])->name('payment.success');
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
 
 // Post-payment account creation
 Route::get('/create-account', [PaymentRegistrationController::class, 'show'])->name('create.account');
