@@ -123,6 +123,8 @@
     .footer a { color: #1e7d3a; }
 
     /* ── Print ── */
+    @page { size: A4 portrait; margin: 0; }
+
     @media print {
       body { background: white; padding: 0; }
       .print-btn { display: none; }
@@ -131,10 +133,6 @@
         min-height: 297mm;
         box-shadow: none;
         padding: 14mm 14mm 12mm;
-      }
-      @page {
-        size: A4 portrait;
-        margin: 0;
       }
     }
   </style>
