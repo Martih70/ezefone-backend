@@ -45,7 +45,7 @@ class PaymentRegistrationController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        Auth::login($user);
+        Auth::login($user, remember: true);
 
         session()->forget(['payment_verified', 'payment_email', 'stripe_session_id']);
 
