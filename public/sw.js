@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ezefone-pwa-v18';
+const CACHE_NAME = 'ezefone-pwa-v19';
 
 const STATIC_ASSETS = [
   '/',
@@ -42,7 +42,7 @@ self.addEventListener('fetch', function(event) {
   }
 
   // HTML: always network-first so updates appear immediately
-  if (url.pathname === '/' || url.pathname.endsWith('.html')) {
+  if (url.pathname === '/' || url.pathname === '/guide' || url.pathname.endsWith('.html')) {
     event.respondWith(
       fetch(event.request).catch(function() {
         return caches.match(event.request);
