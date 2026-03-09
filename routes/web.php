@@ -7,7 +7,22 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\PaymentRegistrationController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+// In-app login for PWA (returns JSON token so the PWA never leaves the app shell)
+Route::post('/api/login', function (Request $request) {
+    $credentials = $request->validate([
+        'email'    => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+    if (!Auth::attempt($credentials)) {
+        return response()->json(['message' => 'Incorrect email or password.'], 401);
+    }
+    $token = Auth::user()->createToken('pwa')->plainTextToken;
+    return response()->json(['token' => $token]);
+})->middleware('throttle:5,1');
 
 // Serve the PWA
 Route::get('/', function () {

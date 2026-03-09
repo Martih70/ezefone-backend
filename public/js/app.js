@@ -77,7 +77,7 @@ async function apiRequest(method, path, body) {
   const res = await fetch('/api' + path, opts);
   if (res.status === 401) {
     localStorage.removeItem('ezefone_token');
-    window.location.href = '/login';
+    showLoginOverlay();
     return;
   }
   if (!res.ok) {
@@ -590,6 +590,54 @@ function signOut() {
 }
 
 // ============================================================
+// IN-APP LOGIN
+// ============================================================
+function showLoginOverlay() {
+  document.getElementById('paywall').style.display = 'none';
+  document.getElementById('login-overlay').style.display = 'flex';
+  setTimeout(function() {
+    var email = document.getElementById('login-email');
+    if (email) email.focus();
+  }, 100);
+}
+
+async function submitInAppLogin(e) {
+  e.preventDefault();
+  var btn = document.getElementById('login-submit-btn');
+  var errDiv = document.getElementById('login-error');
+  var email = document.getElementById('login-email').value;
+  var password = document.getElementById('login-password').value;
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in\u2026';
+  errDiv.style.display = 'none';
+
+  try {
+    var res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ email: email, password: password }),
+    });
+    var data = await res.json().catch(function() { return {}; });
+    if (!res.ok) {
+      errDiv.textContent = data.message || 'Sign in failed. Please try again.';
+      errDiv.style.display = 'block';
+      return;
+    }
+    localStorage.setItem('ezefone_token', data.token);
+    localStorage.setItem('ezefone_paid', '1');
+    document.getElementById('login-overlay').style.display = 'none';
+    await loadContacts();
+  } catch (err) {
+    errDiv.textContent = 'Connection error. Please check your internet.';
+    errDiv.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  }
+}
+
+// ============================================================
 // TOAST
 // ============================================================
 let toastTimer = null;
@@ -742,14 +790,14 @@ async function init() {
 
     // Show install hint in Safari if not already installed and not dismissed
     const isStandalone = window.navigator.standalone === true;
-    const dismissed    = localStorage.getItem('ios-hint-dismissed');
+    const dismissed    = sessionStorage.getItem('ios-hint-dismissed');
     if (!isStandalone && !dismissed) {
       const hint = document.getElementById('ios-install-hint');
       if (hint) {
         hint.classList.remove('hidden');
         document.getElementById('ios-hint-dismiss').addEventListener('click', function() {
           hint.classList.add('hidden');
-          localStorage.setItem('ios-hint-dismissed', '1');
+          sessionStorage.setItem('ios-hint-dismissed', '1');
         });
       }
     }
