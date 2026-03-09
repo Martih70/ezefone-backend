@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ezefone-pwa-v24';
+const CACHE_NAME = 'ezefone-pwa-v25';
 
 const STATIC_ASSETS = [
   '/',
@@ -36,9 +36,11 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('fetch', function(event) {
   const url = new URL(event.request.url);
 
-  // API calls: always network, never cache
+  // API calls: always go direct to network — explicit respondWith avoids
+  // a known iOS/Android bug where bare return causes POST to fail
   if (url.pathname.startsWith('/api/')) {
-    return; // fall through to network
+    event.respondWith(fetch(event.request));
+    return;
   }
 
   // HTML: always network-first so updates appear immediately
