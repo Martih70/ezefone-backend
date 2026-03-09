@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ezefone — Quick Guide</title>
+  <title>Ezefone &mdash; Quick Guide</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: Arial, Helvetica, sans-serif;
-      background: #f5f5f5;
+      background: #f0f0ec;
       color: #1a1a1a;
     }
 
@@ -20,93 +20,108 @@
       background: #1e7d3a;
       color: white;
       border: none;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: bold;
       cursor: pointer;
+      letter-spacing: 0.02em;
     }
+    .print-btn:hover { background: #155f2c; }
 
     /* ── Page ── */
     .page {
-      padding: 22px 18px;
+      padding: 24px 20px 20px;
       background: white;
+      max-width: 720px;
+      margin: 0 auto;
     }
 
     /* ── Header ── */
     .header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       border-bottom: 3px solid #1e7d3a;
-      padding-bottom: 8px;
-      margin-bottom: 14px;
+      padding-bottom: 10px;
+      margin-bottom: 18px;
     }
-    .header img { width: 48px; height: 48px; border-radius: 10px; }
-    .header-title { font-size: 28px; font-weight: 900; color: #1e7d3a; }
-    .header-sub { font-size: 14px; color: #555; margin-top: 2px; }
+    .header img { width: 52px; height: 52px; border-radius: 12px; }
+    .header-title { font-size: 30px; font-weight: 900; color: #1e7d3a; line-height: 1.1; }
+    .header-sub { font-size: 14px; color: #555; margin-top: 3px; }
 
     /* ── Sections ── */
-    .section { margin-bottom: 16px; }
+    .section { margin-bottom: 18px; }
+
     .section-title {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.07em;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       border-bottom: 2px solid;
-      padding-bottom: 4px;
+      padding-bottom: 5px;
     }
 
     /* ── Steps ── */
-    .steps { display: flex; flex-direction: column; gap: 7px; }
+    .steps { display: flex; flex-direction: column; gap: 8px; }
+
     .step {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
-      font-size: 15px;
-      line-height: 1.5;
+      gap: 11px;
+      font-size: 16px;
+      line-height: 1.55;
     }
+
     .num {
       flex-shrink: 0;
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       color: white;
       border-radius: 50%;
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-top: 1px;
     }
 
     /* ── Tip ── */
     .tip {
       font-size: 14px;
-      color: #444;
+      color: #333;
       border-left: 3px solid;
       padding: 6px 10px;
-      margin-top: 7px;
-      border-radius: 0 4px 4px 0;
+      margin-top: 8px;
+      border-radius: 0 5px 5px 0;
     }
 
     /* ── SOS box ── */
     .sos-box {
       border: 2px solid;
-      border-radius: 6px;
-      padding: 10px 14px;
-      font-size: 15px;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 16px;
       line-height: 1.7;
+    }
+
+    /* ── Two-column layout for page 1 ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 24px;
     }
 
     /* ── Footer ── */
     .footer {
-      margin-top: 16px;
+      margin-top: 18px;
       padding-top: 10px;
       border-top: 1px solid #ddd;
       font-size: 13px;
       color: #777;
       text-align: center;
     }
-    .footer a { color: #1e7d3a; }
+    .footer a { color: #1e7d3a; text-decoration: none; }
 
     /* ══════════════════════════════════
        Section colour themes
@@ -115,58 +130,74 @@
     /* 1 — Making a call: warm orange */
     .s1 .section-title { color: #c2410c; border-bottom-color: #fed7aa; }
     .s1 .num { background: #c2410c; }
+    .s1 .tip { border-left-color: #c2410c; background: #fff7ed; }
 
-    /* 2 — Favourites: amber */
-    .s2 .section-title { color: #b45309; border-bottom-color: #fde68a; }
-    .s2 .num { background: #b45309; }
+    /* 2 — Recently called: sky blue */
+    .s2 .section-title { color: #0369a1; border-bottom-color: #bae6fd; }
+    .s2 .num { background: #0369a1; }
+    .s2 .tip { border-left-color: #0369a1; background: #f0f9ff; }
 
-    /* 3 — Photos: blue */
-    .s3 .section-title { color: #1d4ed8; border-bottom-color: #bfdbfe; }
-    .s3 .num { background: #1d4ed8; }
-    .s3 .tip { border-left-color: #1d4ed8; background: #eff6ff; }
+    /* 3 — Favourites: amber */
+    .s3 .section-title { color: #b45309; border-bottom-color: #fde68a; }
+    .s3 .num { background: #b45309; }
+    .s3 .tip { border-left-color: #b45309; background: #fffbeb; }
 
-    /* 4 — Contacts: purple */
-    .s4 .section-title { color: #6d28d9; border-bottom-color: #ddd6fe; }
-    .s4 .num { background: #6d28d9; }
-    .s4 .tip { border-left-color: #6d28d9; background: #f5f3ff; }
+    /* 4 — Labels: green */
+    .s4 .section-title { color: #166534; border-bottom-color: #86efac; }
+    .s4 .num { background: #166534; }
+    .s4 .tip { border-left-color: #166534; background: #f0fdf4; }
 
-    /* 5 — WhatsApp: teal */
-    .s5 .section-title { color: #0e7490; border-bottom-color: #a5f3fc; }
-    .s5 .num { background: #0e7490; }
-    .s5 .tip { border-left-color: #0e7490; background: #ecfeff; }
+    /* 5 — Adding contacts: purple */
+    .s5 .section-title { color: #6d28d9; border-bottom-color: #ddd6fe; }
+    .s5 .num { background: #6d28d9; }
+    .s5 .tip { border-left-color: #6d28d9; background: #f5f3ff; }
 
-    /* 6 — SOS: red */
-    .s6 .section-title { color: #b91c1c; border-bottom-color: #fecaca; }
-    .s6 .sos-box { background: #fef2f2; border-color: #b91c1c; }
-    .s6 .sos-box strong { color: #b91c1c; }
+    /* 6 — Photos: blue */
+    .s6 .section-title { color: #1d4ed8; border-bottom-color: #bfdbfe; }
+    .s6 .num { background: #1d4ed8; }
+    .s6 .tip { border-left-color: #1d4ed8; background: #eff6ff; }
 
-    /* 7 — Trouble: slate */
-    .s7 .section-title { color: #475569; border-bottom-color: #e2e8f0; }
-    .s7 .num { background: #475569; }
+    /* 7 — WhatsApp: teal */
+    .s7 .section-title { color: #0e7490; border-bottom-color: #a5f3fc; }
+    .s7 .num { background: #0e7490; }
+    .s7 .tip { border-left-color: #0e7490; background: #ecfeff; }
+
+    /* 8 — SOS: red */
+    .s8 .section-title { color: #b91c1c; border-bottom-color: #fecaca; }
+    .s8 .sos-box { background: #fef2f2; border-color: #b91c1c; }
+    .s8 .sos-box strong { color: #b91c1c; }
+
+    /* 9 — Trouble: slate */
+    .s9 .section-title { color: #475569; border-bottom-color: #e2e8f0; }
+    .s9 .num { background: #475569; }
+    .s9 .tip { border-left-color: #475569; background: #f8fafc; }
 
     /* ── Print ── */
     @page { size: A4 portrait; margin: 0; }
 
     @media print {
-      body { background: white; padding: 0; }
+      body { background: white; }
       .print-btn { display: none; }
       .page {
         width: 210mm;
         min-height: 297mm;
+        margin: 0;
+        padding: 13mm 15mm 10mm;
         box-shadow: none;
-        padding: 13mm 14mm 10mm;
+        max-width: none;
       }
       .page-break {
         page-break-after: always;
         break-after: page;
         height: 0;
+        margin: 0;
       }
     }
   </style>
 </head>
 <body>
 
-  <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <button class="print-btn" onclick="window.print()">&#x1F5A8; Print / Save as PDF</button>
 
   <div class="page">
 
@@ -174,103 +205,184 @@
     <div class="header">
       <img src="/icons/favicon-48x48.png" alt="Ezefone">
       <div>
-        <div class="header-title">Ezefone — Quick Guide</div>
-        <div class="header-sub">Everything you need, nothing you don't</div>
+        <div class="header-title">Ezefone &mdash; Quick Guide</div>
+        <div class="header-sub">Everything you need, nothing you don&rsquo;t &nbsp;&bull;&nbsp; Page 1 of 2</div>
       </div>
     </div>
 
-    <!-- 1. Making a call -->
-    <div class="section s1">
-      <div class="section-title">1. Making a call from My Favourites</div>
-      <div class="steps">
-        <div class="step"><span class="num">1</span><span>Open Ezefone — you'll see your <strong>My Favourites</strong> screen</span></div>
-        <div class="step"><span class="num">2</span><span>Find the name of the person you want to call</span></div>
-        <div class="step"><span class="num">3</span><span><strong>Tap their card once</strong> — your phone will dial them straight away</span></div>
+    <div class="two-col">
+
+      <!-- Left column -->
+      <div>
+
+        <!-- 1. Making a call -->
+        <div class="section s1">
+          <div class="section-title">1. Making a call</div>
+          <div class="steps">
+            <div class="step"><span class="num">1</span><span>Open Ezefone &mdash; you&rsquo;ll see your <strong>My Favourites</strong> screen</span></div>
+            <div class="step"><span class="num">2</span><span>Find the name of the person you want to call</span></div>
+            <div class="step"><span class="num">3</span><span><strong>Tap their card once</strong> &mdash; your phone dials them straight away</span></div>
+            <div class="step"><span class="num">4</span><span>When finished, tap the <strong>red button</strong> to hang up</span></div>
+          </div>
+        </div>
+
+        <!-- 2. Recently called -->
+        <div class="section s2">
+          <div class="section-title">2. Calling someone you rang recently</div>
+          <div class="steps">
+            <div class="step"><span class="num">1</span><span>After any call, a <strong>Recently Called</strong> strip appears above your favourite cards</span></div>
+            <div class="step"><span class="num">2</span><span><strong>Tap any face</strong> in the strip to call them again instantly</span></div>
+          </div>
+          <div class="tip">Scroll left or right to see your last 8 calls</div>
+        </div>
+
+        <!-- 3. Favourites -->
+        <div class="section s3">
+          <div class="section-title">3. Adding or removing a favourite</div>
+          <div class="steps">
+            <div class="step"><span class="num">1</span><span>Tap the <strong>Contacts</strong> tab at the bottom</span></div>
+            <div class="step"><span class="num">2</span><span>Find the person and <strong>tap their row</strong></span></div>
+            <div class="step"><span class="num">3</span><span>Tap <strong>Add to My Favourites</strong> &mdash; their card appears on your home screen</span></div>
+            <div class="step"><span class="num">4</span><span>To remove: tap their row again, then tap <strong>Remove from My Favourites</strong></span></div>
+          </div>
+          <div class="tip">You can have up to 4 favourite cards</div>
+        </div>
+
       </div>
+
+      <!-- Right column -->
+      <div>
+
+        <!-- 4. Relationship label -->
+        <div class="section s4">
+          <div class="section-title">4. Setting a relationship label</div>
+          <div class="steps">
+            <div class="step"><span class="num">1</span><span>Tap the <strong>Contacts</strong> tab, then tap the person&rsquo;s row</span></div>
+            <div class="step"><span class="num">2</span><span>Tap <strong>Set Relationship Label</strong></span></div>
+            <div class="step"><span class="num">3</span><span>Type a short reminder &mdash; e.g. <em>My Daughter</em> or <em>GP Surgery</em> &mdash; then tap <strong>Save</strong></span></div>
+          </div>
+          <div class="tip">The label appears below their name on the favourite card</div>
+        </div>
+
+        <!-- 5. Adding contacts -->
+        <div class="section s5">
+          <div class="section-title">5. Adding a new contact</div>
+          <div class="steps">
+            <div class="step"><span class="num">1</span><span>Tap the <strong>Contacts</strong> tab at the bottom</span></div>
+            <div class="step"><span class="num">2</span><span><strong>Android:</strong> tap <strong>Import from Phone</strong> to bring in several contacts at once</span></div>
+            <div class="step"><span class="num">3</span><span><strong>iPhone:</strong> tap <strong>Add Contact Manually</strong>, enter their name and number, tap <strong>Save</strong></span></div>
+          </div>
+        </div>
+
+        <!-- 6. Photos -->
+        <div class="section s6">
+          <div class="section-title">6. Adding a photo to a favourite</div>
+          <div class="steps">
+            <div class="step"><span class="num">1</span><span>Tap <strong>Contacts</strong>, then tap the row of a favourite contact</span></div>
+            <div class="step"><span class="num">2</span><span>Tap <strong>Change Photo</strong> and choose a picture from your phone</span></div>
+            <div class="step"><span class="num">3</span><span>The photo appears on their card straight away</span></div>
+          </div>
+          <div class="tip">To remove a photo: tap their row, then tap <strong>Remove Photo</strong></div>
+        </div>
+
+      </div>
+    </div><!-- /.two-col -->
+
+    <!-- Footer page 1 -->
+    <div class="footer">
+      Need more help? Email us: <a href="mailto:info@ezefone.co.uk">info@ezefone.co.uk</a> &nbsp;&bull;&nbsp; ezefone.co.uk &nbsp;&bull;&nbsp; <em>continued overleaf &rarr;</em>
     </div>
 
-    <!-- 2. Adding / removing a favourite -->
-    <div class="section s2">
-      <div class="section-title">2. Adding or removing a favourite</div>
-      <div class="steps">
-        <div class="step"><span class="num">1</span><span>Tap the <strong>Contacts</strong> tab at the bottom</span></div>
-        <div class="step"><span class="num">2</span><span>Find the person in your list</span></div>
-        <div class="step"><span class="num">3</span><span>Tap the <strong>star ☆</strong> to add them — it turns gold ★</span></div>
-        <div class="step"><span class="num">4</span><span>Tap the <strong>gold star ★</strong> again to remove them</span></div>
-      </div>
-    </div>
-
-    <!-- 3. Adding a photo -->
-    <div class="section s3">
-      <div class="section-title">3. Adding a photo to a favourite card</div>
-      <div class="steps">
-        <div class="step"><span class="num">1</span><span>Tap the <strong>Contacts</strong> tab at the bottom</span></div>
-        <div class="step"><span class="num">2</span><span>Find the person — a <strong>blue camera button</strong> appears next to their name if they are one of your four favourites</span></div>
-        <div class="step"><span class="num">3</span><span>Tap the camera button and choose a photo — it will appear on their card straight away</span></div>
-      </div>
-      <div class="tip">To remove a photo: tap the grey remove-photo button next to the camera</div>
-    </div>
-
-    <!-- 4a. Adding a contact - Android -->
-    <div class="section s4">
-      <div class="section-title">4a. Adding a contact — Android</div>
-      <div class="steps">
-        <div class="step"><span class="num">1</span><span>Tap the <strong>Contacts</strong> tab at the bottom</span></div>
-        <div class="step"><span class="num">2</span><span>Tap <strong>Import from Phone</strong> to pick several contacts from your address book at once</span></div>
-      </div>
-      <div class="tip">Or tap <strong>Add Contact Manually</strong> to add one person at a time</div>
-    </div>
-
-    <!-- 4b. Adding a contact - iPhone -->
-    <div class="section s4">
-      <div class="section-title">4b. Adding a contact — iPhone</div>
-      <div class="steps">
-        <div class="step"><span class="num">1</span><span>Tap the <strong>Contacts</strong> tab at the bottom</span></div>
-        <div class="step"><span class="num">2</span><span>Tap <strong>Add Contact Manually</strong></span></div>
-        <div class="step"><span class="num">3</span><span>Type their name and phone number, then tap <strong>Save</strong></span></div>
-      </div>
-    </div>
-
-    <!-- Page break between page 1 and page 2 -->
+    <!-- Page break -->
     <div class="page-break"></div>
 
-    <!-- 5. WhatsApp -->
-    <div class="section s5">
-      <div class="section-title">5. Sending a WhatsApp message</div>
-      <div class="steps">
-        <div class="step"><span class="num">1</span><span>Tap the <strong>WhatsApp</strong> tab at the bottom</span></div>
-        <div class="step"><span class="num">2</span><span>Find the person you want to message</span></div>
-        <div class="step"><span class="num">3</span><span>Tap the <strong>WhatsApp button</strong> next to their name</span></div>
-      </div>
-      <div class="tip">WhatsApp must be installed on your phone for this to work</div>
-    </div>
+    <!-- ── PAGE 2 ── -->
 
-    <!-- 6. SOS -->
-    <div class="section s6">
-      <div class="section-title">6. Emergency SOS call</div>
-      <div class="sos-box">
-        The <strong>red SOS button</strong> is always visible on the My Favourites screen.<br>
-        Tap it once to call your emergency contact immediately.<br>
-        To set your emergency contact: go to <strong>Settings → Emergency Contact (SOS)</strong>
+    <!-- Header page 2 -->
+    <div class="header">
+      <img src="/icons/favicon-48x48.png" alt="Ezefone">
+      <div>
+        <div class="header-title">Ezefone &mdash; Quick Guide</div>
+        <div class="header-sub">Everything you need, nothing you don&rsquo;t &nbsp;&bull;&nbsp; Page 2 of 2</div>
       </div>
     </div>
 
-    <!-- 7. Trouble -->
-    <div class="section s7">
-      <div class="section-title">7. If something goes wrong</div>
-      <div class="steps">
-        <div class="step"><span class="num">1</span><span>Close Ezefone completely</span></div>
-        <div class="step"><span class="num">2</span><span>Wait 5 seconds, then open it again</span></div>
-        <div class="step"><span class="num">3</span><span>If still not working, turn your phone off and back on</span></div>
-      </div>
-    </div>
+    <div class="two-col">
 
-    <!-- Footer -->
+      <!-- Left column -->
+      <div>
+
+        <!-- 7. WhatsApp -->
+        <div class="section s7">
+          <div class="section-title">7. Sending a WhatsApp message</div>
+          <div class="steps">
+            <div class="step"><span class="num">1</span><span>Tap the <strong>WhatsApp</strong> tab at the bottom</span></div>
+            <div class="step"><span class="num">2</span><span>Find the person you want to message</span></div>
+            <div class="step"><span class="num">3</span><span>Tap the <strong>WhatsApp button</strong> next to their name &mdash; WhatsApp will open ready to type</span></div>
+          </div>
+          <div class="tip">WhatsApp must be installed on your phone</div>
+        </div>
+
+        <!-- 8. SOS -->
+        <div class="section s8">
+          <div class="section-title">8. Emergency SOS call</div>
+          <div class="sos-box">
+            The <strong>red &ldquo;Call for Help&rdquo; button</strong> is always visible at the bottom of your home screen.<br><br>
+            Tap it once to call your emergency contact immediately.<br><br>
+            To set your emergency contact:<br>
+            <strong>Settings &rarr; Emergency Contact (SOS)</strong>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right column -->
+      <div>
+
+        <!-- 9. If something goes wrong -->
+        <div class="section s9">
+          <div class="section-title">9. If something goes wrong</div>
+          <div class="steps">
+            <div class="step"><span class="num">1</span><span><strong>Screen frozen?</strong> Press the Home button, then tap Ezefone to reopen it</span></div>
+            <div class="step"><span class="num">2</span><span><strong>Still wrong?</strong> Turn the phone off, wait 10 seconds, then turn it back on</span></div>
+            <div class="step"><span class="num">3</span><span><strong>Cannot find the app?</strong> Open your browser and go to <em>ezefone-backend-c8eadiyp.on-forge.com</em> and sign in</span></div>
+            <div class="step"><span class="num">4</span><span><strong>Battery low?</strong> Plug in your charger &mdash; a lightning bolt on screen means it is charging</span></div>
+          </div>
+          <div class="tip">Charge your phone every night so it is always ready</div>
+        </div>
+
+        <!-- Quick-reference box -->
+        <div class="section" style="margin-top:6px">
+          <div class="section-title" style="color:#374151;border-bottom-color:#d1d5db">Quick reminder &mdash; the four tabs</div>
+          <table style="width:100%;border-collapse:collapse;font-size:15px;margin-top:6px">
+            <tr style="background:#f9fafb">
+              <td style="padding:7px 10px;border:1px solid #e5e7eb;font-weight:800">&#x2605; My Favourites</td>
+              <td style="padding:7px 10px;border:1px solid #e5e7eb;color:#555">Tap a card to call</td>
+            </tr>
+            <tr>
+              <td style="padding:7px 10px;border:1px solid #e5e7eb;font-weight:800">&#x260E; Contacts</td>
+              <td style="padding:7px 10px;border:1px solid #e5e7eb;color:#555">Add &amp; manage everyone</td>
+            </tr>
+            <tr style="background:#f9fafb">
+              <td style="padding:7px 10px;border:1px solid #e5e7eb;font-weight:800">&#x1F4AC; WhatsApp</td>
+              <td style="padding:7px 10px;border:1px solid #e5e7eb;color:#555">Send a WhatsApp message</td>
+            </tr>
+            <tr>
+              <td style="padding:7px 10px;border:1px solid #e5e7eb;font-weight:800">&#x2699; Settings</td>
+              <td style="padding:7px 10px;border:1px solid #e5e7eb;color:#555">SOS, text size &amp; more</td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+    </div><!-- /.two-col -->
+
+    <!-- Footer page 2 -->
     <div class="footer">
-      Need more help? Email us anytime: <a href="mailto:info@ezefone.co.uk">info@ezefone.co.uk</a> &nbsp;|&nbsp; ezefone.co.uk
+      Need more help? Email us: <a href="mailto:info@ezefone.co.uk">info@ezefone.co.uk</a> &nbsp;&bull;&nbsp; reply within 24 hrs &nbsp;&bull;&nbsp; ezefone.co.uk
     </div>
 
-  </div>
+  </div><!-- /.page -->
 
 </body>
 </html>
