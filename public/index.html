@@ -589,6 +589,12 @@
           <span class="material-icons-round">chat</span>WhatsApp
         </button>
       </div>
+      <button id="sheet-photo-add" class="sheet-photo" onclick="sheetAction('photo')">
+        <span class="material-icons-round">add_a_photo</span>Change Photo
+      </button>
+      <button id="sheet-photo-remove" class="sheet-photo-remove hidden" onclick="sheetAction('remove-photo')">
+        <span class="material-icons-round">hide_image</span>Remove Photo
+      </button>
       <button class="sheet-remove" onclick="sheetAction('remove')">
         <span class="material-icons-round">star_border</span>Remove from Favourites
       </button>
@@ -684,6 +690,9 @@
     </div>
 
   </div>
+
+  <!-- Hidden photo file picker -->
+  <input type="file" id="photo-file-input" accept="image/*" style="display:none">
 
   <script src="/js/app.js"></script>
 </body>

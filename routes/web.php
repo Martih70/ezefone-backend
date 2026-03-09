@@ -37,6 +37,8 @@ Route::prefix('api')->middleware('auth:sanctum')->group(function () {
     Route::delete('/contacts/{contactId}', [ContactController::class, 'destroy']);
     Route::post('/contacts/{contactId}/favorite', [ContactController::class, 'addFavorite']);
     Route::delete('/contacts/{contactId}/favorite', [ContactController::class, 'removeFavorite']);
+    Route::post('/contacts/{contactId}/photo', [ContactController::class, 'updatePhoto']);
+    Route::delete('/contacts/{contactId}/photo', [ContactController::class, 'removePhoto']);
     Route::post('/feedback', [FeedbackController::class, 'store']);
 });
 

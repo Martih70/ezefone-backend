@@ -301,6 +301,16 @@ input {
   flex-shrink: 0;
 }
 
+.hero-avatar-photo {
+  width: clamp(44px, 13vw, 68px);
+  height: clamp(44px, 13vw, 68px);
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255,255,255,0.85);
+  box-shadow: 0 4px 16px var(--glow-color, rgba(0,0,0,0.15));
+  flex-shrink: 0;
+}
+
 .hero-name {
   font-size: clamp(14px, 4vw, 20px);
   font-weight: 900;
@@ -845,6 +855,42 @@ input {
 .sheet-call     { background: var(--green-mid); box-shadow: 0 3px 12px rgba(42,140,82,0.35); }
 .sheet-whatsapp { background: var(--green-light); box-shadow: 0 3px 12px rgba(61,184,112,0.35); }
 .sheet-sms      { background: var(--amber); box-shadow: 0 3px 12px rgba(245,166,35,0.35); }
+
+.sheet-photo {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: var(--radius-btn);
+  background: #f0f7ff;
+  border: 2px solid #bfdbfe;
+  font-size: 15px; font-weight: 700;
+  color: #1d4ed8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s;
+}
+.sheet-photo:active { background: #dbeafe; }
+.sheet-photo .material-icons-round { font-size: 20px; }
+
+.sheet-photo-remove {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: var(--radius-btn);
+  background: #fafafa;
+  border: 2px solid #e5e7eb;
+  font-size: 15px; font-weight: 700;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s;
+}
+.sheet-photo-remove:active { background: #f3f4f6; }
+.sheet-photo-remove .material-icons-round { font-size: 20px; }
 
 .sheet-remove {
   width: 100%;

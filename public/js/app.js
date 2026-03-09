@@ -195,11 +195,14 @@ function renderPeople() {
       const initials = getInitials(contact.name);
       const id       = fav.contact_id;
 
+      const avatarHtml = contact.photo_path
+        ? '<img class="hero-avatar-photo" src="' + contact.photo_path + '" alt="">'
+        : '<div class="hero-avatar" style="background:' + theme.avatar + ';box-shadow:0 4px 18px ' + theme.glow + '">' + esc(initials) + '</div>';
+
       html += '<div class="hero-card" style="--glow-color:' + theme.glow + ';background:' + theme.bg + ';border-color:' + theme.border + '" onclick="heroTap(' + id + ')">'
         + '<button class="hero-more-btn" onclick="event.stopPropagation();showActionSheet(' + id + ')" title="More options">'
         + '<span class="material-icons-round">more_horiz</span></button>'
-        + '<div class="hero-avatar" style="background:' + theme.avatar + ';box-shadow:0 4px 18px ' + theme.glow + '">'
-        + esc(initials) + '</div>'
+        + avatarHtml
         + '<div class="hero-name">' + esc(firstName(contact.name)) + '</div>'
         + '<div class="hero-phone">' + esc(contact.phone || '') + '</div>'
         + '<div class="hero-call-hint"><span class="material-icons-round">call</span>Tap to call</div>'
@@ -249,6 +252,7 @@ function showActionSheet(contactId) {
   state.sheetContactId = contactId;
   document.getElementById('sheet-name').textContent  = contact.name;
   document.getElementById('sheet-phone').textContent = contact.phone || '';
+  document.getElementById('sheet-photo-remove').classList.toggle('hidden', !contact.photo_path);
   document.getElementById('action-sheet-overlay').classList.remove('hidden');
 }
 
@@ -275,6 +279,12 @@ function sheetAction(action) {
       window.location.href = 'https://wa.me/' + digits;
       break;
     }
+    case 'photo':
+      triggerPhotoUpload(id);
+      break;
+    case 'remove-photo':
+      removeContactPhoto(id);
+      break;
     case 'remove':
       toggleFavourite(id, true);
       break;
@@ -583,6 +593,78 @@ async function submitFeedback() {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Send Feedback';
+  }
+}
+
+// ============================================================
+// CONTACT PHOTOS
+// ============================================================
+function triggerPhotoUpload(contactId) {
+  const input = document.getElementById('photo-file-input');
+  input.value = '';
+  input.onchange = function() {
+    const file = input.files[0];
+    if (!file) return;
+    compressImage(file).then(function(base64) {
+      uploadContactPhoto(contactId, base64);
+    });
+  };
+  input.click();
+}
+
+function compressImage(file) {
+  return new Promise(function(resolve) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const SIZE = 400;
+        const canvas = document.createElement('canvas');
+        canvas.width  = SIZE;
+        canvas.height = SIZE;
+        const ctx = canvas.getContext('2d');
+        // Centre-crop to square
+        const min = Math.min(img.width, img.height);
+        const sx  = (img.width  - min) / 2;
+        const sy  = (img.height - min) / 2;
+        ctx.drawImage(img, sx, sy, min, min, 0, 0, SIZE, SIZE);
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadContactPhoto(contactId, base64) {
+  showToast('Saving photo\u2026');
+  try {
+    await apiRequest('POST', '/contacts/' + contactId + '/photo', { photo: base64 });
+    // Update in-memory state
+    const c = state.contacts.find(function(x) { return x.id === contactId; });
+    if (c) c.photo_path = base64;
+    state.favorites.forEach(function(f) {
+      if (f.contact && f.contact.id === contactId) f.contact.photo_path = base64;
+    });
+    renderPeople();
+    showToast('Photo saved!');
+  } catch (err) {
+    if (!err.isAuthError) showToast('Could not save photo — please try again');
+  }
+}
+
+async function removeContactPhoto(contactId) {
+  try {
+    await apiRequest('DELETE', '/contacts/' + contactId + '/photo');
+    const c = state.contacts.find(function(x) { return x.id === contactId; });
+    if (c) c.photo_path = null;
+    state.favorites.forEach(function(f) {
+      if (f.contact && f.contact.id === contactId) f.contact.photo_path = null;
+    });
+    renderPeople();
+    showToast('Photo removed');
+  } catch (err) {
+    if (!err.isAuthError) showToast('Could not remove photo');
   }
 }
 
