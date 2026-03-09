@@ -578,7 +578,7 @@ async function submitFeedback() {
     if (!err.isAuthError) {
       status.style.display = 'block';
       status.style.color = '#d93025';
-      status.textContent = 'Could not send — please try again.';
+      status.textContent = 'Could not send (' + err.message + ')';
     }
   } finally {
     btn.disabled = false;
