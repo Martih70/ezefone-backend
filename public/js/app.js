@@ -10,7 +10,6 @@ const state = {
   loading: false,
   installPrompt: null,
   sheetContactId: null,
-  photoSheetContactId: null,
 };
 
 // ============================================================
@@ -301,30 +300,19 @@ function renderManageList() {
     const isFav    = favIds.has(contact.id);
     const id       = contact.id;
 
-    const photoBtn = isFav
-      ? '<button class="manage-photo-btn' + (contact.photo_path ? ' has-photo' : '') + '" onclick="showPhotoSheet(' + id + ')" title="' + (contact.photo_path ? 'Change photo' : 'Add photo') + '">'
-        + '<span class="material-icons-round">add_a_photo</span></button>'
-      : '';
-
     const callBtn = contact.phone
-      ? '<button class="manage-call-btn" onclick="window.location.href=\'tel:' + esc(contact.phone) + '\'" title="Call ' + esc(contact.name) + '">'
+      ? '<button class="manage-call-btn" onclick="event.stopPropagation();window.location.href=\'tel:' + esc(contact.phone) + '\'" title="Call ' + esc(contact.name) + '">'
         + '<span class="material-icons-round">call</span></button>'
       : '';
 
-    return '<div class="manage-row">'
+    return '<div class="manage-row" onclick="showManageSheet(' + id + ')">'
       + '<div class="manage-avatar" style="background:' + color + '">' + esc(initials) + '</div>'
       + '<div class="manage-info">'
-      + '<div class="manage-name">' + esc(contact.name) + '</div>'
+      + '<div class="manage-name">' + esc(contact.name) + (isFav ? ' <span class="manage-fav-dot">\u2605</span>' : '') + '</div>'
       + '<div class="manage-phone">' + esc(contact.phone || contact.email || '') + '</div>'
       + '</div>'
-      + '<div class="manage-actions">'
       + callBtn
-      + photoBtn
-      + '<button class="manage-star-btn' + (isFav ? ' active' : '') + '" onclick="toggleFavourite(' + id + ',' + isFav + ')" title="' + (isFav ? 'Remove from My Favourites' : 'Add to My Favourites') + '">'
-      + '<span class="material-icons-round">' + (isFav ? 'star' : 'star_border') + '</span></button>'
-      + '<button class="manage-delete-btn" onclick="confirmDelete(' + id + ')" title="Delete contact">'
-      + '<span class="material-icons-round">delete</span></button>'
-      + '</div>'
+      + '<span class="material-icons-round manage-chevron">chevron_right</span>'
       + '</div>';
   }).join('');
 }
@@ -559,28 +547,44 @@ async function submitFeedback() {
 }
 
 // ============================================================
-// PHOTO SHEET (single camera button on favourite rows)
+// MANAGE SHEET (tap a contact row to open)
 // ============================================================
-function showPhotoSheet(contactId) {
+function showManageSheet(contactId) {
   const contact = state.contacts.find(c => c.id === contactId);
   if (!contact) return;
-  state.photoSheetContactId = contactId;
-  document.getElementById('photo-sheet-name').textContent = contact.name;
-  document.getElementById('photo-sheet-remove').classList.toggle('hidden', !contact.photo_path);
-  document.getElementById('photo-sheet-overlay').classList.remove('hidden');
+  const isFav = state.favorites.some(f => f.contact_id === contactId);
+
+  state.sheetContactId = contactId;
+  document.getElementById('manage-sheet-name').textContent = contact.name;
+
+  const starIcon  = document.getElementById('manage-sheet-star-icon');
+  const starLabel = document.getElementById('manage-sheet-star-label');
+  const starBtn   = document.getElementById('manage-sheet-star');
+  starIcon.textContent  = isFav ? 'star' : 'star_border';
+  starLabel.textContent = isFav ? 'Remove from My Favourites' : 'Add to My Favourites';
+  starBtn.className     = 'sheet-star' + (isFav ? ' is-fav' : '');
+
+  document.getElementById('manage-sheet-photo').classList.toggle('hidden', !isFav);
+  document.getElementById('manage-sheet-remove-photo').classList.toggle('hidden', !isFav || !contact.photo_path);
+  document.getElementById('manage-sheet-overlay').classList.remove('hidden');
 }
 
-function hidePhotoSheet() {
-  document.getElementById('photo-sheet-overlay').classList.add('hidden');
-  state.photoSheetContactId = null;
+function hideManageSheet() {
+  document.getElementById('manage-sheet-overlay').classList.add('hidden');
+  state.sheetContactId = null;
 }
 
-function photoSheetAction(action) {
-  const id = state.photoSheetContactId;
-  hidePhotoSheet();
+function manageSheetAction(action) {
+  const id = state.sheetContactId;
+  hideManageSheet();
   if (id === null) return;
-  if (action === 'change') triggerPhotoUpload(id);
-  if (action === 'remove') removeContactPhoto(id);
+  const isFav = state.favorites.some(f => f.contact_id === id);
+  switch (action) {
+    case 'star':        toggleFavourite(id, isFav); break;
+    case 'photo':       triggerPhotoUpload(id);     break;
+    case 'remove-photo': removeContactPhoto(id);    break;
+    case 'delete':      confirmDelete(id);          break;
+  }
 }
 
 // ============================================================

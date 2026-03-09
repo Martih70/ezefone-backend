@@ -590,19 +590,26 @@
 
 
   <!-- ============================================================
-       PHOTO SHEET (camera button on favourite contact rows)
+       MANAGE SHEET (tap a contact row)
        ============================================================ -->
-  <div id="photo-sheet-overlay" class="sheet-overlay hidden" onclick="hidePhotoSheet()">
-    <div class="photo-sheet" onclick="event.stopPropagation()">
+  <div id="manage-sheet-overlay" class="sheet-overlay hidden" onclick="hideManageSheet()">
+    <div class="manage-sheet" onclick="event.stopPropagation()">
       <div class="sheet-handle"></div>
-      <div id="photo-sheet-name" class="sheet-name"></div>
-      <button id="photo-sheet-change" class="sheet-photo" onclick="photoSheetAction('change')">
+      <div id="manage-sheet-name" class="sheet-name"></div>
+      <button id="manage-sheet-star" class="sheet-star" onclick="manageSheetAction('star')">
+        <span class="material-icons-round" id="manage-sheet-star-icon">star_border</span>
+        <span id="manage-sheet-star-label">Add to My Favourites</span>
+      </button>
+      <button id="manage-sheet-photo" class="sheet-photo hidden" onclick="manageSheetAction('photo')">
         <span class="material-icons-round">add_a_photo</span>Change Photo
       </button>
-      <button id="photo-sheet-remove" class="sheet-photo-remove hidden" onclick="photoSheetAction('remove')">
+      <button id="manage-sheet-remove-photo" class="sheet-photo-remove hidden" onclick="manageSheetAction('remove-photo')">
         <span class="material-icons-round">hide_image</span>Remove Photo
       </button>
-      <button class="sheet-cancel" onclick="hidePhotoSheet()">Cancel</button>
+      <button class="sheet-delete" onclick="manageSheetAction('delete')">
+        <span class="material-icons-round">delete</span>Delete Contact
+      </button>
+      <button class="sheet-cancel" onclick="hideManageSheet()">Cancel</button>
     </div>
   </div>
 
