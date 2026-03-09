@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ezefone-pwa-v27';
+const CACHE_NAME = 'ezefone-pwa-v28';
 
 const STATIC_ASSETS = [
   '/',

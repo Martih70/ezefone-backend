@@ -469,10 +469,10 @@
             <span class="material-icons-round faq-chevron">expand_more</span>
           </div>
           <div class="faq-answer">
-            <div class="faq-step"><span class="step-num">1</span><span>On the My Favourites screen, tap the <strong>···</strong> button on the card you want to update</span></div>
-            <div class="faq-step"><span class="step-num">2</span><span>Tap <strong>Change Photo</strong></span></div>
-            <div class="faq-step"><span class="step-num">3</span><span>Choose a photo from your phone — it will appear on the card straight away</span></div>
-            <div class="faq-tip">💡 To remove a photo, tap <strong>···</strong> then <strong>Remove Photo</strong></div>
+            <div class="faq-step"><span class="step-num">1</span><span>Tap <strong>Contacts</strong> at the bottom of the screen</span></div>
+            <div class="faq-step"><span class="step-num">2</span><span>Find the person — a <strong>blue camera icon</strong> appears next to their name if they are one of your four favourites</span></div>
+            <div class="faq-step"><span class="step-num">3</span><span>Tap the camera icon and choose a photo from your phone — it will appear on their card straight away</span></div>
+            <div class="faq-tip">💡 To remove a photo, tap the grey remove-photo icon (next to the camera)</div>
           </div>
 
           <div class="faq-row" onclick="toggleFaq(this)">
@@ -586,27 +586,6 @@
       <span class="nav-label">Help</span>
     </button>
   </nav>
-
-
-  <!-- ============================================================
-       ACTION SHEET (··· button on hero card)
-       ============================================================ -->
-  <div id="action-sheet-overlay" class="sheet-overlay hidden" onclick="hideActionSheet()">
-    <div class="action-sheet" id="action-sheet" onclick="event.stopPropagation()">
-      <div class="sheet-handle"></div>
-      <div id="sheet-name" class="sheet-name"></div>
-      <button id="sheet-photo-add" class="sheet-photo" onclick="sheetAction('photo')">
-        <span class="material-icons-round">add_a_photo</span>Change Photo
-      </button>
-      <button id="sheet-photo-remove" class="sheet-photo-remove hidden" onclick="sheetAction('remove-photo')">
-        <span class="material-icons-round">hide_image</span>Remove Photo
-      </button>
-      <button class="sheet-remove" onclick="sheetAction('remove')">
-        <span class="material-icons-round">star_border</span>Remove from Favourites
-      </button>
-      <button class="sheet-cancel" onclick="hideActionSheet()">Cancel</button>
-    </div>
-  </div>
 
 
   <!-- ============================================================

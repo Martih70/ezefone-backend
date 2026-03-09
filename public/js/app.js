@@ -200,8 +200,6 @@ function renderPeople() {
         : '<div class="hero-avatar" style="background:' + theme.avatar + ';box-shadow:0 4px 18px ' + theme.glow + '">' + esc(initials) + '</div>';
 
       html += '<div class="hero-card" style="--glow-color:' + theme.glow + ';background:' + theme.bg + ';border-color:' + theme.border + '" onclick="heroTap(' + id + ')">'
-        + '<button class="hero-more-btn" onclick="event.stopPropagation();showActionSheet(' + id + ')" title="More options">'
-        + '<span class="material-icons-round">more_horiz</span></button>'
         + avatarHtml
         + '<div class="hero-name">' + esc(firstName(contact.name)) + '</div>'
         + '<div class="hero-phone">' + esc(contact.phone || '') + '</div>'
@@ -241,43 +239,6 @@ function heroTap(contactId) {
   window.location.href = 'tel:' + contact.phone;
 }
 
-// ============================================================
-// ACTION SHEET (··· button)
-// ============================================================
-function showActionSheet(contactId) {
-  const fav = state.favorites.find(f => f.contact_id === contactId);
-  const contact = fav ? fav.contact : state.contacts.find(c => c.id === contactId);
-  if (!contact) return;
-
-  state.sheetContactId = contactId;
-  document.getElementById('sheet-name').textContent  = contact.name;
-  document.getElementById('sheet-phone').textContent = contact.phone || '';
-  document.getElementById('sheet-photo-remove').classList.toggle('hidden', !contact.photo_path);
-  document.getElementById('action-sheet-overlay').classList.remove('hidden');
-}
-
-function hideActionSheet() {
-  document.getElementById('action-sheet-overlay').classList.add('hidden');
-  state.sheetContactId = null;
-}
-
-function sheetAction(action) {
-  const id = state.sheetContactId;
-  hideActionSheet();
-  if (id === null) return;
-
-  switch (action) {
-    case 'photo':
-      triggerPhotoUpload(id);
-      break;
-    case 'remove-photo':
-      removeContactPhoto(id);
-      break;
-    case 'remove':
-      toggleFavourite(id, true);
-      break;
-  }
-}
 
 // ============================================================
 // RENDER: MESSAGES
@@ -339,6 +300,12 @@ function renderManageList() {
     const isFav    = favIds.has(contact.id);
     const id       = contact.id;
 
+    const photoBtn = isFav
+      ? '<button class="manage-photo-btn' + (contact.photo_path ? ' has-photo' : '') + '" onclick="triggerPhotoUpload(' + id + ')" title="' + (contact.photo_path ? 'Change photo' : 'Add photo') + '">'
+        + '<span class="material-icons-round">' + (contact.photo_path ? 'add_a_photo' : 'add_a_photo') + '</span></button>'
+        + (contact.photo_path ? '<button class="manage-photo-remove-btn" onclick="removeContactPhoto(' + id + ')" title="Remove photo"><span class="material-icons-round">hide_image</span></button>' : '')
+      : '';
+
     return '<div class="manage-row">'
       + '<div class="manage-avatar" style="background:' + color + '">' + esc(initials) + '</div>'
       + '<div class="manage-info">'
@@ -346,6 +313,7 @@ function renderManageList() {
       + '<div class="manage-phone">' + esc(contact.phone || contact.email || '') + '</div>'
       + '</div>'
       + '<div class="manage-actions">'
+      + photoBtn
       + '<button class="manage-star-btn' + (isFav ? ' active' : '') + '" onclick="toggleFavourite(' + id + ',' + isFav + ')" title="' + (isFav ? 'Remove from My Favourites' : 'Add to My Favourites') + '">'
       + '<span class="material-icons-round">' + (isFav ? 'star' : 'star_border') + '</span></button>'
       + '<button class="manage-delete-btn" onclick="confirmDelete(' + id + ')" title="Delete contact">'
@@ -635,6 +603,7 @@ async function uploadContactPhoto(contactId, base64) {
       if (f.contact && f.contact.id === contactId) f.contact.photo_path = base64;
     });
     renderPeople();
+    renderManageList();
     showToast('Photo saved!');
   } catch (err) {
     if (!err.isAuthError) showToast('Could not save photo — please try again');
@@ -650,6 +619,7 @@ async function removeContactPhoto(contactId) {
       if (f.contact && f.contact.id === contactId) f.contact.photo_path = null;
     });
     renderPeople();
+    renderManageList();
     showToast('Photo removed');
   } catch (err) {
     if (!err.isAuthError) showToast('Could not remove photo');

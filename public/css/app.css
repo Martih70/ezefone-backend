@@ -349,25 +349,6 @@ input {
 
 .hero-call-hint .material-icons-round { font-size: 15px; }
 
-/* More options button (···) */
-.hero-more-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-light);
-  background: rgba(0,0,0,0.04);
-  transition: background 0.15s;
-}
-
-.hero-more-btn:active { background: rgba(0,0,0,0.1); }
-.hero-more-btn .material-icons-round { font-size: 18px; }
-
 /* ---- Empty slot ---- */
 .hero-empty {
   background: var(--card-bg);
@@ -754,6 +735,29 @@ input {
 .manage-delete-btn:active { transform: scale(0.9); }
 .manage-delete-btn .material-icons-round { font-size: 20px; }
 
+.manage-photo-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(29,78,216,0.08);
+  color: #1d4ed8;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.1s;
+}
+.manage-photo-btn.has-photo { background: rgba(29,78,216,0.18); }
+.manage-photo-btn:active { transform: scale(0.9); }
+.manage-photo-btn .material-icons-round { font-size: 20px; }
+
+.manage-photo-remove-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(107,114,128,0.08);
+  color: #6b7280;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.1s;
+}
+.manage-photo-remove-btn:active { transform: scale(0.9); }
+.manage-photo-remove-btn .material-icons-round { font-size: 20px; }
+
 /* =============================================
    Bottom Navigation
    ============================================= */
@@ -786,116 +790,6 @@ input {
 .nav-btn .material-icons-round { font-size: 27px; }
 .nav-label { font-size: 13px; font-weight: 700; }
 
-/* =============================================
-   Action Sheet (··· options)
-   ============================================= */
-.sheet-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  z-index: 200;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.action-sheet {
-  background: var(--card-bg);
-  border-radius: 28px 28px 0 0;
-  padding: 14px 20px calc(20px + env(safe-area-inset-bottom));
-  width: 100%;
-  max-width: 480px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.sheet-handle {
-  width: 40px; height: 4px;
-  background: var(--border);
-  border-radius: var(--radius-full);
-  margin: 0 auto 16px;
-}
-
-.sheet-name {
-  font-size: 22px; font-weight: 900;
-  color: var(--text);
-  text-align: center;
-}
-
-.sheet-phone {
-  font-size: 14px;
-  color: var(--text-muted);
-  text-align: center;
-  margin-top: 4px;
-  margin-bottom: 20px;
-}
-
-.sheet-photo {
-  width: 100%;
-  padding: 18px;
-  margin-bottom: 12px;
-  border-radius: var(--radius-btn);
-  background: #f0f7ff;
-  border: 2px solid #bfdbfe;
-  font-size: 17px; font-weight: 700;
-  color: #1d4ed8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: background 0.15s;
-}
-.sheet-photo:active { background: #dbeafe; }
-.sheet-photo .material-icons-round { font-size: 22px; }
-
-.sheet-photo-remove {
-  width: 100%;
-  padding: 18px;
-  margin-bottom: 12px;
-  border-radius: var(--radius-btn);
-  background: #fafafa;
-  border: 2px solid #e5e7eb;
-  font-size: 17px; font-weight: 700;
-  color: #6b7280;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: background 0.15s;
-}
-.sheet-photo-remove:active { background: #f3f4f6; }
-.sheet-photo-remove .material-icons-round { font-size: 20px; }
-
-.sheet-remove {
-  width: 100%;
-  padding: 18px;
-  margin-bottom: 12px;
-  border-radius: var(--radius-btn);
-  background: #fff5f5;
-  border: 2px solid #fecaca;
-  font-size: 15px; font-weight: 700;
-  color: #dc2626;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: background 0.15s;
-}
-.sheet-remove:active { background: #fee2e2; }
-.sheet-remove .material-icons-round { font-size: 22px; }
-
-.sheet-cancel {
-  width: 100%;
-  padding: 18px;
-  border-radius: var(--radius-btn);
-  background: var(--bg);
-  border: 2px solid var(--border);
-  font-size: 17px; font-weight: 700;
-  color: var(--text-muted);
-  text-align: center;
-  transition: background 0.15s;
-}
-.sheet-cancel:active { background: var(--border); }
 
 /* =============================================
    Add Contact Modal
