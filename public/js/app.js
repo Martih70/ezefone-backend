@@ -78,7 +78,9 @@ async function apiRequest(method, path, body) {
   if (res.status === 401) {
     localStorage.removeItem('ezefone_token');
     showLoginOverlay();
-    return;
+    const authErr = new Error('Unauthenticated');
+    authErr.isAuthError = true;
+    throw authErr;
   }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -95,8 +97,7 @@ async function loadContacts() {
     state.contacts = (data.contacts || []).sort((a, b) => a.name.localeCompare(b.name));
     state.favorites = data.favorites || [];
   } catch (err) {
-    console.error(err);
-    showToast('Could not load contacts \u2014 check connection');
+    if (!err.isAuthError) showToast('Could not load contacts \u2014 check connection');
   } finally {
     state.loading = false;
     renderPeople();
@@ -574,9 +575,11 @@ async function submitFeedback() {
     status.style.color = 'var(--green-deep)';
     status.textContent = 'Thank you — feedback sent!';
   } catch (err) {
-    status.style.display = 'block';
-    status.style.color = '#d93025';
-    status.textContent = 'Could not send — please try again.';
+    if (!err.isAuthError) {
+      status.style.display = 'block';
+      status.style.color = '#d93025';
+      status.textContent = 'Could not send — please try again.';
+    }
   } finally {
     btn.disabled = false;
     btn.textContent = 'Send Feedback';
