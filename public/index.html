@@ -105,6 +105,13 @@
 
     <!-- Hero grid: 4 favourite cards -->
     <div class="people-scroll">
+
+      <!-- Recently called strip (hidden when empty) -->
+      <div id="recently-called-section" class="hidden">
+        <div class="section-label recently-called-label">RECENTLY CALLED</div>
+        <div id="recently-called-strip" class="recently-called-strip"></div>
+      </div>
+
       <div class="section-label">MY FAVOURITES</div>
       <div id="hero-grid" class="hero-grid">
         <!-- Rendered by JS -->
@@ -244,6 +251,47 @@
               <div class="settings-row-sub">Ezefone PWA 1.0 &bull; by CallFormLabs</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Text Size -->
+      <div class="settings-section">
+        <div class="settings-section-label">TEXT SIZE</div>
+        <div class="settings-card">
+          <div class="settings-row">
+            <span class="material-icons-round settings-row-icon">text_fields</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Card Text Size</div>
+              <div class="settings-row-sub">Adjust the size of names on favourite cards</div>
+            </div>
+          </div>
+          <div class="text-size-selector">
+            <button class="text-size-btn" id="ts-btn-normal" onclick="setTextSize('normal')">Normal</button>
+            <button class="text-size-btn" id="ts-btn-large"  onclick="setTextSize('large')">Large</button>
+            <button class="text-size-btn" id="ts-btn-xl"     onclick="setTextSize('xl')">Extra Large</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carer Lock -->
+      <div class="settings-section">
+        <div class="settings-section-label">CARER LOCK</div>
+        <div class="settings-card">
+          <div class="settings-row">
+            <span class="material-icons-round settings-row-icon">shield</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">PIN Protection</div>
+              <div class="settings-row-sub" id="carer-lock-status">Settings are currently unlocked</div>
+            </div>
+          </div>
+          <button class="settings-row settings-row-btn" id="carer-lock-btn" onclick="setupCarerLock()">
+            <span class="material-icons-round settings-row-icon" id="carer-lock-icon">lock</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label" id="carer-lock-label">Set Carer PIN</div>
+              <div class="settings-row-sub" id="carer-lock-sub">Prevent changes to contacts &amp; settings</div>
+            </div>
+            <span class="material-icons-round settings-chevron">chevron_right</span>
+          </button>
         </div>
       </div>
 
@@ -533,13 +581,21 @@
 
       <!-- Print guide -->
       <div class="settings-section">
-        <div class="settings-section-label">PRINTABLE GUIDE</div>
+        <div class="settings-section-label">PRINTABLE GUIDES</div>
         <div class="settings-card">
           <button class="settings-row settings-row-btn" onclick="window.open('/guide', '_blank')">
             <span class="material-icons-round settings-row-icon">print</span>
             <div class="settings-row-body">
               <div class="settings-row-label">Print / Save as PDF</div>
               <div class="settings-row-sub">A4 quick-reference guide — great to keep by the phone</div>
+            </div>
+            <span class="material-icons-round settings-chevron">chevron_right</span>
+          </button>
+          <button class="settings-row settings-row-btn" onclick="printFavouriteCards()">
+            <span class="material-icons-round settings-row-icon">contact_page</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Print Favourite Cards</div>
+              <div class="settings-row-sub">Large-print sheet of your 4 favourite contacts</div>
             </div>
             <span class="material-icons-round settings-chevron">chevron_right</span>
           </button>
@@ -608,6 +664,10 @@
       </button>
       <button id="manage-sheet-remove-photo" class="sheet-photo-remove hidden" onclick="manageSheetAction('remove-photo')">
         <span class="material-icons-round">hide_image</span>Remove Photo
+      </button>
+      <button id="manage-sheet-label" class="sheet-label" onclick="manageSheetAction('label')">
+        <span class="material-icons-round">label</span>
+        <span id="manage-sheet-label-text">Set Relationship Label</span>
       </button>
       <button class="sheet-delete" onclick="manageSheetAction('delete')">
         <span class="material-icons-round">delete</span>Delete Contact
@@ -707,6 +767,61 @@
 
   <!-- Hidden photo file picker -->
   <input type="file" id="photo-file-input" accept="image/*" style="display:none">
+
+  <!-- ============================================================
+       EDIT LABEL MODAL
+       ============================================================ -->
+  <div id="edit-label-modal" class="modal-overlay hidden" onclick="overlayClose(event, hideEditLabelModal)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <h2 class="modal-title">Relationship Label</h2>
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;text-align:center">
+        e.g. My Daughter &bull; GP Surgery &bull; Best Friend
+      </p>
+      <div class="form-group">
+        <input type="text" id="label-input" class="form-input" placeholder="e.g. My Daughter" maxlength="40" autocomplete="off">
+      </div>
+      <div class="modal-btn-row">
+        <button type="button" class="modal-cancel-btn" onclick="hideEditLabelModal()">Cancel</button>
+        <button type="button" class="modal-submit-btn" id="label-submit-btn" onclick="submitEditLabel(false)">Save</button>
+      </div>
+      <button type="button" id="label-remove-btn" class="hidden" style="width:100%;margin-top:10px;padding:12px;border:none;background:none;color:var(--red-sos);font-size:14px;font-weight:700;cursor:pointer" onclick="submitEditLabel(true)">Remove Label</button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       PIN OVERLAY (carer lock)
+       ============================================================ -->
+  <div id="pin-overlay" class="pin-overlay hidden">
+    <div class="pin-card">
+      <span class="material-icons-round pin-icon">lock</span>
+      <h2 class="pin-title" id="pin-title">Settings Locked</h2>
+      <p class="pin-sub" id="pin-sub">Enter your carer PIN to continue</p>
+      <div class="pin-dots">
+        <div class="pin-dot" id="pin-dot-0"></div>
+        <div class="pin-dot" id="pin-dot-1"></div>
+        <div class="pin-dot" id="pin-dot-2"></div>
+        <div class="pin-dot" id="pin-dot-3"></div>
+      </div>
+      <div id="pin-error" class="pin-error hidden">Incorrect PIN — try again</div>
+      <div class="pin-numpad">
+        <button class="pin-key" onclick="pinDigit('1')">1</button>
+        <button class="pin-key" onclick="pinDigit('2')">2</button>
+        <button class="pin-key" onclick="pinDigit('3')">3</button>
+        <button class="pin-key" onclick="pinDigit('4')">4</button>
+        <button class="pin-key" onclick="pinDigit('5')">5</button>
+        <button class="pin-key" onclick="pinDigit('6')">6</button>
+        <button class="pin-key" onclick="pinDigit('7')">7</button>
+        <button class="pin-key" onclick="pinDigit('8')">8</button>
+        <button class="pin-key" onclick="pinDigit('9')">9</button>
+        <button class="pin-key pin-key-action" onclick="pinClear()">Clear</button>
+        <button class="pin-key" onclick="pinDigit('0')">0</button>
+        <button class="pin-key pin-key-action" onclick="pinBack()">&#x232B;</button>
+      </div>
+      <button id="pin-cancel-btn" class="pin-cancel" onclick="hidePinOverlayCancel()">Cancel</button>
+    </div>
+  </div>
 
   <script src="/js/app.js"></script>
 </body>

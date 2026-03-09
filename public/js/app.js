@@ -143,6 +143,12 @@ async function refreshData() {
 // NAVIGATION
 // ============================================================
 function navigate(screen) {
+  // Carer lock: intercept navigation to settings/contacts if PIN is set
+  if ((screen === 'settings' || screen === 'contacts') && carerLocked()) {
+    showPinOverlay(function() { navigate(screen); });
+    return;
+  }
+
   const prev = document.getElementById('screen-' + state.screen);
   const next = document.getElementById('screen-' + screen);
   if (!next) return;
@@ -158,7 +164,7 @@ function navigate(screen) {
   if (screen === 'people')   renderPeople();
   if (screen === 'contacts') { updateContactCount(); renderManageList(); }
   if (screen === 'messages') renderMessages();
-  if (screen === 'settings') loadSosInputs();
+  if (screen === 'settings') { loadSosInputs(); applyTextSize(); updateCarerLockUI(); }
 }
 
 // ============================================================
@@ -199,9 +205,14 @@ function renderPeople() {
         ? '<img class="hero-avatar-photo" src="' + contact.photo_path + '" alt="">'
         : '<div class="hero-avatar" style="background:' + theme.avatar + ';box-shadow:0 4px 18px ' + theme.glow + '">' + esc(initials) + '</div>';
 
+      const labelHtml = contact.label
+        ? '<div class="hero-label">' + esc(contact.label) + '</div>'
+        : '';
+
       html += '<div class="hero-card" style="--glow-color:' + theme.glow + ';background:' + theme.bg + ';border-color:' + theme.border + '" onclick="heroTap(' + id + ')">'
         + avatarHtml
         + '<div class="hero-name">' + esc(firstName(contact.name)) + '</div>'
+        + labelHtml
         + '<div class="hero-phone">' + esc(contact.phone || '') + '</div>'
         + '<div class="hero-call-hint"><span class="material-icons-round">call</span>Tap to call</div>'
         + '</div>';
@@ -215,6 +226,7 @@ function renderPeople() {
   }
 
   grid.innerHTML = html;
+  renderRecentlyCalled();
 
   // SOS card — always visible
   const sosNumber = localStorage.getItem('sos-number');
@@ -236,6 +248,7 @@ function heroTap(contactId) {
   const fav = state.favorites.find(f => f.contact_id === contactId);
   const contact = fav ? fav.contact : state.contacts.find(c => c.id === contactId);
   if (!contact || !contact.phone) { showToast('No phone number'); return; }
+  recordRecentCall(contactId);
   window.location.href = 'tel:' + contact.phone;
 }
 
@@ -325,7 +338,7 @@ function renderManageList() {
       const isFav    = favIds.has(contact.id);
       const id       = contact.id;
       const callBtn  = contact.phone
-        ? '<button class="manage-call-btn" onclick="event.stopPropagation();window.location.href=\'tel:' + esc(contact.phone) + '\'" title="Call ' + esc(contact.name) + '"><span class="material-icons-round">call</span></button>'
+        ? '<button class="manage-call-btn" onclick="event.stopPropagation();recordRecentCall(' + id + ');window.location.href=\'tel:' + esc(contact.phone) + '\'" title="Call ' + esc(contact.name) + '"><span class="material-icons-round">call</span></button>'
         : '';
       html += '<div class="manage-row" onclick="showManageSheet(' + id + ')">'
         + '<div class="manage-avatar" style="background:' + color + '">' + esc(initials) + '</div>'
@@ -608,6 +621,10 @@ function showManageSheet(contactId) {
 
   document.getElementById('manage-sheet-photo').classList.toggle('hidden', !isFav);
   document.getElementById('manage-sheet-remove-photo').classList.toggle('hidden', !isFav || !contact.photo_path);
+
+  const labelText = document.getElementById('manage-sheet-label-text');
+  labelText.textContent = contact.label ? 'Edit Label: ' + contact.label : 'Set Relationship Label';
+
   document.getElementById('manage-sheet-overlay').classList.remove('hidden');
 }
 
@@ -622,10 +639,11 @@ function manageSheetAction(action) {
   if (id === null) return;
   const isFav = state.favorites.some(f => f.contact_id === id);
   switch (action) {
-    case 'star':        toggleFavourite(id, isFav); break;
-    case 'photo':       triggerPhotoUpload(id);     break;
-    case 'remove-photo': removeContactPhoto(id);    break;
-    case 'delete':      confirmDelete(id);          break;
+    case 'star':        toggleFavourite(id, isFav);    break;
+    case 'photo':       triggerPhotoUpload(id);        break;
+    case 'remove-photo': removeContactPhoto(id);       break;
+    case 'label':       showEditLabelModal(id);        break;
+    case 'delete':      confirmDelete(id);             break;
   }
 }
 
@@ -901,6 +919,8 @@ function isIOS() {
 async function init() {
   updateClock();
   setInterval(updateClock, 30000);
+  applyTextSize();
+  updateCarerLockUI();
 
   // iOS-specific behaviour
   if (isIOS()) {
@@ -954,6 +974,317 @@ async function init() {
   // Show setup wizard on first launch
   if (!localStorage.getItem('wizard-complete')) {
     showWizard();
+  }
+}
+
+// ============================================================
+// RECENTLY CALLED
+// ============================================================
+function recordRecentCall(contactId) {
+  let recent = JSON.parse(localStorage.getItem('recent-calls') || '[]');
+  recent = recent.filter(function(id) { return id !== contactId; });
+  recent.unshift(contactId);
+  if (recent.length > 8) recent = recent.slice(0, 8);
+  localStorage.setItem('recent-calls', JSON.stringify(recent));
+  renderRecentlyCalled();
+}
+
+function renderRecentlyCalled() {
+  const section = document.getElementById('recently-called-section');
+  const strip   = document.getElementById('recently-called-strip');
+  if (!section || !strip) return;
+
+  const recent = JSON.parse(localStorage.getItem('recent-calls') || '[]');
+  const contacts = recent
+    .map(function(id) { return state.contacts.find(function(c) { return c.id === id; }); })
+    .filter(Boolean);
+
+  if (contacts.length === 0) {
+    section.classList.add('hidden');
+    return;
+  }
+
+  section.classList.remove('hidden');
+  strip.innerHTML = contacts.map(function(contact) {
+    const color    = getAvatarColor(contact.name);
+    const initials = getInitials(contact.name);
+    const avatarHtml = contact.photo_path
+      ? '<img class="recent-call-avatar-photo" src="' + contact.photo_path + '" alt="">'
+      : '<div class="recent-call-avatar" style="background:' + color + '">' + esc(initials) + '</div>';
+    return '<div class="recent-call-item" onclick="' + (contact.phone ? 'recordRecentCall(' + contact.id + ');window.location.href=\'tel:' + esc(contact.phone) + '\'' : 'showToast(\'No phone number\')') + '">'
+      + avatarHtml
+      + '<div class="recent-call-name">' + esc(firstName(contact.name)) + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ============================================================
+// RELATIONSHIP LABEL
+// ============================================================
+let labelTargetContactId = null;
+
+function showEditLabelModal(contactId) {
+  const contact = state.contacts.find(function(c) { return c.id === contactId; });
+  if (!contact) return;
+  labelTargetContactId = contactId;
+  const input = document.getElementById('label-input');
+  input.value = contact.label || '';
+  const removeBtn = document.getElementById('label-remove-btn');
+  if (contact.label) removeBtn.classList.remove('hidden');
+  else               removeBtn.classList.add('hidden');
+  document.getElementById('edit-label-modal').classList.remove('hidden');
+  setTimeout(function() { input.focus(); }, 150);
+}
+
+function hideEditLabelModal() {
+  document.getElementById('edit-label-modal').classList.add('hidden');
+  labelTargetContactId = null;
+}
+
+async function submitEditLabel(remove) {
+  const id = labelTargetContactId;
+  if (id === null) return;
+  const label = remove ? null : document.getElementById('label-input').value.trim() || null;
+  hideEditLabelModal();
+  await updateContactLabel(id, label);
+}
+
+async function updateContactLabel(contactId, label) {
+  try {
+    await apiRequest('PATCH', '/contacts/' + contactId + '/label', { label: label });
+    const c = state.contacts.find(function(x) { return x.id === contactId; });
+    if (c) c.label = label;
+    state.favorites.forEach(function(f) {
+      if (f.contact && f.contact.id === contactId) f.contact.label = label;
+    });
+    renderPeople();
+    renderManageList();
+    showToast(label ? 'Label saved' : 'Label removed');
+  } catch (err) {
+    if (!err.isAuthError) showToast('Could not save label');
+  }
+}
+
+// ============================================================
+// TEXT SIZE
+// ============================================================
+function setTextSize(size) {
+  localStorage.setItem('text-size', size);
+  applyTextSize();
+}
+
+function applyTextSize() {
+  const size = localStorage.getItem('text-size') || 'normal';
+  document.body.classList.remove('text-large', 'text-xl');
+  if (size === 'large') document.body.classList.add('text-large');
+  if (size === 'xl')    document.body.classList.add('text-xl');
+
+  // Update active button in Settings
+  ['normal', 'large', 'xl'].forEach(function(s) {
+    const btn = document.getElementById('ts-btn-' + s);
+    if (btn) btn.classList.toggle('active', s === size);
+  });
+}
+
+// ============================================================
+// PRINT FAVOURITE CARDS
+// ============================================================
+function printFavouriteCards() {
+  const favs = state.favorites.slice(0, 4);
+  if (favs.length === 0) {
+    showToast('No favourite contacts to print');
+    return;
+  }
+
+  const rows = favs.map(function(fav) {
+    const c = fav.contact;
+    if (!c) return '';
+    const initials = getInitials(c.name);
+    const avatarHtml = c.photo_path
+      ? '<img src="' + c.photo_path + '" style="width:80px;height:80px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 12px">'
+      : '<div style="width:80px;height:80px;border-radius:50%;background:#1a6b3c;color:white;font-size:28px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">' + esc(initials) + '</div>';
+    return '<div style="border:2px solid #e2e8e4;border-radius:16px;padding:20px 16px;text-align:center;break-inside:avoid">'
+      + avatarHtml
+      + '<div style="font-size:22px;font-weight:900;color:#0f172a">' + esc(c.name) + '</div>'
+      + (c.label ? '<div style="font-size:14px;color:#64748b;margin-top:4px">' + esc(c.label) + '</div>' : '')
+      + (c.phone ? '<div style="font-size:18px;font-weight:700;color:#1a6b3c;margin-top:8px">' + esc(c.phone) + '</div>' : '')
+      + '</div>';
+  }).join('');
+
+  const html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>My Favourite Contacts</title>'
+    + '<style>body{font-family:Arial,sans-serif;padding:24px}h1{font-size:20px;margin-bottom:20px;color:#1a6b3c}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media print{body{padding:0}}</style>'
+    + '</head><body>'
+    + '<h1>My Favourite Contacts &mdash; Ezefone</h1>'
+    + '<div class="grid">' + rows + '</div>'
+    + '<script>window.onload=function(){window.print();}<\/script>'
+    + '</body></html>';
+
+  const win = window.open('', '_blank');
+  if (win) {
+    win.document.write(html);
+    win.document.close();
+  } else {
+    showToast('Allow pop-ups to print');
+  }
+}
+
+// ============================================================
+// CARER LOCK
+// ============================================================
+let pinBuffer = '';
+let pinCallback = null;
+let pinMode = 'verify'; // 'verify' | 'set-step1' | 'set-step2'
+let pinFirstEntry = '';
+
+function carerLocked() {
+  const pin = localStorage.getItem('carer-pin');
+  if (!pin) return false;
+  return !sessionStorage.getItem('carer-unlocked');
+}
+
+function showPinOverlay(callback) {
+  pinCallback = callback || null;
+  pinMode = 'verify';
+  pinBuffer = '';
+  pinFirstEntry = '';
+  document.getElementById('pin-title').textContent = 'Settings Locked';
+  document.getElementById('pin-sub').textContent = 'Enter your carer PIN to continue';
+  document.getElementById('pin-cancel-btn').classList.remove('hidden');
+  document.getElementById('pin-error').classList.add('hidden');
+  updatePinDots();
+  document.getElementById('pin-overlay').classList.remove('hidden');
+}
+
+function hidePinOverlay() {
+  document.getElementById('pin-overlay').classList.add('hidden');
+  pinBuffer = '';
+  pinCallback = null;
+}
+
+function hidePinOverlayCancel() {
+  hidePinOverlay();
+  // Revert nav highlight to current screen
+  document.querySelectorAll('.nav-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.screen === state.screen);
+  });
+}
+
+function pinDigit(d) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += d;
+  document.getElementById('pin-error').classList.add('hidden');
+  updatePinDots();
+  if (pinBuffer.length === 4) {
+    setTimeout(checkPin, 200);
+  }
+}
+
+function pinBack() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  updatePinDots();
+}
+
+function pinClear() {
+  pinBuffer = '';
+  updatePinDots();
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('pin-dot-' + i);
+    if (dot) dot.classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+
+function checkPin() {
+  if (pinMode === 'verify') {
+    const stored = localStorage.getItem('carer-pin');
+    if (pinBuffer === stored) {
+      sessionStorage.setItem('carer-unlocked', '1');
+      hidePinOverlay();
+      if (pinCallback) { pinCallback(); pinCallback = null; }
+    } else {
+      document.getElementById('pin-error').classList.remove('hidden');
+      pinBuffer = '';
+      updatePinDots();
+    }
+
+  } else if (pinMode === 'set-step1') {
+    pinFirstEntry = pinBuffer;
+    pinBuffer = '';
+    pinMode = 'set-step2';
+    document.getElementById('pin-title').textContent = 'Confirm PIN';
+    document.getElementById('pin-sub').textContent = 'Enter the same PIN again';
+    updatePinDots();
+
+  } else if (pinMode === 'set-step2') {
+    if (pinBuffer === pinFirstEntry) {
+      localStorage.setItem('carer-pin', pinBuffer);
+      sessionStorage.setItem('carer-unlocked', '1');
+      hidePinOverlay();
+      updateCarerLockUI();
+      showToast('Carer PIN set — Settings are now locked');
+    } else {
+      document.getElementById('pin-error').textContent = 'PINs do not match — try again';
+      document.getElementById('pin-error').classList.remove('hidden');
+      pinBuffer = '';
+      pinFirstEntry = '';
+      pinMode = 'set-step1';
+      document.getElementById('pin-title').textContent = 'Set a 4-Digit PIN';
+      document.getElementById('pin-sub').textContent = 'Choose a PIN your family member won\'t guess';
+      updatePinDots();
+    }
+  }
+}
+
+function setupCarerLock() {
+  const existing = localStorage.getItem('carer-pin');
+  if (existing) {
+    // Offer to disable
+    if (!confirm('Remove carer lock and disable PIN protection?')) return;
+    if (carerLocked()) {
+      showPinOverlay(function() { disableCarerLock(); });
+      return;
+    }
+    disableCarerLock();
+    return;
+  }
+  // Set new PIN
+  pinMode = 'set-step1';
+  pinBuffer = '';
+  pinFirstEntry = '';
+  document.getElementById('pin-title').textContent = 'Set a 4-Digit PIN';
+  document.getElementById('pin-sub').textContent = 'Choose a PIN your family member won\'t guess';
+  document.getElementById('pin-cancel-btn').classList.remove('hidden');
+  document.getElementById('pin-error').classList.add('hidden');
+  updatePinDots();
+  document.getElementById('pin-overlay').classList.remove('hidden');
+}
+
+function disableCarerLock() {
+  localStorage.removeItem('carer-pin');
+  sessionStorage.removeItem('carer-unlocked');
+  updateCarerLockUI();
+  showToast('Carer lock disabled');
+}
+
+function updateCarerLockUI() {
+  const hasPIN = !!localStorage.getItem('carer-pin');
+  const statusEl  = document.getElementById('carer-lock-status');
+  const labelEl   = document.getElementById('carer-lock-label');
+  const subEl     = document.getElementById('carer-lock-sub');
+  const iconEl    = document.getElementById('carer-lock-icon');
+  if (!statusEl) return;
+  if (hasPIN) {
+    statusEl.textContent = 'Settings are protected by a PIN';
+    labelEl.textContent  = 'Remove Carer PIN';
+    subEl.textContent    = 'Tap to disable PIN protection';
+    iconEl.textContent   = 'lock_open';
+  } else {
+    statusEl.textContent = 'Settings are currently unlocked';
+    labelEl.textContent  = 'Set Carer PIN';
+    subEl.textContent    = 'Prevent changes to contacts & settings';
+    iconEl.textContent   = 'lock';
   }
 }
 

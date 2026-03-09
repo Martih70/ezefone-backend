@@ -37,6 +37,7 @@ class ContactController extends Controller
     {
         $validated = $request->validate([
             'name'  => 'required|string',
+            'label' => 'nullable|string|max:60',
             'phone' => 'nullable|string',
             'email' => 'nullable|string',
         ]);
@@ -80,6 +81,21 @@ class ContactController extends Controller
         Favorite::where('contact_id', $contactId)->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function updateLabel(Request $request, $contactId)
+    {
+        $contact = Contact::where('id', $contactId)
+            ->where('user_id', $this->userId())
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'label' => 'nullable|string|max:60',
+        ]);
+
+        $contact->update(['label' => $validated['label'] ?? null]);
+
+        return response()->json(['success' => true]);
     }
 
     public function updatePhoto(Request $request, $contactId)
