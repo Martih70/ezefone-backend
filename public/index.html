@@ -590,6 +590,24 @@
 
 
   <!-- ============================================================
+       PHOTO SHEET (camera button on favourite contact rows)
+       ============================================================ -->
+  <div id="photo-sheet-overlay" class="sheet-overlay hidden" onclick="hidePhotoSheet()">
+    <div class="photo-sheet" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div id="photo-sheet-name" class="sheet-name"></div>
+      <button id="photo-sheet-change" class="sheet-photo" onclick="photoSheetAction('change')">
+        <span class="material-icons-round">add_a_photo</span>Change Photo
+      </button>
+      <button id="photo-sheet-remove" class="sheet-photo-remove hidden" onclick="photoSheetAction('remove')">
+        <span class="material-icons-round">hide_image</span>Remove Photo
+      </button>
+      <button class="sheet-cancel" onclick="hidePhotoSheet()">Cancel</button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
        ADD CONTACT MODAL
        ============================================================ -->
   <div id="add-contact-modal" class="modal-overlay hidden" onclick="overlayClose(event, hideAddContactModal)">

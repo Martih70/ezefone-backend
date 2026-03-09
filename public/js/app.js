@@ -10,6 +10,7 @@ const state = {
   loading: false,
   installPrompt: null,
   sheetContactId: null,
+  photoSheetContactId: null,
 };
 
 // ============================================================
@@ -301,9 +302,8 @@ function renderManageList() {
     const id       = contact.id;
 
     const photoBtn = isFav
-      ? '<button class="manage-photo-btn' + (contact.photo_path ? ' has-photo' : '') + '" onclick="triggerPhotoUpload(' + id + ')" title="' + (contact.photo_path ? 'Change photo' : 'Add photo') + '">'
-        + '<span class="material-icons-round">' + (contact.photo_path ? 'add_a_photo' : 'add_a_photo') + '</span></button>'
-        + (contact.photo_path ? '<button class="manage-photo-remove-btn" onclick="removeContactPhoto(' + id + ')" title="Remove photo"><span class="material-icons-round">hide_image</span></button>' : '')
+      ? '<button class="manage-photo-btn' + (contact.photo_path ? ' has-photo' : '') + '" onclick="showPhotoSheet(' + id + ')" title="' + (contact.photo_path ? 'Change photo' : 'Add photo') + '">'
+        + '<span class="material-icons-round">add_a_photo</span></button>'
       : '';
 
     const callBtn = contact.phone
@@ -556,6 +556,31 @@ async function submitFeedback() {
     btn.disabled = false;
     btn.textContent = 'Send Feedback';
   }
+}
+
+// ============================================================
+// PHOTO SHEET (single camera button on favourite rows)
+// ============================================================
+function showPhotoSheet(contactId) {
+  const contact = state.contacts.find(c => c.id === contactId);
+  if (!contact) return;
+  state.photoSheetContactId = contactId;
+  document.getElementById('photo-sheet-name').textContent = contact.name;
+  document.getElementById('photo-sheet-remove').classList.toggle('hidden', !contact.photo_path);
+  document.getElementById('photo-sheet-overlay').classList.remove('hidden');
+}
+
+function hidePhotoSheet() {
+  document.getElementById('photo-sheet-overlay').classList.add('hidden');
+  state.photoSheetContactId = null;
+}
+
+function photoSheetAction(action) {
+  const id = state.photoSheetContactId;
+  hidePhotoSheet();
+  if (id === null) return;
+  if (action === 'change') triggerPhotoUpload(id);
+  if (action === 'remove') removeContactPhoto(id);
 }
 
 // ============================================================
