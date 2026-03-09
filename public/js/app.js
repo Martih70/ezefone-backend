@@ -266,19 +266,7 @@ function sheetAction(action) {
   hideActionSheet();
   if (id === null) return;
 
-  const fav = state.favorites.find(f => f.contact_id === id);
-  const contact = fav ? fav.contact : state.contacts.find(c => c.id === id);
-  if (!contact || !contact.phone) { showToast('No phone number'); return; }
-
   switch (action) {
-    case 'call':
-      window.location.href = 'tel:' + contact.phone;
-      break;
-    case 'whatsapp': {
-      const digits = contact.phone.replace(/\D/g, '');
-      window.location.href = 'https://wa.me/' + digits;
-      break;
-    }
     case 'photo':
       triggerPhotoUpload(id);
       break;
