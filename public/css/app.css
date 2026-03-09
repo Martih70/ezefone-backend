@@ -236,7 +236,7 @@ input {
 }
 
 .section-label {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 800;
   color: var(--text-muted);
   letter-spacing: 1.3px;
@@ -286,13 +286,13 @@ input {
 
 /* Avatar circle */
 .hero-avatar {
-  width: clamp(44px, 13vw, 68px);
-  height: clamp(44px, 13vw, 68px);
+  width: clamp(52px, 15vw, 76px);
+  height: clamp(52px, 15vw, 76px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(18px, 5.5vw, 28px);
+  font-size: clamp(22px, 6.5vw, 32px);
   font-weight: 900;
   color: white;
   border: 3px solid rgba(255,255,255,0.85);
@@ -302,8 +302,8 @@ input {
 }
 
 .hero-avatar-photo {
-  width: clamp(44px, 13vw, 68px);
-  height: clamp(44px, 13vw, 68px);
+  width: clamp(52px, 15vw, 76px);
+  height: clamp(52px, 15vw, 76px);
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid rgba(255,255,255,0.85);
@@ -312,7 +312,7 @@ input {
 }
 
 .hero-name {
-  font-size: clamp(14px, 4vw, 20px);
+  font-size: clamp(19px, 5.5vw, 26px);
   font-weight: 900;
   color: var(--text);
   text-align: center;
@@ -324,7 +324,7 @@ input {
 }
 
 .hero-phone {
-  font-size: clamp(11px, 3vw, 15px);
+  font-size: clamp(13px, 3.5vw, 17px);
   font-weight: 700;
   color: var(--text-muted);
   text-align: center;
@@ -342,12 +342,12 @@ input {
   background: var(--green-mid);
   color: white;
   border-radius: var(--radius-full);
-  padding: 4px 10px;
-  font-size: clamp(10px, 2.5vw, 13px);
+  padding: 5px 12px;
+  font-size: clamp(12px, 3vw, 15px);
   font-weight: 800;
 }
 
-.hero-call-hint .material-icons-round { font-size: 15px; }
+.hero-call-hint .material-icons-round { font-size: 16px; }
 
 /* ---- Empty slot ---- */
 .hero-empty {
