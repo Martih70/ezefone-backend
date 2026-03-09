@@ -131,48 +131,51 @@
     <div class="sub-header">
       <h1 class="sub-header-title">Contacts</h1>
     </div>
-    <div class="settings-scroll">
+    <div class="contacts-body">
+      <div class="settings-scroll">
 
-      <div class="settings-section">
-        <div class="settings-card">
+        <div class="settings-section">
+          <div class="settings-card">
 
-          <button class="import-btn" id="import-from-phone-btn" onclick="importFromPhone()">
-            <span class="material-icons-round">contacts</span>
-            <div class="import-btn-text">
-              <span class="import-btn-title">Import from Phone</span>
-              <span class="import-btn-sub">Pick contacts from your address book</span>
-            </div>
-            <span class="material-icons-round import-btn-arrow">arrow_forward</span>
-          </button>
+            <button class="import-btn" id="import-from-phone-btn" onclick="importFromPhone()">
+              <span class="material-icons-round">contacts</span>
+              <div class="import-btn-text">
+                <span class="import-btn-title">Import from Phone</span>
+                <span class="import-btn-sub">Pick contacts from your address book</span>
+              </div>
+              <span class="material-icons-round import-btn-arrow">arrow_forward</span>
+            </button>
 
-          <button class="settings-row settings-row-btn" onclick="showAddContactModal()">
-            <span class="material-icons-round settings-row-icon">person_add</span>
-            <div class="settings-row-body">
-              <div class="settings-row-label">Add Contact Manually</div>
-              <div class="settings-row-sub">Enter name and phone number</div>
-            </div>
-            <span class="material-icons-round settings-chevron">chevron_right</span>
-          </button>
+            <button class="settings-row settings-row-btn" onclick="showAddContactModal()">
+              <span class="material-icons-round settings-row-icon">person_add</span>
+              <div class="settings-row-body">
+                <div class="settings-row-label">Add Contact Manually</div>
+                <div class="settings-row-sub">Enter name and phone number</div>
+              </div>
+              <span class="material-icons-round settings-chevron">chevron_right</span>
+            </button>
 
-          <button class="settings-row settings-row-btn" onclick="refreshData()">
-            <span class="material-icons-round settings-row-icon">sync</span>
-            <div class="settings-row-body">
-              <div class="settings-row-label">Refresh</div>
-              <div class="settings-row-sub" id="contact-count-label">Loading&hellip;</div>
-            </div>
-            <span class="material-icons-round settings-chevron">chevron_right</span>
-          </button>
+            <button class="settings-row settings-row-btn" onclick="refreshData()">
+              <span class="material-icons-round settings-row-icon">sync</span>
+              <div class="settings-row-body">
+                <div class="settings-row-label">Refresh</div>
+                <div class="settings-row-sub" id="contact-count-label">Loading&hellip;</div>
+              </div>
+              <span class="material-icons-round settings-chevron">chevron_right</span>
+            </button>
 
+          </div>
         </div>
-      </div>
 
-      <div class="settings-section">
-        <div class="settings-section-label">ALL CONTACTS &mdash; TAP STAR TO SET AS ONE OF YOUR FAVOURITES</div>
-        <div id="manage-list" class="manage-list-card">
-          <!-- Rendered by JS -->
+        <div class="settings-section">
+          <div class="settings-section-label">ALL CONTACTS &mdash; TAP A ROW TO MANAGE</div>
+          <div id="manage-list" class="manage-list-card">
+            <!-- Rendered by JS -->
+          </div>
         </div>
-      </div>
 
+      </div>
+      <div id="alpha-strip" class="alpha-strip"></div>
     </div>
   </div><!-- /screen-contacts -->
 

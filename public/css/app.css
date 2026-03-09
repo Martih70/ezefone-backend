@@ -582,6 +582,63 @@ input {
 /* =============================================
    Settings
    ============================================= */
+.contacts-body {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.contacts-body .settings-scroll {
+  padding-right: 28px;
+}
+
+.alpha-strip {
+  position: absolute;
+  right: 2px;
+  top: 0;
+  bottom: 0;
+  width: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  z-index: 50;
+  pointer-events: none;
+}
+.alpha-letter {
+  pointer-events: all;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--green-deep);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s, color 0.1s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.alpha-letter:active {
+  background: var(--green-deep);
+  color: white;
+  border-radius: 50%;
+}
+
+.alpha-section-header {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--text-light);
+  padding: 8px 16px 4px;
+  background: var(--bg);
+  text-transform: uppercase;
+}
+
 .settings-scroll {
   flex: 1;
   overflow-y: auto;

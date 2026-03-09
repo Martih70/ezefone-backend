@@ -283,38 +283,80 @@ function renderManageList() {
 
   if (state.loading) {
     list.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>Loading\u2026</p></div>';
+    updateAlphaStrip([]);
     return;
   }
 
   if (state.contacts.length === 0) {
     list.innerHTML = '<div class="empty-state"><span class="material-icons-round">people_outline</span>'
       + '<p>No contacts yet. Import from your phone or add manually.</p></div>';
+    updateAlphaStrip([]);
     return;
   }
 
   const favIds = new Set(state.favorites.map(f => f.contact_id));
 
-  list.innerHTML = state.contacts.map(contact => {
-    const color    = getAvatarColor(contact.name);
-    const initials = getInitials(contact.name);
-    const isFav    = favIds.has(contact.id);
-    const id       = contact.id;
+  // Sort alphabetically and group by first letter
+  const sorted = [...state.contacts].sort(function(a, b) {
+    return a.name.localeCompare(b.name);
+  });
 
-    const callBtn = contact.phone
-      ? '<button class="manage-call-btn" onclick="event.stopPropagation();window.location.href=\'tel:' + esc(contact.phone) + '\'" title="Call ' + esc(contact.name) + '">'
-        + '<span class="material-icons-round">call</span></button>'
-      : '';
+  const groups = {};
+  sorted.forEach(function(contact) {
+    const ch = contact.name.trim()[0];
+    const letter = ch ? ch.toUpperCase() : '#';
+    const key = /[A-Z]/.test(letter) ? letter : '#';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(contact);
+  });
 
-    return '<div class="manage-row" onclick="showManageSheet(' + id + ')">'
-      + '<div class="manage-avatar" style="background:' + color + '">' + esc(initials) + '</div>'
-      + '<div class="manage-info">'
-      + '<div class="manage-name">' + esc(contact.name) + (isFav ? ' <span class="manage-fav-dot">\u2605</span>' : '') + '</div>'
-      + '<div class="manage-phone">' + esc(contact.phone || contact.email || '') + '</div>'
-      + '</div>'
-      + callBtn
-      + '<span class="material-icons-round manage-chevron">chevron_right</span>'
-      + '</div>';
+  const letters = Object.keys(groups).sort(function(a, b) {
+    if (a === '#') return 1;
+    if (b === '#') return -1;
+    return a.localeCompare(b);
+  });
+
+  let html = '';
+  letters.forEach(function(letter) {
+    html += '<div class="alpha-section-header" id="alpha-section-' + letter + '">' + letter + '</div>';
+    groups[letter].forEach(function(contact) {
+      const color    = getAvatarColor(contact.name);
+      const initials = getInitials(contact.name);
+      const isFav    = favIds.has(contact.id);
+      const id       = contact.id;
+      const callBtn  = contact.phone
+        ? '<button class="manage-call-btn" onclick="event.stopPropagation();window.location.href=\'tel:' + esc(contact.phone) + '\'" title="Call ' + esc(contact.name) + '"><span class="material-icons-round">call</span></button>'
+        : '';
+      html += '<div class="manage-row" onclick="showManageSheet(' + id + ')">'
+        + '<div class="manage-avatar" style="background:' + color + '">' + esc(initials) + '</div>'
+        + '<div class="manage-info">'
+        + '<div class="manage-name">' + esc(contact.name) + (isFav ? ' <span class="manage-fav-dot">\u2605</span>' : '') + '</div>'
+        + '<div class="manage-phone">' + esc(contact.phone || contact.email || '') + '</div>'
+        + '</div>'
+        + callBtn
+        + '<span class="material-icons-round manage-chevron">chevron_right</span>'
+        + '</div>';
+    });
+  });
+
+  list.innerHTML = html;
+  updateAlphaStrip(letters);
+}
+
+function updateAlphaStrip(activeLetters) {
+  const strip = document.getElementById('alpha-strip');
+  if (!strip) return;
+  strip.innerHTML = activeLetters.map(function(letter) {
+    return '<button class="alpha-letter" onclick="scrollToLetter(\'' + letter + '\')">' + letter + '</button>';
   }).join('');
+}
+
+function scrollToLetter(letter) {
+  const el = document.getElementById('alpha-section-' + letter);
+  if (!el) return;
+  const scroll = el.closest('.settings-scroll');
+  if (!scroll) return;
+  scroll.scrollTop += el.getBoundingClientRect().top - scroll.getBoundingClientRect().top - 10;
 }
 
 function updateContactCount() {
