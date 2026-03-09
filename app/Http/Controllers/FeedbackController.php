@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Feedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -18,11 +18,19 @@ class FeedbackController extends Controller
 
         $user = Auth::user();
 
-        // Always save to database first — guaranteed path regardless of mail config
-        $feedback = Feedback::create([
-            'user_id' => $user->id,
-            'message' => $validated['message'],
-        ]);
+        // Save to database first — guaranteed regardless of mail config
+        $feedbackId = null;
+        try {
+            $feedbackId = DB::table('feedback')->insertGetId([
+                'user_id'    => $user->id,
+                'message'    => $validated['message'],
+                'emailed'    => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Feedback DB save failed', ['error' => $e->getMessage()]);
+        }
 
         // Send email as best-effort — never fail the request if this throws
         try {
@@ -34,10 +42,12 @@ class FeedbackController extends Controller
                          ->replyTo($user->email, $user->name);
                 }
             );
-            $feedback->update(['emailed' => true]);
+            if ($feedbackId) {
+                DB::table('feedback')->where('id', $feedbackId)->update(['emailed' => true]);
+            }
         } catch (\Throwable $e) {
             Log::error('Feedback email failed', [
-                'feedback_id' => $feedback->id,
+                'feedback_id' => $feedbackId,
                 'error'       => $e->getMessage(),
             ]);
         }
