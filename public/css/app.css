@@ -735,6 +735,17 @@ input {
 .manage-delete-btn:active { transform: scale(0.9); }
 .manage-delete-btn .material-icons-round { font-size: 20px; }
 
+.manage-call-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(30,125,58,0.1);
+  color: #1e7d3a;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.1s;
+}
+.manage-call-btn:active { transform: scale(0.9); }
+.manage-call-btn .material-icons-round { font-size: 20px; }
+
 .manage-photo-btn {
   width: 38px; height: 38px;
   border-radius: 50%;

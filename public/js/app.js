@@ -306,6 +306,11 @@ function renderManageList() {
         + (contact.photo_path ? '<button class="manage-photo-remove-btn" onclick="removeContactPhoto(' + id + ')" title="Remove photo"><span class="material-icons-round">hide_image</span></button>' : '')
       : '';
 
+    const callBtn = contact.phone
+      ? '<button class="manage-call-btn" onclick="window.location.href=\'tel:' + esc(contact.phone) + '\'" title="Call ' + esc(contact.name) + '">'
+        + '<span class="material-icons-round">call</span></button>'
+      : '';
+
     return '<div class="manage-row">'
       + '<div class="manage-avatar" style="background:' + color + '">' + esc(initials) + '</div>'
       + '<div class="manage-info">'
@@ -313,6 +318,7 @@ function renderManageList() {
       + '<div class="manage-phone">' + esc(contact.phone || contact.email || '') + '</div>'
       + '</div>'
       + '<div class="manage-actions">'
+      + callBtn
       + photoBtn
       + '<button class="manage-star-btn' + (isFav ? ' active' : '') + '" onclick="toggleFavourite(' + id + ',' + isFav + ')" title="' + (isFav ? 'Remove from My Favourites' : 'Add to My Favourites') + '">'
       + '<span class="material-icons-round">' + (isFav ? 'star' : 'star_border') + '</span></button>'
