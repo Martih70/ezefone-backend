@@ -1,2 +1,4 @@
 User-agent: *
 Disallow:
+
+Sitemap: https://ezefone.co.uk/sitemap.xml
