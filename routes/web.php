@@ -64,6 +64,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Sitemap
+Route::get('/sitemap.xml', function () {
+    return response(file_get_contents(public_path('sitemap.xml')), 200)
+        ->header('Content-Type', 'application/xml');
+});
+
 // Printable A5 guide
 Route::get('/guide', function () {
     return response(file_get_contents(public_path('guide.html')), 200)
