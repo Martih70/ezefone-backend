@@ -35,15 +35,31 @@ class PaymentRegistrationController extends Controller
 
         $validated = $request->validate([
             'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'max:255', 'unique:users'],
+            'email'    => ['required', 'email', 'max:255'],
             'password' => ['required', 'confirmed', Password::min(8)],
         ]);
 
-        $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
+        // Ensure the submitted email matches the Stripe-verified email.
+        if ($validated['email'] !== session('payment_email')) {
+            return back()->withErrors(['email' => 'Email must match your Stripe payment email.'])->withInput();
+        }
+
+        // The Stripe webhook may have already created this account (race condition).
+        // If so, update the placeholder record with the real name/password instead.
+        $user = User::where('email', $validated['email'])->first();
+
+        if ($user) {
+            $user->update([
+                'name'     => $validated['name'],
+                'password' => Hash::make($validated['password']),
+            ]);
+        } else {
+            $user = User::create([
+                'name'     => $validated['name'],
+                'email'    => $validated['email'],
+                'password' => Hash::make($validated['password']),
+            ]);
+        }
 
         Auth::login($user);
 
