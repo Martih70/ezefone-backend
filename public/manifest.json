@@ -2,11 +2,17 @@
   "name": "Ezefone",
   "short_name": "Ezefone",
   "description": "Simple calling and messaging for everyone",
+  "lang": "en-GB",
+  "dir": "ltr",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#faf8f4",
   "theme_color": "#1a6b3c",
   "orientation": "portrait",
+  "categories": ["communication", "utilities"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icons/favicon-48x48.png",
@@ -35,6 +41,23 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icons/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "label": "Ezefone home screen"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Favourites",
+      "short_name": "Favourites",
+      "description": "View your favourite contacts",
+      "url": "/",
+      "icons": [{ "src": "/icons/favicon-192x192.png", "sizes": "192x192" }]
     }
   ]
 }
