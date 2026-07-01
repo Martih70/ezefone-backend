@@ -547,9 +547,6 @@ function loadSettingsForm() {
     sel.value = state.settings.sos_contact_id || '';
   }
 
-  // Location toggle
-  const toggle = document.getElementById('sos-location-toggle');
-  if (toggle) toggle.checked = !!state.settings.sos_location_sharing;
 }
 
 // Code word — save button
@@ -586,84 +583,17 @@ async function sosContactChanged(value) {
   }
 }
 
-// Location toggle — onchange
-function locationToggleChanged(enabled) {
-  if (!enabled) {
-    patchSettings({ sos_location_sharing: false }).catch(function() {
-      showToast('Could not save — check your connection');
-    });
-    return;
-  }
-  if (!('geolocation' in navigator)) {
-    const toggle = document.getElementById('sos-location-toggle');
-    if (toggle) toggle.checked = false;
-    showToast('Location is not available on this device');
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(
-    function() {
-      patchSettings({ sos_location_sharing: true }).catch(function() {
-        showToast('Could not save — check your connection');
-      });
-    },
-    function() {
-      const toggle = document.getElementById('sos-location-toggle');
-      if (toggle) toggle.checked = false;
-      showToast('Location access was not allowed. You can try again here.');
-    },
-    { timeout: 10000 }
-  );
-}
-
 // ============================================================
 // SOS
 // ============================================================
 function sosTap() {
   const phone = state.settings.sos_contact_phone;
-  const name  = state.settings.sos_contact_name || 'your contact';
-
   if (!phone) {
     navigate('settings');
     showToast('Choose a contact under Family Safety');
     return;
   }
-
-  showToast('Calling ' + name + '...');
-
-  // Open the phone dialer after the toast has shown
-  setTimeout(function() {
-    window.location.href = 'tel:' + phone;
-  }, 1500);
-
-  // Then open a pre-filled SMS
-  setTimeout(function() {
-    sendSosSms(phone, name);
-  }, 2500);
-}
-
-function sendSosSms(phone, name) {
-  const userName = state.settings.user_name || 'someone you know';
-
-  function openSms(mapLink) {
-    var body = 'This is ' + userName + ' using Call for Help on Ezefone. Please call me back.';
-    if (mapLink) body += ' ' + mapLink;
-    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    var sep   = isIOS ? '&' : '?';
-    window.location.href = 'sms:' + phone + sep + 'body=' + encodeURIComponent(body);
-  }
-
-  if (state.settings.sos_location_sharing && 'geolocation' in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      function(pos) {
-        var link = 'https://www.google.com/maps?q=' + pos.coords.latitude + ',' + pos.coords.longitude;
-        openSms(link);
-      },
-      function() { openSms(null); },
-      { timeout: 5000, maximumAge: 60000 }
-    );
-  } else {
-    openSms(null);
-  }
+  window.location.href = 'tel:' + phone;
 }
 
 
