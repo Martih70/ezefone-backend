@@ -10,6 +10,7 @@ const state = {
   loading: false,
   installPrompt: null,
   sheetContactId: null,
+  settings: {},    // loaded from /api/settings on init
 };
 
 // ============================================================
@@ -164,7 +165,7 @@ function navigate(screen) {
   if (screen === 'people')   renderPeople();
   if (screen === 'contacts') { updateContactCount(); renderManageList(); }
   if (screen === 'messages') renderMessages();
-  if (screen === 'settings') { loadSosInputs(); applyTextSize(); updateCarerLockUI(); }
+  if (screen === 'settings') { loadSettingsForm(); applyTextSize(); updateCarerLockUI(); }
 }
 
 // ============================================================
@@ -229,15 +230,15 @@ function renderPeople() {
   renderRecentlyCalled();
 
   // SOS card — always visible
-  const sosNumber = localStorage.getItem('sos-number');
-  const sosName   = localStorage.getItem('sos-name') || 'Emergency contact';
-  const sosCard   = document.getElementById('sos-card');
-  const sosSub    = document.getElementById('sos-subtitle');
+  const sosCard = document.getElementById('sos-card');
+  const sosSub  = document.getElementById('sos-subtitle');
   if (sosCard) {
     sosCard.classList.remove('hidden');
     if (sosSub) {
-      sosSub.textContent = sosNumber
-        ? sosName + ' \u2014 ' + sosNumber
+      const sosName  = state.settings.sos_contact_name;
+      const sosPhone = state.settings.sos_contact_phone;
+      sosSub.textContent = sosPhone
+        ? (sosName || sosPhone) + ' \u2014 tap to call'
         : 'Tap to set up your emergency contact';
     }
   }
@@ -506,30 +507,163 @@ async function importFromPhone() {
 }
 
 // ============================================================
-// SOS
+// FAMILY SAFETY — SETTINGS API
 // ============================================================
-function sosTap() {
-  const num = localStorage.getItem('sos-number');
-  if (num) {
-    window.location.href = 'tel:' + num;
-  } else {
-    navigate('settings');
-    showToast('Set your emergency number in Settings');
+async function loadSettings() {
+  try {
+    const data = await apiRequest('GET', '/settings');
+    state.settings = data || {};
+    renderPeople();
+  } catch (err) {
+    if (!err.isAuthError) console.warn('Could not load settings:', err.message);
   }
 }
 
-function saveSosField(key, value) {
-  const trimmed = value.trim();
-  if (trimmed) { localStorage.setItem(key, trimmed); }
-  else         { localStorage.removeItem(key); }
-  renderPeople();
+async function patchSettings(patch) {
+  await apiRequest('PATCH', '/settings', patch);
+  Object.assign(state.settings, patch);
 }
 
-function loadSosInputs() {
-  const n = document.getElementById('sos-number-input');
-  const l = document.getElementById('sos-name-input');
-  if (n) n.value = localStorage.getItem('sos-number') || '';
-  if (l) l.value = localStorage.getItem('sos-name')   || '';
+// Called by navigate() when entering the settings screen
+function loadSettingsForm() {
+  // Code word
+  const cwInput = document.getElementById('code-word-input');
+  if (cwInput) cwInput.value = state.settings.family_code_word || '';
+
+  // SOS contact picker — rebuild options from current contacts list
+  const sel = document.getElementById('sos-contact-select');
+  if (sel) {
+    sel.innerHTML = '<option value="">— Choose a contact —</option>';
+    state.contacts.forEach(function(c) {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.name + (c.phone ? ' (' + c.phone + ')' : '');
+      sel.appendChild(opt);
+    });
+    const addOpt = document.createElement('option');
+    addOpt.value = '__add__';
+    addOpt.textContent = '+ Add a new number';
+    sel.appendChild(addOpt);
+    sel.value = state.settings.sos_contact_id || '';
+  }
+
+  // Location toggle
+  const toggle = document.getElementById('sos-location-toggle');
+  if (toggle) toggle.checked = !!state.settings.sos_location_sharing;
+}
+
+// Code word — save button
+async function saveCodeWord() {
+  const input = document.getElementById('code-word-input');
+  if (!input) return;
+  try {
+    await patchSettings({ family_code_word: input.value.trim() || null });
+    showToast('Saved. You can view this anytime under Family Safety.');
+  } catch (err) {
+    showToast('Could not save — check your connection');
+  }
+}
+
+// SOS contact picker — onchange
+async function sosContactChanged(value) {
+  if (value === '__add__') {
+    // Reset the select back and open the add-contact modal
+    const sel = document.getElementById('sos-contact-select');
+    if (sel) sel.value = state.settings.sos_contact_id || '';
+    showAddContactModal();
+    return;
+  }
+  const contactId = value ? parseInt(value, 10) : null;
+  try {
+    await patchSettings({ sos_contact_id: contactId });
+    // Update displayed name/phone from loaded contacts list
+    const contact = contactId ? state.contacts.find(function(c) { return c.id === contactId; }) : null;
+    state.settings.sos_contact_name  = contact ? contact.name  : null;
+    state.settings.sos_contact_phone = contact ? contact.phone : null;
+    renderPeople();
+  } catch (err) {
+    showToast('Could not save — check your connection');
+  }
+}
+
+// Location toggle — onchange
+function locationToggleChanged(enabled) {
+  if (!enabled) {
+    patchSettings({ sos_location_sharing: false }).catch(function() {
+      showToast('Could not save — check your connection');
+    });
+    return;
+  }
+  if (!('geolocation' in navigator)) {
+    const toggle = document.getElementById('sos-location-toggle');
+    if (toggle) toggle.checked = false;
+    showToast('Location is not available on this device');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function() {
+      patchSettings({ sos_location_sharing: true }).catch(function() {
+        showToast('Could not save — check your connection');
+      });
+    },
+    function() {
+      const toggle = document.getElementById('sos-location-toggle');
+      if (toggle) toggle.checked = false;
+      showToast('Location access was not allowed. You can try again here.');
+    },
+    { timeout: 10000 }
+  );
+}
+
+// ============================================================
+// SOS
+// ============================================================
+function sosTap() {
+  const phone = state.settings.sos_contact_phone;
+  const name  = state.settings.sos_contact_name || 'your contact';
+
+  if (!phone) {
+    navigate('settings');
+    showToast('Choose a contact under Family Safety');
+    return;
+  }
+
+  showToast('Calling ' + name + '...');
+
+  // Open the phone dialer after the toast has shown
+  setTimeout(function() {
+    window.location.href = 'tel:' + phone;
+  }, 1500);
+
+  // Then open a pre-filled SMS
+  setTimeout(function() {
+    sendSosSms(phone, name);
+  }, 2500);
+}
+
+function sendSosSms(phone, name) {
+  const userName = state.settings.user_name || 'someone you know';
+
+  function openSms(mapLink) {
+    var body = 'This is ' + userName + ' using Call for Help on Ezefone. Please call me back.';
+    if (mapLink) body += ' ' + mapLink;
+    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    var sep   = isIOS ? '&' : '?';
+    window.location.href = 'sms:' + phone + sep + 'body=' + encodeURIComponent(body);
+  }
+
+  if (state.settings.sos_location_sharing && 'geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      function(pos) {
+        var link = 'https://www.google.com/maps?q=' + pos.coords.latitude + ',' + pos.coords.longitude;
+        openSms(link);
+      },
+      function() { openSms(null); },
+      { timeout: 5000, maximumAge: 60000 }
+    );
+  } else {
+    openSms(null);
+  }
 }
 
 
@@ -969,6 +1103,7 @@ async function init() {
 
   if (localStorage.getItem('ezefone_paid')) {
     await loadContacts();
+    await loadSettings();
   }
 
   // Show setup wizard on first launch

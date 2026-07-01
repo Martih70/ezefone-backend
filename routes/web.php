@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\PaymentRegistrationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,8 @@ Route::prefix('api')->middleware('auth:sanctum')->group(function () {
     Route::post('/contacts/{contactId}/photo', [ContactController::class, 'updatePhoto']);
     Route::delete('/contacts/{contactId}/photo', [ContactController::class, 'removePhoto']);
     Route::post('/feedback', [FeedbackController::class, 'store']);
+    Route::get('/settings', [SettingsController::class, 'show']);
+    Route::patch('/settings', [SettingsController::class, 'update']);
 });
 
 // Stripe Checkout

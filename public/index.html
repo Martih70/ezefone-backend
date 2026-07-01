@@ -18,6 +18,76 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Literata:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <link rel="stylesheet" href="/css/app.css">
+  <style>
+    /* Family Safety section */
+    .family-safety-intro {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0 0 12px 0;
+      line-height: 1.5;
+    }
+    .family-safety-helper {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+    .family-safety-note {
+      font-size: 12px;
+      color: var(--text-light);
+      margin: 0;
+      line-height: 1.5;
+    }
+    .family-safety-save-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--green-deep);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .family-safety-save-btn:active { opacity: 0.85; }
+    .family-safety-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='%2364748b'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+    /* Toggle switch */
+    .family-safety-toggle {
+      position: relative;
+      width: 50px;
+      height: 28px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .family-safety-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .family-safety-toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 9999px;
+      transition: background 0.2s;
+    }
+    .family-safety-toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+    .family-safety-toggle input:checked + .family-safety-toggle-track { background: var(--green-deep); }
+    .family-safety-toggle input:checked + .family-safety-toggle-track::after { transform: translateX(22px); }
+  </style>
 </head>
 <body>
 
@@ -207,27 +277,61 @@
     </div>
     <div class="settings-scroll">
 
-      <!-- Emergency contact -->
+      <!-- Family Safety -->
       <div class="settings-section">
-        <div class="settings-section-label">EMERGENCY CONTACT (SOS)</div>
-        <div class="settings-card">
-          <div class="settings-row">
-            <span class="material-icons-round settings-row-icon" style="color:#d93025">emergency</span>
-            <div class="settings-row-body">
-              <div class="settings-row-label">SOS Name</div>
-              <input type="text" id="sos-name-input" class="settings-inline-input"
-                     placeholder="e.g. Margaret / Ambulance"
-                     onchange="saveSosField('sos-name', this.value)">
+        <div class="settings-section-label">Family Safety</div>
+        <p class="family-safety-intro">A few simple things that can help keep you safe.</p>
+
+        <!-- Code word -->
+        <div class="settings-card" style="margin-bottom:14px">
+          <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:10px">
+            <div style="display:flex;align-items:center;gap:14px;width:100%">
+              <span class="material-icons-round settings-row-icon">vpn_key</span>
+              <div class="settings-row-body">
+                <div class="settings-row-label">Our family code word</div>
+              </div>
             </div>
+            <p class="family-safety-helper">If someone calls saying they're a family member in trouble and asking for money, ask them for this word. If they don't know it, hang up and call a family member directly to check.</p>
+            <input type="text" id="code-word-input" class="settings-inline-input"
+                   placeholder="e.g. Sunflower"
+                   autocomplete="off" autocorrect="off" spellcheck="false">
+            <button class="family-safety-save-btn" onclick="saveCodeWord()">Save code word</button>
+            <p class="family-safety-note">Choose this together with your family. Keep it private — don't share it with anyone outside your family.</p>
           </div>
-          <div class="settings-row">
-            <span class="material-icons-round settings-row-icon" style="color:#d93025">call</span>
-            <div class="settings-row-body">
-              <div class="settings-row-label">SOS Number</div>
-              <input type="tel" id="sos-number-input" class="settings-inline-input"
-                     placeholder="e.g. +44 7700 900123"
-                     onchange="saveSosField('sos-number', this.value)">
+        </div>
+
+        <!-- SOS contact picker -->
+        <div class="settings-card" style="margin-bottom:14px">
+          <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:10px">
+            <div style="display:flex;align-items:center;gap:14px;width:100%">
+              <span class="material-icons-round settings-row-icon" style="color:#d93025">emergency</span>
+              <div class="settings-row-body">
+                <div class="settings-row-label">Who should "Call for Help" contact?</div>
+              </div>
             </div>
+            <p class="family-safety-helper">Choose one person to call if you ever need help in a hurry.</p>
+            <select id="sos-contact-select" class="settings-inline-input family-safety-select"
+                    onchange="sosContactChanged(this.value)">
+              <option value="">— Choose a contact —</option>
+            </select>
+            <p class="family-safety-note">When you tap Call for Help, we'll call this person straight away.</p>
+          </div>
+        </div>
+
+        <!-- Location sharing toggle -->
+        <div class="settings-card">
+          <div class="settings-row" style="justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:0">
+              <span class="material-icons-round settings-row-icon">location_on</span>
+              <div class="settings-row-body">
+                <div class="settings-row-label">Share my location when I ask for help</div>
+                <div class="settings-row-sub">If this is on, we'll include a map link when you ask for help, so they know where you are.</div>
+              </div>
+            </div>
+            <label class="family-safety-toggle" aria-label="Share location toggle">
+              <input type="checkbox" id="sos-location-toggle" onchange="locationToggleChanged(this.checked)">
+              <span class="family-safety-toggle-track"></span>
+            </label>
           </div>
         </div>
       </div>
@@ -491,9 +595,9 @@
           </div>
           <div class="faq-answer">
             <div class="faq-step"><span class="step-num">1</span><span>The red <strong>Call for Help</strong> button is always visible at the bottom of your home screen</span></div>
-            <div class="faq-step"><span class="step-num">2</span><span>Tapping it calls your nominated emergency contact immediately</span></div>
-            <div class="faq-step"><span class="step-num">3</span><span>To set up your emergency contact: tap <strong>Settings &rarr; Emergency Contact (SOS)</strong></span></div>
-            <div class="faq-tip">&#x1F4A1; You can set this to a family member, carer, or 999</div>
+            <div class="faq-step"><span class="step-num">2</span><span>Tapping it calls your chosen contact straight away and sends them a message</span></div>
+            <div class="faq-step"><span class="step-num">3</span><span>To choose who it contacts: tap <strong>Settings &rarr; Family Safety</strong></span></div>
+            <div class="faq-tip">&#x1F4A1; You can also set a family code word and turn on location sharing in Family Safety</div>
           </div>
 
         </div>

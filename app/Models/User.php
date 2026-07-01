@@ -23,6 +23,9 @@ class User extends Authenticatable
         'email',
         'password',
         'stripe_customer_id',
+        'family_code_word',
+        'sos_contact_id',
+        'sos_location_sharing',
     ];
 
     /**
@@ -43,8 +46,9 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'email_verified_at'    => 'datetime',
+            'password'             => 'hashed',
+            'sos_location_sharing' => 'boolean',
         ];
     }
 }
