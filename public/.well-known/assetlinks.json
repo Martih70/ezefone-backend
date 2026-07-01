@@ -2,7 +2,7 @@
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target": {
     "namespace": "android_app",
-    "package_name": "uk.co.ezefone.pwa.twa",
-    "sha256_cert_fingerprints": ["8E:42:4E:05:DC:F5:49:4B:BF:CC:3E:4D:56:1B:FE:CA:2F:E5:8B:DB:EB:2D:63:61:EF:3A:53:07:55:5A:18:03"]
+    "package_name": "com.martin.ezefone",
+    "sha256_cert_fingerprints": ["CA:F4:79:7D:57:8C:E8:F3:4B:48:6C:D5:65:3C:56:D8:03:9B:F6:31:EB:5A:9A:C4:42:0E:4C:02:89:36:5E:C3"]
   }
 }]
