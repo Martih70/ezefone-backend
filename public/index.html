@@ -318,6 +318,54 @@
           </div>
         </div>
 
+        <!-- Unknown caller guide -->
+        <div class="settings-card" style="margin-bottom:14px">
+          <button class="settings-row settings-row-btn" onclick="navigate('unknown-caller')">
+            <span class="material-icons-round settings-row-icon">block</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Stop unknown numbers from ringing</div>
+              <div class="settings-row-sub">Your phone already has a way to do this</div>
+            </div>
+            <span class="material-icons-round settings-chevron">chevron_right</span>
+          </button>
+        </div>
+
+        <!-- Daily check-in -->
+        <div class="settings-card" style="margin-bottom:14px">
+          <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:10px">
+            <div style="display:flex;align-items:center;gap:14px;width:100%">
+              <span class="material-icons-round settings-row-icon">schedule</span>
+              <div class="settings-row-body">
+                <div class="settings-row-label">Let a family member know if I haven't opened my phone</div>
+              </div>
+              <label class="family-safety-toggle">
+                <input type="checkbox" id="checkin-enabled" onchange="checkinEnabledChanged(this.checked)">
+                <span class="family-safety-toggle-track"></span>
+              </label>
+            </div>
+            <p class="family-safety-helper">If this is on, we'll gently let them know if you haven't used your phone by the time below, just so they know to check in.</p>
+            <div id="checkin-details" style="display:none;width:100%;flex-direction:column;gap:12px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                <label class="family-safety-helper" for="checkin-time" style="margin:0;white-space:nowrap">Alert if not opened by</label>
+                <input type="time" id="checkin-time" class="settings-inline-input" style="width:auto;min-width:110px" onchange="saveCheckinSettings()">
+              </div>
+              <input type="email" id="checkin-email" class="settings-inline-input"
+                     placeholder="Family member's email address"
+                     autocomplete="off" onblur="saveCheckinSettings()">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:4px">
+                <div>
+                  <div class="settings-row-label" style="font-size:14px">Pause for today</div>
+                  <div class="family-safety-note" style="margin:0">Turn on if you're away or in hospital</div>
+                </div>
+                <label class="family-safety-toggle">
+                  <input type="checkbox" id="checkin-paused" onchange="checkinPausedChanged(this.checked)">
+                  <span class="family-safety-toggle-track"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- App -->
@@ -424,6 +472,57 @@
     </div>
   </div><!-- /screen-settings -->
 
+
+
+  <!-- ============================================================
+       SCREEN: UNKNOWN CALLER GUIDE
+       ============================================================ -->
+  <div class="screen" id="screen-unknown-caller">
+    <div class="sub-header" style="display:flex;align-items:center;gap:8px">
+      <button onclick="navigate('settings')" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;color:inherit">
+        <span class="material-icons-round">arrow_back</span>
+      </button>
+      <h1 class="sub-header-title" style="margin:0">Stop Unknown Callers</h1>
+    </div>
+    <div class="settings-scroll">
+      <div class="settings-section">
+        <p class="family-safety-intro" style="margin-bottom:16px">Your phone already has a way to do this — you just need to turn it on. Tap below for simple steps.</p>
+
+        <!-- Tab bar -->
+        <div style="display:flex;gap:0;border-radius:10px;overflow:hidden;border:2px solid var(--border);margin-bottom:16px">
+          <button id="uc-tab-iphone" onclick="showUcTab('iphone')"
+                  style="flex:1;padding:10px;border:none;font-size:15px;font-weight:700;cursor:pointer;background:var(--green-deep);color:#fff">
+            iPhone
+          </button>
+          <button id="uc-tab-android" onclick="showUcTab('android')"
+                  style="flex:1;padding:10px;border:none;font-size:15px;font-weight:700;cursor:pointer;background:#f5f5f5;color:var(--text-muted)">
+            Android
+          </button>
+        </div>
+
+        <!-- iPhone instructions -->
+        <div id="uc-panel-iphone" class="settings-card" style="margin-bottom:14px">
+          <div class="faq-step" style="padding:14px 16px"><span class="step-num">1</span><span>Open your phone's <strong>Settings</strong> app (not Ezefone).</span></div>
+          <div class="faq-step" style="padding:14px 16px"><span class="step-num">2</span><span>Tap <strong>Apps</strong>, then tap <strong>Phone</strong>.</span></div>
+          <div class="faq-step" style="padding:14px 16px"><span class="step-num">3</span><span>Look for <strong>Silence Unknown Callers</strong> (or <strong>Screen Unknown Callers</strong>) and turn it on.</span></div>
+          <p class="family-safety-helper" style="padding:0 16px 14px">From now on, calls from numbers not saved in your Contacts will go straight to voicemail without ringing.</p>
+        </div>
+
+        <!-- Android instructions -->
+        <div id="uc-panel-android" class="settings-card" style="margin-bottom:14px;display:none">
+          <p class="family-safety-helper" style="padding:14px 16px 8px">Steps vary slightly by phone brand — look for something like "Caller ID &amp; spam" or "Block unknown numbers" in your Phone app's settings.</p>
+          <div class="faq-step" style="padding:14px 16px"><span class="step-num">1</span><span>Open your phone's built-in <strong>Phone</strong> app (not Ezefone).</span></div>
+          <div class="faq-step" style="padding:14px 16px"><span class="step-num">2</span><span>Tap the <strong>three dots</strong> or menu icon, then tap <strong>Settings</strong>.</span></div>
+          <div class="faq-step" style="padding:14px 16px"><span class="step-num">3</span><span>Look for <strong>Caller ID and spam protection</strong> (or similar) and turn on blocking for unknown numbers.</span></div>
+        </div>
+
+        <!-- Caveat -->
+        <div class="settings-card" style="background:#fffbeb;border-left:4px solid #f59e0b;padding:14px 16px">
+          <p class="family-safety-helper" style="margin:0"><strong>Good to know:</strong> this will silence calls from anyone not saved as a contact — including doctors' surgeries, delivery drivers, or new numbers from family. Make sure everyone important is saved in Contacts first.</p>
+        </div>
+      </div>
+    </div>
+  </div><!-- /screen-unknown-caller -->
 
 
   <!-- ============================================================

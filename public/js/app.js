@@ -162,10 +162,11 @@ function navigate(screen) {
     btn.classList.toggle('active', btn.dataset.screen === screen);
   });
 
-  if (screen === 'people')   renderPeople();
-  if (screen === 'contacts') { updateContactCount(); renderManageList(); }
-  if (screen === 'messages') renderMessages();
-  if (screen === 'settings') { loadSettingsForm(); applyTextSize(); updateCarerLockUI(); }
+  if (screen === 'people')         renderPeople();
+  if (screen === 'contacts')       { updateContactCount(); renderManageList(); }
+  if (screen === 'messages')       renderMessages();
+  if (screen === 'settings')       { loadSettingsForm(); applyTextSize(); updateCarerLockUI(); }
+  if (screen === 'unknown-caller') showUcTab('iphone');
 }
 
 // ============================================================
@@ -547,6 +548,24 @@ function loadSettingsForm() {
     sel.value = state.settings.sos_contact_id || '';
   }
 
+  // Daily check-in
+  var checkinEnabled = document.getElementById('checkin-enabled');
+  var checkinDetails = document.getElementById('checkin-details');
+  var checkinTime    = document.getElementById('checkin-time');
+  var checkinEmail   = document.getElementById('checkin-email');
+  var checkinPaused  = document.getElementById('checkin-paused');
+
+  if (checkinEnabled) checkinEnabled.checked = !!state.settings.checkin_enabled;
+  if (checkinDetails) checkinDetails.style.display = state.settings.checkin_enabled ? 'flex' : 'none';
+  if (checkinTime)    checkinTime.value  = state.settings.checkin_time  || '11:00';
+  if (checkinEmail)   checkinEmail.value = state.settings.checkin_email || '';
+
+  if (checkinPaused) {
+    var today  = new Date().toISOString().slice(0, 10);
+    var paused = state.settings.checkin_paused_until;
+    checkinPaused.checked = !!(paused && paused >= today);
+  }
+
 }
 
 // Code word — save button
@@ -578,6 +597,56 @@ async function sosContactChanged(value) {
     state.settings.sos_contact_name  = contact ? contact.name  : null;
     state.settings.sos_contact_phone = contact ? contact.phone : null;
     renderPeople();
+  } catch (err) {
+    showToast('Could not save — check your connection');
+  }
+}
+
+// ============================================================
+// UNKNOWN CALLER GUIDE — tab switcher
+// ============================================================
+function showUcTab(tab) {
+  var isIphone  = tab === 'iphone';
+  var activeCol = 'var(--green-deep)';
+  var inactiveCol = '#f5f5f5';
+
+  document.getElementById('uc-tab-iphone').style.background  = isIphone ? activeCol : inactiveCol;
+  document.getElementById('uc-tab-iphone').style.color       = isIphone ? '#fff' : 'var(--text-muted)';
+  document.getElementById('uc-tab-android').style.background = isIphone ? inactiveCol : activeCol;
+  document.getElementById('uc-tab-android').style.color      = isIphone ? 'var(--text-muted)' : '#fff';
+
+  document.getElementById('uc-panel-iphone').style.display  = isIphone ? '' : 'none';
+  document.getElementById('uc-panel-android').style.display = isIphone ? 'none' : '';
+}
+
+// ============================================================
+// DAILY CHECK-IN — settings UI
+// ============================================================
+function checkinEnabledChanged(checked) {
+  var details = document.getElementById('checkin-details');
+  if (details) details.style.display = checked ? 'flex' : 'none';
+  patchSettings({ checkin_enabled: checked }).catch(function() {
+    showToast('Could not save — check your connection');
+  });
+}
+
+async function saveCheckinSettings() {
+  var timeEl  = document.getElementById('checkin-time');
+  var emailEl = document.getElementById('checkin-email');
+  var time    = timeEl  ? timeEl.value  : null;
+  var email   = emailEl ? emailEl.value.trim() || null : null;
+  try {
+    await patchSettings({ checkin_time: time, checkin_email: email });
+    if (email) showToast('Saved. A welcome email has been sent to ' + email + '.');
+  } catch (err) {
+    showToast('Could not save — check your connection');
+  }
+}
+
+async function checkinPausedChanged(checked) {
+  var today = new Date().toISOString().slice(0, 10);
+  try {
+    await patchSettings({ checkin_paused_until: checked ? today : null });
   } catch (err) {
     showToast('Could not save — check your connection');
   }

@@ -26,6 +26,12 @@ class User extends Authenticatable
         'family_code_word',
         'sos_contact_id',
         'sos_location_sharing',
+        'last_opened_at',
+        'checkin_enabled',
+        'checkin_time',
+        'checkin_email',
+        'checkin_paused_until',
+        'checkin_alerted_date',
     ];
 
     /**
@@ -49,6 +55,10 @@ class User extends Authenticatable
             'email_verified_at'    => 'datetime',
             'password'             => 'hashed',
             'sos_location_sharing' => 'boolean',
+            'last_opened_at'       => 'datetime',
+            'checkin_enabled'      => 'boolean',
+            'checkin_paused_until' => 'date',
+            'checkin_alerted_date' => 'date',
         ];
     }
 }
