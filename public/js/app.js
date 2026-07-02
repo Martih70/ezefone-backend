@@ -633,7 +633,7 @@ function checkinEnabledChanged(checked) {
 async function saveCheckinSettings() {
   var timeEl  = document.getElementById('checkin-time');
   var emailEl = document.getElementById('checkin-email');
-  var time    = timeEl  ? timeEl.value  : null;
+  var time    = (timeEl && timeEl.value) ? timeEl.value : '11:00';
   var email   = emailEl ? emailEl.value.trim() || null : null;
   try {
     await patchSettings({ checkin_time: time, checkin_email: email });
