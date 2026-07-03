@@ -162,15 +162,25 @@
     .s7 .num { background: #0e7490; }
     .s7 .tip { border-left-color: #0e7490; background: #ecfeff; }
 
-    /* 8 — SOS: red */
-    .s8 .section-title { color: #b91c1c; border-bottom-color: #fecaca; }
-    .s8 .sos-box { background: #fef2f2; border-color: #b91c1c; }
-    .s8 .sos-box strong { color: #b91c1c; }
+    /* 8 — Text message: indigo */
+    .s8 .section-title { color: #4338ca; border-bottom-color: #c7d2fe; }
+    .s8 .num { background: #4338ca; }
+    .s8 .tip { border-left-color: #4338ca; background: #eef2ff; }
 
-    /* 9 — Trouble: slate */
-    .s9 .section-title { color: #475569; border-bottom-color: #e2e8f0; }
-    .s9 .num { background: #475569; }
-    .s9 .tip { border-left-color: #475569; background: #f8fafc; }
+    /* 9 — SOS: red */
+    .s9 .section-title { color: #b91c1c; border-bottom-color: #fecaca; }
+    .s9 .sos-box { background: #fef2f2; border-color: #b91c1c; }
+    .s9 .sos-box strong { color: #b91c1c; }
+
+    /* 10 — Family Safety: emerald */
+    .s10 .section-title { color: #059669; border-bottom-color: #a7f3d0; }
+    .s10 .num { background: #059669; }
+    .s10 .tip { border-left-color: #059669; background: #ecfdf5; }
+
+    /* 11 — Trouble: slate */
+    .s11 .section-title { color: #475569; border-bottom-color: #e2e8f0; }
+    .s11 .num { background: #475569; }
+    .s11 .tip { border-left-color: #475569; background: #f8fafc; }
 
     /* ── Print ── */
     @page { size: A4 portrait; margin: 0; }
@@ -323,14 +333,25 @@
           <div class="tip">WhatsApp must be installed on your phone</div>
         </div>
 
-        <!-- 8. SOS -->
+        <!-- 8. Text message -->
         <div class="section s8">
-          <div class="section-title">8. Emergency SOS call</div>
+          <div class="section-title">8. Sending a text to a favourite</div>
+          <div class="steps">
+            <div class="step"><span class="num">1</span><span>On your home screen, find the favourite card of the person you want to text</span></div>
+            <div class="step"><span class="num">2</span><span>Tap the blue <strong>Text</strong> button at the bottom of their card</span></div>
+            <div class="step"><span class="num">3</span><span>Your phone&rsquo;s Messages app opens with their number ready &mdash; type and send</span></div>
+          </div>
+          <div class="tip">A short starter message is pre-filled &mdash; you can change or delete it before sending</div>
+        </div>
+
+        <!-- 9. SOS -->
+        <div class="section s9">
+          <div class="section-title">9. Emergency &mdash; Call for Help</div>
           <div class="sos-box">
             The <strong>red &ldquo;Call for Help&rdquo; button</strong> is always visible at the bottom of your home screen.<br><br>
             Tap it once to call your emergency contact immediately.<br><br>
             To set your emergency contact:<br>
-            <strong>Settings &rarr; Emergency Contact (SOS)</strong>
+            <strong>Settings &rarr; Family Safety</strong>
           </div>
         </div>
 
@@ -339,16 +360,26 @@
       <!-- Right column -->
       <div>
 
-        <!-- 9. If something goes wrong -->
-        <div class="section s9">
-          <div class="section-title">9. If something goes wrong</div>
+        <!-- 10. Family Safety -->
+        <div class="section s10">
+          <div class="section-title">10. Family Safety features</div>
+          <div class="steps">
+            <div class="step"><span class="num">1</span><span><strong>Nuisance calls:</strong> tap <strong>Settings &rarr; Family Safety &rarr; Stop nuisance calls</strong> and follow the steps &mdash; unknown numbers go straight to voicemail</span></div>
+            <div class="step"><span class="num">2</span><span><strong>Daily check-in:</strong> turn on <strong>Let a family member know if I haven&rsquo;t opened my phone</strong> &mdash; they get a gentle email if you haven&rsquo;t opened Ezefone by the time you choose</span></div>
+            <div class="step"><span class="num">3</span><span><strong>Code word:</strong> set a secret word only real family know &mdash; ask for it if anyone calls claiming to be a relative in trouble</span></div>
+          </div>
+          <div class="tip">All Family Safety options are in <strong>Settings &rarr; Family Safety</strong></div>
+        </div>
+
+        <!-- 11. If something goes wrong -->
+        <div class="section s11">
+          <div class="section-title">11. If something goes wrong</div>
           <div class="steps">
             <div class="step"><span class="num">1</span><span><strong>Screen frozen?</strong> Press the Home button, then tap Ezefone to reopen it</span></div>
-            <div class="step"><span class="num">2</span><span><strong>Still wrong?</strong> Turn the phone off, wait 10 seconds, then turn it back on</span></div>
-            <div class="step"><span class="num">3</span><span><strong>Cannot find the app?</strong> Open your browser and go to <em>ezefone-backend-c8eadiyp.on-forge.com</em> and sign in</span></div>
-            <div class="step"><span class="num">4</span><span><strong>Battery low?</strong> Plug in your charger &mdash; a lightning bolt on screen means it is charging</span></div>
+            <div class="step"><span class="num">2</span><span><strong>Still wrong?</strong> Turn the phone off, wait 10 seconds, turn it back on</span></div>
+            <div class="step"><span class="num">3</span><span><strong>Battery low?</strong> Plug in your charger &mdash; a lightning bolt means it is charging</span></div>
           </div>
-          <div class="tip">Charge your phone every night so it is always ready</div>
+          <div class="tip">Charge every night so your phone is always ready</div>
         </div>
 
         <!-- Quick-reference box -->
@@ -357,7 +388,7 @@
           <table style="width:100%;border-collapse:collapse;font-size:15px;margin-top:6px">
             <tr style="background:#f9fafb">
               <td style="padding:7px 10px;border:1px solid #e5e7eb;font-weight:800">&#x2605; My Favourites</td>
-              <td style="padding:7px 10px;border:1px solid #e5e7eb;color:#555">Tap a card to call</td>
+              <td style="padding:7px 10px;border:1px solid #e5e7eb;color:#555">Tap to call &bull; Text to message</td>
             </tr>
             <tr>
               <td style="padding:7px 10px;border:1px solid #e5e7eb;font-weight:800">&#x260E; Contacts</td>
@@ -369,7 +400,7 @@
             </tr>
             <tr>
               <td style="padding:7px 10px;border:1px solid #e5e7eb;font-weight:800">&#x2699; Settings</td>
-              <td style="padding:7px 10px;border:1px solid #e5e7eb;color:#555">SOS, text size &amp; more</td>
+              <td style="padding:7px 10px;border:1px solid #e5e7eb;color:#555">Family Safety, text size &amp; more</td>
             </tr>
           </table>
         </div>
