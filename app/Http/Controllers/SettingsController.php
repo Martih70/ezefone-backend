@@ -68,7 +68,7 @@ class SettingsController extends Controller
             'mailer'    => config('mail.default'),
             'will_send' => !empty($newCheckinEmail) && $newCheckinEmail !== $oldCheckinEmail,
         ]);
-        if (!empty($newCheckinEmail)) {
+        if (!empty($newCheckinEmail) && $newCheckinEmail !== $oldCheckinEmail) {
             Mail::to($newCheckinEmail)->send(new CheckinWelcome($user));
         }
 
