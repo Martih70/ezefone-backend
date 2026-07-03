@@ -334,20 +334,43 @@ input {
   white-space: nowrap;
 }
 
-/* Tap-to-call hint */
-.hero-call-hint {
+/* Call + Text action row */
+.hero-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: var(--green-mid);
-  color: white;
-  border-radius: var(--radius-full);
-  padding: 4px 10px;
-  font-size: clamp(10px, 3vw, 15px);
-  font-weight: 800;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
 }
 
-.hero-call-hint .material-icons-round { font-size: clamp(13px, 3.5vw, 16px); }
+.hero-action-call,
+.hero-action-text {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: var(--radius-full);
+  padding: 4px 8px;
+  font-size: clamp(9px, 2.8vw, 13px);
+  font-weight: 800;
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.hero-action-call {
+  background: var(--green-mid);
+  color: white;
+}
+
+.hero-action-text {
+  background: #3b82f6;
+  color: white;
+}
+
+.hero-action-call .material-icons-round,
+.hero-action-text .material-icons-round {
+  font-size: clamp(11px, 3vw, 14px);
+}
 
 /* ---- Empty slot ---- */
 .hero-empty {

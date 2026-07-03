@@ -211,12 +211,21 @@ function renderPeople() {
         ? '<div class="hero-label">' + esc(contact.label) + '</div>'
         : '';
 
+      const phone = contact.phone || '';
+      const textHtml = phone
+        ? '<a class="hero-action-text" href="sms:' + esc(phone) + '?body=' + encodeURIComponent("Hi, it's " + firstName(contact.name) + '. ') + '" onclick="event.stopPropagation()">'
+          + '<span class="material-icons-round">message</span>Text</a>'
+        : '';
+
       html += '<div class="hero-card" style="--glow-color:' + theme.glow + ';background:' + theme.bg + ';border-color:' + theme.border + '" onclick="heroTap(' + id + ')">'
         + avatarHtml
         + '<div class="hero-name">' + esc(firstName(contact.name)) + '</div>'
         + labelHtml
-        + '<div class="hero-phone">' + esc(contact.phone || '') + '</div>'
-        + '<div class="hero-call-hint"><span class="material-icons-round">call</span>Tap to call</div>'
+        + '<div class="hero-phone">' + esc(phone) + '</div>'
+        + '<div class="hero-actions">'
+        + '<div class="hero-action-call"><span class="material-icons-round">call</span>Call</div>'
+        + textHtml
+        + '</div>'
         + '</div>';
 
     } else {
