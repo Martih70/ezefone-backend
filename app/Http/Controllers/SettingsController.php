@@ -62,6 +62,12 @@ class SettingsController extends Controller
 
         // Send welcome email when checkin_email is first set or changed
         $newCheckinEmail = $user->fresh()->checkin_email;
+        \Log::info('checkin_email_check', [
+            'old'       => $oldCheckinEmail,
+            'new'       => $newCheckinEmail,
+            'mailer'    => config('mail.default'),
+            'will_send' => !empty($newCheckinEmail) && $newCheckinEmail !== $oldCheckinEmail,
+        ]);
         if (!empty($newCheckinEmail) && $newCheckinEmail !== $oldCheckinEmail) {
             Mail::to($newCheckinEmail)->send(new CheckinWelcome($user));
         }
