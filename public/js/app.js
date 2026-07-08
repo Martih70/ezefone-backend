@@ -213,7 +213,7 @@ function renderPeople() {
 
       const phone = contact.phone || '';
       const textHtml = phone
-        ? '<a class="hero-action-text" href="sms:' + esc(phone) + '?body=' + encodeURIComponent("Hi, it's " + firstName(contact.name) + '. ') + '" onclick="event.stopPropagation()">'
+        ? '<a class="hero-action-text" href="sms:' + esc(phone) + '?body=' + encodeURIComponent("Hi, it's " + firstName(state.settings.user_name || '') + '. ') + '" onclick="event.stopPropagation()">'
           + '<span class="material-icons-round">message</span>Text</a>'
         : '';
 
