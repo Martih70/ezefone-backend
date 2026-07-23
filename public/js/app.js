@@ -942,6 +942,15 @@ function overlayClose(e, fn) {
 // PAYWALL
 // ============================================================
 function checkPaywall() {
+  // Skip paywall entirely when running as the installed app (TWA/PWA)
+  const isInstalledApp = window.matchMedia('(display-mode: standalone)').matches
+    || window.matchMedia('(display-mode: fullscreen)').matches
+    || document.referrer.startsWith('android-app://');
+
+  if (isInstalledApp) {
+    return;
+  }
+
   const params = new URLSearchParams(window.location.search);
 
   // Capture auth token passed after login/payment
