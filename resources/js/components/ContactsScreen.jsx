@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import ContactsList from './ContactsList';
 import FavoritesList from './FavoritesList';
 import AddContactForm from './AddContactForm';
+import ReplaceFavoriteDialog from './ReplaceFavoriteDialog';
 
 export default function ContactsScreen({ onBack }) {
     const [contacts, setContacts] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const [showAddForm, setShowAddForm] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [pendingFavorite, setPendingFavorite] = useState(null);
 
     const patternStyle = {
         backgroundImage: `repeating-linear-gradient(
@@ -50,6 +52,19 @@ export default function ContactsScreen({ onBack }) {
             fetchContacts();
         } catch (error) {
             console.error('Failed to remove favorite:', error);
+        }
+    };
+
+    const replaceFavorite = async (oldContactId) => {
+        if (!pendingFavorite) return;
+        try {
+            await window.axios.delete(`/contacts/${oldContactId}/favorite`);
+            await window.axios.post(`/contacts/${pendingFavorite.id}/favorite`);
+            fetchContacts();
+        } catch (error) {
+            console.error('Failed to replace favorite:', error);
+        } finally {
+            setPendingFavorite(null);
         }
     };
 
@@ -102,6 +117,7 @@ export default function ContactsScreen({ onBack }) {
                             favorites={favorites}
                             onAddFavorite={addFavorite}
                             onRemoveFavorite={removeFavorite}
+                            onFavoritesFull={setPendingFavorite}
                         />
                     )}
                 </div>
@@ -119,6 +135,16 @@ export default function ContactsScreen({ onBack }) {
                     <AddContactForm onSubmit={handleAddContact} />
                 )}
             </div>
+
+            {/* Replace Favorite Dialog */}
+            {pendingFavorite && (
+                <ReplaceFavoriteDialog
+                    contact={pendingFavorite}
+                    favorites={favorites}
+                    onSelect={replaceFavorite}
+                    onCancel={() => setPendingFavorite(null)}
+                />
+            )}
         </div>
     );
 }

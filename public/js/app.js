@@ -122,7 +122,6 @@ async function deleteContactById(id) {
 }
 
 async function addFavourite(contactId) {
-  if (state.favorites.length >= 4) { showToast('My Favourites is full (4 max)'); return; }
   const fav = await apiRequest('POST', '/contacts/' + contactId + '/favorite');
   // Ensure contact is populated on the fav object
   if (!fav.contact) fav.contact = state.contacts.find(c => c.id === contactId);
@@ -395,6 +394,10 @@ function updateContactCount() {
 // TOGGLE FAVOURITE
 // ============================================================
 async function toggleFavourite(contactId, isFav) {
+  if (!isFav && state.favorites.length >= 4) {
+    showReplaceFavouriteModal(contactId);
+    return;
+  }
   try {
     if (isFav) {
       await removeFavourite(contactId);
@@ -1168,6 +1171,53 @@ function renderRecentlyCalled() {
       + '<div class="recent-call-name">' + esc(firstName(contact.name)) + '</div>'
       + '</div>';
   }).join('');
+}
+
+// ============================================================
+// REPLACE FAVOURITE (My Favourites is full)
+// ============================================================
+let replaceTargetContactId = null;
+
+function showReplaceFavouriteModal(contactId) {
+  const contact = state.contacts.find(function(c) { return c.id === contactId; });
+  if (!contact) return;
+  replaceTargetContactId = contactId;
+
+  document.getElementById('replace-favorite-name').textContent = contact.name;
+
+  const list = document.getElementById('replace-favorite-list');
+  list.innerHTML = state.favorites.map(function(fav) {
+    const favContact = fav.contact;
+    const color    = getAvatarColor(favContact.name);
+    const initials = getInitials(favContact.name);
+    return '<div class="manage-row" onclick="selectReplaceFavourite(' + favContact.id + ')">'
+      + '<div class="manage-avatar" style="background:' + color + '">' + esc(initials) + '</div>'
+      + '<div class="manage-info"><div class="manage-name">' + esc(favContact.name) + '</div></div>'
+      + '</div>';
+  }).join('');
+
+  document.getElementById('replace-favorite-modal').classList.remove('hidden');
+}
+
+function hideReplaceFavouriteModal() {
+  document.getElementById('replace-favorite-modal').classList.add('hidden');
+  replaceTargetContactId = null;
+}
+
+async function selectReplaceFavourite(oldContactId) {
+  const newContactId = replaceTargetContactId;
+  hideReplaceFavouriteModal();
+  if (newContactId === null) return;
+  try {
+    await removeFavourite(oldContactId);
+    await addFavourite(newContactId);
+    renderPeople();
+    renderManageList();
+    updateContactCount();
+    showToast('Added to My Favourites');
+  } catch (err) {
+    showToast('Could not update: ' + err.message);
+  }
 }
 
 // ============================================================

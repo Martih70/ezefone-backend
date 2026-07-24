@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
 {
+    private const MAX_FAVORITES = 4;
+
     private function userId(): int
     {
         return Auth::id();
@@ -56,6 +58,14 @@ class ContactController extends Controller
         $contact = Contact::where('id', $contactId)
             ->where('user_id', $userId)
             ->firstOrFail();
+
+        $favoriteCount = Favorite::whereHas('contact', fn($q) => $q->where('user_id', $userId))->count();
+
+        if ($favoriteCount >= self::MAX_FAVORITES) {
+            return response()->json([
+                'message' => 'You can only have ' . self::MAX_FAVORITES . ' favorites. Remove one before adding another.',
+            ], 422);
+        }
 
         $maxOrder = Favorite::whereHas('contact', fn($q) => $q->where('user_id', $userId))
             ->max('order') ?? 0;

@@ -1096,6 +1096,22 @@
 
 
   <!-- ============================================================
+       REPLACE FAVOURITE MODAL (My Favourites is full)
+       ============================================================ -->
+  <div id="replace-favorite-modal" class="modal-overlay hidden" onclick="overlayClose(event, hideReplaceFavouriteModal)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <h2 class="modal-title">My Favourites is full</h2>
+      <p style="font-size:14px;color:var(--text-muted);margin:-6px 0 0;text-align:center">
+        Choose someone to replace with <strong id="replace-favorite-name"></strong>
+      </p>
+      <div class="manage-list-card" id="replace-favorite-list"></div>
+      <button type="button" class="modal-cancel-btn" onclick="hideReplaceFavouriteModal()">Cancel</button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
        PIN OVERLAY (carer lock)
        ============================================================ -->
   <div id="pin-overlay" class="pin-overlay hidden">

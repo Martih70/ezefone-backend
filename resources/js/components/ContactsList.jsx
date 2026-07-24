@@ -1,7 +1,8 @@
 import React from 'react';
 import { getInitials } from '../utils/getInitials';
+import { MAX_FAVORITES } from '../constants';
 
-export default function ContactsList({ contacts, favorites, onAddFavorite, onRemoveFavorite }) {
+export default function ContactsList({ contacts, favorites, onAddFavorite, onRemoveFavorite, onFavoritesFull }) {
     const isFavorite = (contactId) => {
         return favorites.some(fav => fav.contact_id === contactId);
     };
@@ -9,6 +10,8 @@ export default function ContactsList({ contacts, favorites, onAddFavorite, onRem
     const toggleFavorite = (contact) => {
         if (isFavorite(contact.id)) {
             onRemoveFavorite(contact.id);
+        } else if (favorites.length >= MAX_FAVORITES) {
+            onFavoritesFull(contact);
         } else {
             onAddFavorite(contact.id);
         }

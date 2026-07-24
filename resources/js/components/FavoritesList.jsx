@@ -1,9 +1,9 @@
 import React from 'react';
 import { getInitials } from '../utils/getInitials';
+import { MAX_FAVORITES } from '../constants';
 
 export default function FavoritesList({ favorites, onRemoveFavorite }) {
-    const slots = 5;
-    const emptySlots = Array.from({ length: Math.max(0, slots - favorites.length) });
+    const emptySlots = Array.from({ length: Math.max(0, MAX_FAVORITES - favorites.length) });
 
     return (
         <div className="flex gap-3 overflow-x-auto pb-2">
