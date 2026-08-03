@@ -166,6 +166,7 @@ function navigate(screen) {
   if (screen === 'messages')       renderMessages();
   if (screen === 'settings')       { loadSettingsForm(); applyTextSize(); updateCarerLockUI(); }
   if (screen === 'unknown-caller') showUcTab('iphone');
+  if (screen === 'family-safety-sheet') renderFamilySafetySheet();
 }
 
 // ============================================================
@@ -596,6 +597,14 @@ async function sosContactChanged(value) {
   } catch (err) {
     showToast('Could not save — check your connection');
   }
+}
+
+// Family Safety Sheet -- fill in SOS contact if one is already set
+function renderFamilySafetySheet() {
+  const nameEl  = document.getElementById('sheet-sos-name');
+  const phoneEl = document.getElementById('sheet-sos-phone');
+  if (nameEl)  nameEl.textContent  = state.settings.sos_contact_name  || ' ';
+  if (phoneEl) phoneEl.textContent = state.settings.sos_contact_phone || ' ';
 }
 
 // ============================================================

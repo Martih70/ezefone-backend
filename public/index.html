@@ -75,6 +75,107 @@
     }
     .family-safety-toggle input:checked + .family-safety-toggle-track { background: var(--green-deep); }
     .family-safety-toggle input:checked + .family-safety-toggle-track::after { transform: translateX(22px); }
+
+    /* Family Safety Sheet — print */
+    .safety-sheet-print-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: var(--green-deep);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 18px;
+    }
+    .safety-sheet-print-btn:active { opacity: 0.85; }
+    .safety-sheet {
+      background: #fff;
+      color: #111;
+      padding: 24px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .safety-sheet-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 0 0 2px 0;
+    }
+    .safety-sheet-subtitle {
+      font-size: 13px;
+      color: #555;
+      margin: 0 0 20px 0;
+    }
+    .safety-sheet-field {
+      margin: 0 0 6px 0;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .safety-sheet-field-label { font-weight: 700; }
+    .safety-sheet-field-label-sm { font-size: 12px; color: #555; margin: 0 6px; }
+    .safety-sheet-blank {
+      display: inline-block;
+      min-width: 160px;
+      border-bottom: 1px solid #111;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .safety-sheet-note {
+      font-size: 12px;
+      color: #555;
+      margin: 0 0 18px 0;
+      line-height: 1.5;
+    }
+    .safety-sheet-lead {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+    }
+    .safety-sheet-donts {
+      margin: 0 0 14px 0;
+      padding: 0 0 0 20px;
+    }
+    .safety-sheet-donts li {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+    .safety-sheet-body {
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0 0 20px 0;
+    }
+    .safety-sheet-fraud {
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0 0 20px 0;
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      #family-safety-sheet-content, #family-safety-sheet-content * { visibility: visible; }
+      #screen-family-safety-sheet {
+        position: static !important;
+        opacity: 1 !important;
+        transform: none !important;
+        inset: auto !important;
+      }
+      #family-safety-sheet-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border: none;
+        padding: 0;
+      }
+      .no-print { display: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -347,6 +448,18 @@
           </div>
         </div>
 
+        <!-- Print family safety sheet -->
+        <div class="settings-card" style="margin-bottom:14px">
+          <button class="settings-row settings-row-btn" onclick="navigate('family-safety-sheet')">
+            <span class="material-icons-round settings-row-icon">print</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Print your Family Safety Sheet</div>
+              <div class="settings-row-sub">Great to keep somewhere visible, like on the fridge.</div>
+            </div>
+            <span class="material-icons-round settings-chevron">chevron_right</span>
+          </button>
+        </div>
+
       </div>
 
       <!-- App -->
@@ -523,6 +636,58 @@
       </div>
     </div>
   </div><!-- /screen-code-word-guide -->
+
+  <div class="screen" id="screen-family-safety-sheet">
+    <div class="sub-header no-print" style="display:flex;align-items:center;gap:8px">
+      <button onclick="navigate('settings')" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;color:inherit">
+        <span class="material-icons-round">arrow_back</span>
+      </button>
+      <h1 class="sub-header-title" style="margin:0">Family Safety Sheet</h1>
+    </div>
+    <div class="settings-scroll">
+      <div class="settings-section">
+        <button class="safety-sheet-print-btn no-print" onclick="window.print()">
+          <span class="material-icons-round">print</span> Print this sheet
+        </button>
+
+        <div class="safety-sheet" id="family-safety-sheet-content">
+          <p class="safety-sheet-title">Our Family Safety Plan</p>
+          <p class="safety-sheet-subtitle">made with Ezefone</p>
+
+          <p class="safety-sheet-field">
+            <span class="safety-sheet-field-label">Our family code word:</span>
+            <span class="safety-sheet-blank">&nbsp;</span>
+          </p>
+          <p class="safety-sheet-note">(agree this together, then keep this sheet somewhere safe — not saved digitally)</p>
+
+          <p class="safety-sheet-lead">If someone calls claiming to be a family member in trouble, asking for money:</p>
+
+          <ul class="safety-sheet-donts">
+            <li><strong>DO NOT</strong> tell them the code word — ask <em>them</em> for it.</li>
+            <li><strong>DO NOT</strong> send money, vouchers, or gift cards because of a phone call alone.</li>
+            <li><strong>DO NOT</strong> feel rushed — it's always okay to hang up and check.</li>
+          </ul>
+
+          <p class="safety-sheet-body">If they can't give the code word, hang up and call a family member directly.</p>
+
+          <p class="safety-sheet-field">
+            <span class="safety-sheet-field-label">Who to call for help:</span>
+            <span class="safety-sheet-blank" id="sheet-sos-name">&nbsp;</span>
+            <span class="safety-sheet-field-label-sm">(name)</span>
+            <span class="safety-sheet-blank" id="sheet-sos-phone">&nbsp;</span>
+            <span class="safety-sheet-field-label-sm">(number)</span>
+          </p>
+
+          <p class="safety-sheet-fraud">Think you've been targeted by a scam? Call Report Fraud (formerly Action Fraud) on <strong>0300 123 2040</strong>.</p>
+
+          <p class="safety-sheet-field">
+            <span class="safety-sheet-field-label">Date agreed:</span>
+            <span class="safety-sheet-blank">&nbsp;</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div><!-- /screen-family-safety-sheet -->
 
 
   <!-- ============================================================
