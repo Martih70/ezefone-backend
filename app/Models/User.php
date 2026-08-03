@@ -23,7 +23,6 @@ class User extends Authenticatable
         'email',
         'password',
         'stripe_customer_id',
-        'family_code_word',
         'sos_contact_id',
         'sos_location_sharing',
         'last_opened_at',

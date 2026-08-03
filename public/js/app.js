@@ -539,10 +539,6 @@ async function patchSettings(patch) {
 
 // Called by navigate() when entering the settings screen
 function loadSettingsForm() {
-  // Code word
-  const cwInput = document.getElementById('code-word-input');
-  if (cwInput) cwInput.value = state.settings.family_code_word || '';
-
   // SOS contact picker — rebuild options from current contacts list
   const sel = document.getElementById('sos-contact-select');
   if (sel) {
@@ -578,18 +574,6 @@ function loadSettingsForm() {
     checkinPaused.checked = !!(paused && paused >= today);
   }
 
-}
-
-// Code word — save button
-async function saveCodeWord() {
-  const input = document.getElementById('code-word-input');
-  if (!input) return;
-  try {
-    await patchSettings({ family_code_word: input.value.trim() || null });
-    showToast('Saved. You can view this anytime under Family Safety.');
-  } catch (err) {
-    showToast('Could not save — check your connection');
-  }
 }
 
 // SOS contact picker — onchange

@@ -38,18 +38,6 @@
       margin: 0;
       line-height: 1.5;
     }
-    .family-safety-save-btn {
-      width: 100%;
-      padding: 12px;
-      background: var(--green-deep);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius-btn);
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .family-safety-save-btn:active { opacity: 0.85; }
     .family-safety-select {
       appearance: none;
       -webkit-appearance: none;
@@ -284,20 +272,13 @@
 
         <!-- Code word -->
         <div class="settings-card" style="margin-bottom:14px">
-          <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:10px">
-            <div style="display:flex;align-items:center;gap:14px;width:100%">
-              <span class="material-icons-round settings-row-icon">vpn_key</span>
-              <div class="settings-row-body">
-                <div class="settings-row-label">Our family code word</div>
-              </div>
+          <button class="settings-row settings-row-btn" onclick="navigate('code-word-guide')">
+            <span class="material-icons-round settings-row-icon">vpn_key</span>
+            <div class="settings-row-body">
+              <div class="settings-row-label">Our family code word</div>
             </div>
-            <p class="family-safety-helper">If someone calls saying they're a family member in trouble and asking for money, ask them for this word. If they don't know it, hang up and call a family member directly to check.</p>
-            <input type="text" id="code-word-input" class="settings-inline-input"
-                   placeholder="e.g. Sunflower"
-                   autocomplete="off" autocorrect="off" spellcheck="false">
-            <button class="family-safety-save-btn" onclick="saveCodeWord()">Save code word</button>
-            <p class="family-safety-note">Choose this together with your family. Keep it private — don't share it with anyone outside your family.</p>
-          </div>
+            <span class="material-icons-round settings-chevron">chevron_right</span>
+          </button>
         </div>
 
         <!-- SOS contact picker -->
@@ -524,6 +505,25 @@
     </div>
   </div><!-- /screen-unknown-caller -->
 
+  <div class="screen" id="screen-code-word-guide">
+    <div class="sub-header" style="display:flex;align-items:center;gap:8px">
+      <button onclick="navigate('settings')" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;color:inherit">
+        <span class="material-icons-round">arrow_back</span>
+      </button>
+      <h1 class="sub-header-title" style="margin:0">Family Code Word</h1>
+    </div>
+    <div class="settings-scroll">
+      <div class="settings-section">
+        <div class="settings-card" style="padding:16px">
+          <p class="settings-row-label" style="margin:0 0 10px 0">Your family code word</p>
+          <p class="family-safety-helper" style="margin:0 0 14px 0">Agree on a word together as a family — something easy to remember, that nobody outside your family would guess.</p>
+          <p class="family-safety-helper" style="margin:0 0 14px 0">Write it down somewhere safe and physical — like inside an address book or a diary — not saved anywhere digital, including in this app.</p>
+          <p class="family-safety-helper" style="margin:0"><strong>We don't store your code word, on purpose.</strong> It should only ever exist between you and your family — never anywhere it could be read out by someone else, including by us.</p>
+        </div>
+      </div>
+    </div>
+  </div><!-- /screen-code-word-guide -->
+
 
   <!-- ============================================================
        SCREEN: HELP
@@ -694,7 +694,7 @@
             <div class="faq-step"><span class="step-num">1</span><span>The red <strong>Call for Help</strong> button is always visible at the bottom of your home screen</span></div>
             <div class="faq-step"><span class="step-num">2</span><span>Tapping it calls your chosen contact straight away and sends them a message</span></div>
             <div class="faq-step"><span class="step-num">3</span><span>To choose who it contacts: tap <strong>Settings &rarr; Family Safety</strong></span></div>
-            <div class="faq-tip">&#x1F4A1; You can also set a family code word and a daily check-in in Family Safety</div>
+            <div class="faq-tip">&#x1F4A1; You can also agree a family code word and set up a daily check-in in Family Safety</div>
           </div>
 
         </div>
@@ -793,7 +793,7 @@
             <div class="faq-step"><span class="step-num">1</span><span>A code word is a secret word only your real family knows</span></div>
             <div class="faq-step"><span class="step-num">2</span><span>If someone calls claiming to be a relative in trouble and asking for money, ask them for the code word</span></div>
             <div class="faq-step"><span class="step-num">3</span><span>If they don&rsquo;t know it, hang up and call a family member directly to check</span></div>
-            <div class="faq-tip">&#x1F4A1; To set one: tap <strong>Settings &rarr; Family Safety &rarr; Family Code Word</strong></div>
+            <div class="faq-tip">&#x1F4A1; We don&rsquo;t store your code word — agree it as a family and write it down somewhere safe and physical. See <strong>Settings &rarr; Family Safety &rarr; Family Code Word</strong> for guidance</div>
           </div>
 
         </div>

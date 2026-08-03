@@ -24,7 +24,6 @@ class SettingsController extends Controller
 
         return response()->json([
             'user_name'            => $user->name,
-            'family_code_word'     => $user->family_code_word,
             'sos_contact_id'       => $user->sos_contact_id,
             'sos_contact_name'     => $sosContact?->name,
             'sos_contact_phone'    => $sosContact?->phone,
@@ -39,7 +38,6 @@ class SettingsController extends Controller
     public function update(Request $request)
     {
         $validated = $request->validate([
-            'family_code_word'     => 'sometimes|nullable|string|max:100',
             'sos_contact_id'       => 'sometimes|nullable|integer',
             'sos_location_sharing' => 'sometimes|boolean',
             'checkin_enabled'      => 'sometimes|boolean',
