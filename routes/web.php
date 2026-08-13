@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\FeaturedPostController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\ContactController;
@@ -30,6 +31,10 @@ Route::get('/', function () {
     return response(file_get_contents(public_path('index.html')), 200)
         ->header('Content-Type', 'text/html; charset=utf-8');
 });
+
+// Public read-only settings — no auth, fetched client-side by the static
+// marketing site (ezefone-web) at runtime.
+Route::get('/api/settings/featured-facebook-post', [FeaturedPostController::class, 'show']);
 
 // API Routes — auth required so contacts are per-user
 Route::prefix('api')->middleware('auth:sanctum')->group(function () {
@@ -65,6 +70,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Admin: featured Facebook post — gated by login + ADMIN_EMAILS allowlist
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/featured-post', [FeaturedPostController::class, 'edit'])->name('admin.featured-post.edit');
+    Route::patch('/admin/featured-post', [FeaturedPostController::class, 'update'])->name('admin.featured-post.update');
 });
 
 // Sitemap
