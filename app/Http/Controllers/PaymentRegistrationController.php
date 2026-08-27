@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
 
 class PaymentRegistrationController extends Controller
 {
@@ -55,9 +57,10 @@ class PaymentRegistrationController extends Controller
             ]);
         } else {
             $user = User::create([
-                'name'     => $validated['name'],
-                'email'    => $validated['email'],
-                'password' => Hash::make($validated['password']),
+                'name'         => $validated['name'],
+                'email'        => $validated['email'],
+                'password'     => Hash::make($validated['password']),
+                'pricing_tier' => $this->pricingTierFromSession(),
             ]);
         }
 
@@ -68,5 +71,22 @@ class PaymentRegistrationController extends Controller
         $token = $user->createToken('pwa')->plainTextToken;
 
         return redirect('/?paid=1&token=' . $token);
+    }
+
+    /**
+     * Look up which pricing tier the verified Stripe session paid for, in
+     * case this account is being created before the webhook has landed.
+     */
+    protected function pricingTierFromSession(): ?string
+    {
+        $sessionId = session('stripe_session_id');
+
+        if (!$sessionId) {
+            return null;
+        }
+
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        return Session::retrieve($sessionId)->metadata['pricing_tier'] ?? null;
     }
 }
