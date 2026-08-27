@@ -1059,6 +1059,13 @@ function wizardFinish() {
   updateContactCount();
 }
 
+// One-tap bail-out from the welcome step — skips all 4 person steps and the
+// "All set!" done screen, going straight to the main app. Contacts can still
+// be added any time via Settings > Add Contact.
+function wizardSkipAll() {
+  wizardFinish();
+}
+
 function isIOS() {
   return /iphone|ipad|ipod/i.test(navigator.userAgent);
 }
