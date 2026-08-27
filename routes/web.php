@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\EarlyAdopterStatusController;
 use App\Http\Controllers\FeaturedPostController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\StripeWebhookController;
@@ -35,6 +36,10 @@ Route::get('/', function () {
 // Public read-only settings — no auth, fetched client-side by the static
 // marketing site (ezefone-web) at runtime.
 Route::get('/api/settings/featured-facebook-post', [FeaturedPostController::class, 'show']);
+
+// Public, unauthenticated "X of 100 spots claimed" counter for the Early
+// Adopter pricing offer — fetched client-side by ezefone-web.
+Route::get('/api/early-adopter-status', [EarlyAdopterStatusController::class, 'show']);
 
 // API Routes — auth required so contacts are per-user
 Route::prefix('api')->middleware('auth:sanctum')->group(function () {
