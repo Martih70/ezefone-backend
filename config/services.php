@@ -36,10 +36,12 @@ return [
     ],
 
     'stripe' => [
-        'key'      => env('STRIPE_KEY'),
-        'secret'   => env('STRIPE_SECRET'),
-        'webhook'  => env('STRIPE_WEBHOOK_SECRET'),
-        'price_id' => env('STRIPE_PRICE_ID'),
+        'key'                  => env('STRIPE_KEY'),
+        'secret'               => env('STRIPE_SECRET'),
+        'webhook'              => env('STRIPE_WEBHOOK_SECRET'),
+        'price_early_adopter'  => env('STRIPE_PRICE_EARLY_ADOPTER'),
+        'price_standard'       => env('STRIPE_PRICE_STANDARD'),
+        'early_adopter_limit'  => env('STRIPE_EARLY_ADOPTER_LIMIT', 100),
     ],
 
 ];

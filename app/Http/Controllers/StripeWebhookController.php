@@ -34,6 +34,7 @@ class StripeWebhookController extends Controller
 
             $email = $session->customer_details?->email;
             $name  = $session->customer_details?->name ?? 'Ezefone User';
+            $tier  = $session->metadata?->pricing_tier;
 
             if (!$email) {
                 return response('No email', 200);
@@ -46,9 +47,10 @@ class StripeWebhookController extends Controller
 
             // Create account with random password — user sets their own via reset email
             $user = User::create([
-                'name'     => $name,
-                'email'    => $email,
-                'password' => Hash::make(Str::random(32)),
+                'name'         => $name,
+                'email'        => $email,
+                'password'     => Hash::make(Str::random(32)),
+                'pricing_tier' => $tier,
             ]);
 
             // Send password reset email so user can set their password and sign in
