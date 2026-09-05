@@ -6,6 +6,8 @@ use App\Models\BlogPost;
 use App\Services\SeobotClient;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Http;
+use Throwable;
 
 class SeobotImportCommand extends Command
 {
@@ -95,6 +97,32 @@ class SeobotImportCommand extends Command
 
         $this->info($summary);
 
+        if ($created + $updated > 0) {
+            $this->triggerEzefoneWebRebuild();
+        }
+
         return self::SUCCESS;
+    }
+
+    /**
+     * ezefone-web is a static export — it only picks up new/changed posts
+     * when it's rebuilt. Best-effort: a failure here shouldn't fail the
+     * import itself, since blog_posts is already correctly updated either
+     * way and the next scheduled run will try again.
+     */
+    protected function triggerEzefoneWebRebuild(): void
+    {
+        $hookUrl = config('services.seobot.ezefone_web_deploy_hook_url');
+
+        if (! $hookUrl) {
+            return;
+        }
+
+        try {
+            Http::timeout(10)->get($hookUrl)->throw();
+            $this->info('Triggered ezefone-web rebuild.');
+        } catch (Throwable $e) {
+            $this->warn("Could not trigger ezefone-web rebuild: {$e->getMessage()}");
+        }
     }
 }
