@@ -48,3 +48,9 @@ Schedule::call(function () {
             $user->update(['checkin_alerted_date' => $today]);
         });
 })->hourly()->name('checkin-alerts')->withoutOverlapping();
+
+// TEMPORARY — remove this scheduled entry (and the seobot:import command)
+// once SEObot is cancelled in a few months. Until then, this picks up any
+// newly published SEObot articles once a day so blog_posts stays current
+// without anyone having to remember to run the import by hand.
+Schedule::command('seobot:import')->daily()->name('seobot-import')->withoutOverlapping();
