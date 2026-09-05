@@ -3,12 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
@@ -60,5 +62,15 @@ class User extends Authenticatable
             'checkin_paused_until' => 'date',
             'checkin_alerted_date' => 'date',
         ];
+    }
+
+    /**
+     * Gate for the /backoffice Filament panel — reuses the same
+     * ADMIN_EMAILS allowlist as the existing hand-rolled /admin/* pages
+     * (see EnsureUserIsAdmin) rather than a separate role system.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return in_array($this->email, config('app.admin_emails', []), true);
     }
 }
