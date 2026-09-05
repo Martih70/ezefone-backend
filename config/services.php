@@ -44,4 +44,9 @@ return [
         'early_adopter_limit'  => env('STRIPE_EARLY_ADOPTER_LIMIT', 100),
     ],
 
+    // Temporary: only needed until SEObot is cancelled — see seobot:import.
+    'seobot' => [
+        'key' => env('SEOBOT_API_KEY'),
+    ],
+
 ];
