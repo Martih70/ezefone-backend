@@ -47,6 +47,13 @@ return [
     // Temporary: only needed until SEObot is cancelled — see seobot:import.
     'seobot' => [
         'key' => env('SEOBOT_API_KEY'),
+
+        // ezefone-web is a static export rebuilt only when its Forge deploy
+        // hook fires — this is that hook's URL, so seobot:import can trigger
+        // a rebuild itself whenever it actually imports something new.
+        // Site → Deployments tab in Forge. Left unset, the import command
+        // just skips this step.
+        'ezefone_web_deploy_hook_url' => env('EZEFONE_WEB_DEPLOY_HOOK_URL'),
     ],
 
 ];
